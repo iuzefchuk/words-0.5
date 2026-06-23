@@ -17,56 +17,44 @@ type DialogTriggerParams = {
 };
 
 class Dialog {
-  #html = $state<null | string>(null);
+  html = $state<null | string>(null);
 
-  #title = $state<null | string>(null);
+  title = $state<null | string>(null);
 
-  #isDestructive = $state(false);
+  isDestructive = $state(false);
 
-  #pendingResolve: ((result: DialogResult) => void) | null = null;
-
-  get html(): null | string {
-    return this.#html;
-  }
-
-  get isDestructive(): boolean {
-    return this.#isDestructive;
-  }
+  private pendingResolve: ((result: DialogResult) => void) | null = null;
 
   get isOpen(): boolean {
-    return this.#html !== null;
-  }
-
-  get title(): null | string {
-    return this.#title;
+    return this.html !== null;
   }
 
   resolve({ status }: { status: DialogStatus }): void {
-    if (this.#pendingResolve !== null) {
-      this.#pendingResolve({
+    if (this.pendingResolve !== null) {
+      this.pendingResolve({
         isCanceled: status === DialogStatus.Canceled,
         isConfirmed: status === DialogStatus.Confirmed,
         isDismissed: status === DialogStatus.Dismissed,
       });
-      this.#pendingResolve = null;
+      this.pendingResolve = null;
     }
   }
 
   async trigger({ html, isDestructive = false, title }: DialogTriggerParams): Promise<DialogResult> {
-    this.#html = html;
-    this.#title = title ?? null;
-    this.#isDestructive = isDestructive;
+    this.html = html;
+    this.title = title ?? null;
+    this.isDestructive = isDestructive;
     const result = await new Promise<DialogResult>(resolve => {
-      this.#pendingResolve = resolve;
+      this.pendingResolve = resolve;
     });
-    this.#resetState();
+    this.resetState();
     return result;
   }
 
-  #resetState(): void {
-    this.#title = null;
-    this.#html = null;
-    this.#isDestructive = false;
+  private resetState(): void {
+    this.title = null;
+    this.html = null;
+    this.isDestructive = false;
   }
 }
 

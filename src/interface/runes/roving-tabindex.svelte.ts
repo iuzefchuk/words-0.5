@@ -2,33 +2,29 @@ import { tick } from 'svelte';
 import { Key } from '@/interface/enums.ts';
 
 export default class RovingTabindex {
-  #focusedIndex = $state(0);
+  focusedIndex = $state(0);
 
-  readonly #getGrid: () => HTMLElement | null;
+  private readonly getGrid: () => HTMLElement | null;
 
-  readonly #itemSelector: string;
+  private readonly itemSelector: string;
 
-  readonly #itemsPerRow: number;
+  private readonly itemsPerRow: number;
 
   constructor(getGrid: () => HTMLElement | null, itemSelector: string, itemsPerRow: number) {
-    this.#getGrid = getGrid;
-    this.#itemSelector = itemSelector;
-    this.#itemsPerRow = itemsPerRow;
-  }
-
-  get focusedIndex(): number {
-    return this.#focusedIndex;
+    this.getGrid = getGrid;
+    this.itemSelector = itemSelector;
+    this.itemsPerRow = itemsPerRow;
   }
 
   readonly onKeydown = (event: KeyboardEvent): void => {
-    const items = this.#getGrid()?.querySelectorAll<HTMLElement>(this.#itemSelector);
+    const items = this.getGrid()?.querySelectorAll<HTMLElement>(this.itemSelector);
     if (items === undefined) throw new Error('RovingTabindex: grid is not mounted');
-    if (items.length === 0) throw new Error(`RovingTabindex: no items match "${this.#itemSelector}"`);
+    if (items.length === 0) throw new Error(`RovingTabindex: no items match "${this.itemSelector}"`);
     const total = items.length;
-    let target = this.#focusedIndex;
+    let target = this.focusedIndex;
     switch (event.key as Key) {
       case Key.ArrowDown:
-        target += this.#itemsPerRow;
+        target += this.itemsPerRow;
         break;
       case Key.ArrowLeft:
         target -= 1;
@@ -37,7 +33,7 @@ export default class RovingTabindex {
         target += 1;
         break;
       case Key.ArrowUp:
-        target -= this.#itemsPerRow;
+        target -= this.itemsPerRow;
         break;
       case Key.End:
         target = total - 1;
@@ -55,8 +51,8 @@ export default class RovingTabindex {
     }
     event.preventDefault();
     const clamped = Math.min(Math.max(target, 0), total - 1);
-    if (clamped === this.#focusedIndex) return;
-    this.#focusedIndex = clamped;
+    if (clamped === this.focusedIndex) return;
+    this.focusedIndex = clamped;
     void tick().then(() => {
       items[clamped]?.focus();
     });

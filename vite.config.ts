@@ -40,7 +40,7 @@ export default defineConfig(({ mode }) => {
     plugins: [svelte({ configFile: `${DIRECTORY.root}/svelte.config.ts` }), crossOriginIsolation()],
     publicDir: DIRECTORY.public,
     resolve: {
-      alias: { '@': DIRECTORY.src },
+      tsconfigPaths: true,
     },
     root: DIRECTORY.srcInterface,
     server: {

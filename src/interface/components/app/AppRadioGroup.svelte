@@ -112,8 +112,7 @@
     }
 
     &:has(:focus-visible) {
-      outline: 2px solid light-dark(var(--color-level-9), var(--color-level-3));
-      outline-offset: -1px;
+      outline: var(--outline);
     }
   }
 

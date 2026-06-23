@@ -1,9 +1,8 @@
 import { defineConfig } from 'vitest/config';
-import { DIRECTORY } from './meta/constants.ts';
 
 export default defineConfig({
   resolve: {
-    alias: { $: DIRECTORY.tests, '@': DIRECTORY.src },
+    tsconfigPaths: true,
   },
   test: {
     clearMocks: true,

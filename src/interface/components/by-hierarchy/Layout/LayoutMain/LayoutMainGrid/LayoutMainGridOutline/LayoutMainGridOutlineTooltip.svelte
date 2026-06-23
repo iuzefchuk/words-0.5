@@ -36,10 +36,10 @@
     padding: var(--space-4xs) var(--space-2xs);
     font-size: var(--font-size-small);
     font-weight: var(--font-weight);
-    color: light-dark(var(--color-level-1), var(--color-level-11));
-    background: light-dark(var(--color-level-11), var(--color-level-0));
     border-radius: var(--space-3xs);
+    background: oklch(100% 0 0 / 0.2);
     box-shadow: var(--shadow-level-3);
+    backdrop-filter: blur(var(--space-xs));
   }
 
   .tooltip__value--shimmer {

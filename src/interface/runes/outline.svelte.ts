@@ -5,7 +5,7 @@ import type { DomainInventoryTile, DomainPlayfieldCell } from '@/app/types/index
 export type Bounds = { col: number; colSpan: number; row: number; rowSpan: number };
 
 export default class Outline {
-  readonly bounds = $derived.by((): ReadonlyArray<Bounds> => Outline.#computeBounds(userStore.tiles));
+  readonly bounds = $derived.by((): ReadonlyArray<Bounds> => Outline.computeBounds(userStore.tiles));
 
   isAnchorAt(idx: number): boolean {
     if (mainStore.currentTurnScore === undefined) return false;
@@ -36,19 +36,19 @@ export default class Outline {
     return group.col + group.colSpan >= mainStore.playfieldCellsPerAxis;
   }
 
-  static #computeBounds(tiles: ReadonlyArray<DomainInventoryTile>): ReadonlyArray<Bounds> {
-    const cells = Outline.#findCellsFor(tiles);
+  private static computeBounds(tiles: ReadonlyArray<DomainInventoryTile>): ReadonlyArray<Bounds> {
+    const cells = Outline.findCellsFor(tiles);
     if (cells.size === 0) return [];
     const visited = new Set<DomainPlayfieldCell>();
     const bounds: Array<Bounds> = [];
     for (const cell of cells) {
       if (visited.has(cell)) continue;
-      bounds.push(Outline.#floodFillBounds(cell, cells, visited));
+      bounds.push(Outline.floodFillBounds(cell, cells, visited));
     }
     return bounds;
   }
 
-  static #findCellsFor(tiles: ReadonlyArray<DomainInventoryTile>): Set<DomainPlayfieldCell> {
+  private static findCellsFor(tiles: ReadonlyArray<DomainInventoryTile>): Set<DomainPlayfieldCell> {
     const cells = new Set<DomainPlayfieldCell>();
     for (const tile of tiles) {
       const cell = mainStore.findCellWithTile(tile);
@@ -57,7 +57,7 @@ export default class Outline {
     return cells;
   }
 
-  static #floodFillBounds(
+  private static floodFillBounds(
     start: DomainPlayfieldCell,
     cells: ReadonlySet<DomainPlayfieldCell>,
     visited: Set<DomainPlayfieldCell>,

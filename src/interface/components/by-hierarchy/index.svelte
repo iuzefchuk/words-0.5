@@ -1,9 +1,9 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import Alert from '@/interface/components/by-hierarchy/Alert.svelte';
+  import BootAlert from '@/interface/components/by-hierarchy/BootAlert.svelte';
   import Dialog from '@/interface/components/by-hierarchy/Dialog.svelte';
   import Layout from '@/interface/components/by-hierarchy/Layout/Layout.svelte';
-  import Progress from '@/interface/components/by-hierarchy/Progress.svelte';
+  import BootProgress from '@/interface/components/by-hierarchy/BootProgress.svelte';
   import mainStore from '@/interface/runes/main.svelte.ts';
   import userStore from '@/interface/runes/user.svelte.ts';
   import TextLocalizer from '@/interface/services/TextLocalizer/TextLocalizer.ts';
@@ -19,10 +19,10 @@
 </script>
 
 {#if mainStore.bootError !== null}
-  <Alert html={t('boot_error', { error: mainStore.bootError })} />
+  <BootAlert html={t('boot_error', { error: mainStore.bootError })} />
 {:else if mainStore.appReady}
   <Layout />
 {:else}
-  <Progress />
+  <BootProgress />
 {/if}
 <Dialog />

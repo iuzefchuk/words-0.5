@@ -11,328 +11,301 @@ type Queries = App['queries'];
 // Wraps the framework-agnostic App with version-counter reactivity: reads touch a counter so they
 // re-run when a write bumps it. Two counters keep playfield-only changes from re-deriving everything.
 class Main {
-  #app = $state<App | null>(null);
+  private app = $state<App | null>(null);
 
-  #bootError = $state<null | string>(null);
+  bootError = $state<null | string>(null);
 
-  #bootProgress = $state(0);
+  bootProgress = $state(0);
 
-  #stateVersion = $state(0);
+  private stateVersion = $state(0);
 
-  #playfieldVersion = $state(0);
+  private playfieldVersion = $state(0);
 
-  readonly #tileByCellCache = new Map<DomainPlayfieldCell, DomainInventoryTile>();
+  private lastDrainedEventCount = 0;
 
-  #lastDrainedEventCount = 0;
-
-  #pendingValidationId = 0;
+  private pendingValidationId = 0;
 
   get allActionsAreDisabled(): boolean {
-    return !this.#readState(queries => queries.currentPlayerIsUser);
+    return !this.readState(queries => queries.currentPlayerIsUser);
   }
 
   get appReady(): boolean {
-    return this.#app !== null;
-  }
-
-  get bootError(): null | string {
-    return this.#bootError;
-  }
-
-  get bootProgress(): number {
-    return this.#bootProgress;
+    return this.app !== null;
   }
 
   get currentPlayerIsUser(): boolean {
-    return this.#readState(queries => queries.currentPlayerIsUser);
+    return this.readState(queries => queries.currentPlayerIsUser);
   }
 
   get currentTurnIsValid(): boolean {
-    return this.#readPlayfield(queries => queries.currentTurnIsValid);
+    return this.readPlayfield(queries => queries.currentTurnIsValid);
   }
 
   get currentTurnScore(): number | undefined {
-    return this.#readPlayfield(queries => queries.currentTurnScore);
+    return this.readPlayfield(queries => queries.currentTurnScore);
   }
 
-  get events(): ReturnType<Queries['eventsView']['slice']> {
-    return this.#readState(queries => [...queries.eventsView]);
+  get events(): Queries['eventsView'] {
+    return this.readState(queries => queries.eventsView);
   }
 
   get hasPriorTurns(): boolean {
-    return this.#readState(queries => queries.turnHistoryHasPriorTurns);
+    return this.readState(queries => queries.turnHistoryHasPriorTurns);
   }
 
   get matchDifficulty(): Queries['matchDifficulty'] {
-    return this.#readState(queries => queries.matchDifficulty);
+    return this.readState(queries => queries.matchDifficulty);
   }
 
   get matchIsFinished(): boolean {
-    return this.#readState(queries => queries.matchIsFinished);
+    return this.readState(queries => queries.matchIsFinished);
   }
 
   get matchResult(): Queries['matchResult'] {
-    return this.#readState(queries => queries.matchResult);
+    return this.readState(queries => queries.matchResult);
   }
 
   get matchType(): Queries['matchType'] {
-    return this.#readPlayfield(queries => queries.matchType);
+    return this.readPlayfield(queries => queries.matchType);
   }
 
   get opponentScore(): number {
-    return this.#readState(queries => queries.opponentScore);
+    return this.readState(queries => queries.opponentScore);
   }
 
   get playfieldCells(): ReadonlyArray<DomainPlayfieldCell> {
-    return this.#readState(queries => queries.playfieldCells);
+    return this.readState(queries => queries.playfieldCells);
   }
 
   get playfieldCellsPerAxis(): number {
-    return this.#readState(queries => queries.playfieldCellsPerAxis);
+    return this.readState(queries => queries.playfieldCellsPerAxis);
   }
 
   get settingsChangeIsAllowed(): boolean {
-    return this.#readState(queries => queries.settingsChangeIsAllowed);
+    return this.readState(queries => queries.settingsChangeIsAllowed);
   }
 
   get tilesPerPlayer(): number {
-    return this.#readState(queries => queries.tilesPerPlayer);
+    return this.readState(queries => queries.tilesPerPlayer);
   }
 
   get tilesRemaining(): number {
-    return this.#readState(queries => queries.tilesRemaining);
+    return this.readState(queries => queries.tilesRemaining);
   }
 
   get userPassWillBeResign(): boolean {
-    return this.#readState(queries => queries.userPassWillBeResign);
+    return this.readState(queries => queries.userPassWillBeResign);
   }
 
   get userScore(): number {
-    return this.#readState(queries => queries.userScore);
+    return this.readState(queries => queries.userScore);
   }
 
   get userTiles(): ReadonlyArray<DomainInventoryTile> {
-    return this.#readState(queries => queries.userTiles);
+    return this.readState(queries => queries.userTiles);
   }
 
   areTilesSame(firstTile: DomainInventoryTile, secondTile: DomainInventoryTile): boolean {
-    return this.#requireApp().queries.areTilesSame(firstTile, secondTile);
+    return this.requireApp().queries.areTilesSame(firstTile, secondTile);
   }
 
   changeMatchDifficulty(matchDifficulty: Parameters<App['commands']['changeMatchDifficulty']>[0]): void {
-    this.#writeState(() => {
-      this.#requireApp().commands.changeMatchDifficulty(matchDifficulty);
+    this.writeState(() => {
+      this.requireApp().commands.changeMatchDifficulty(matchDifficulty);
     });
   }
 
   changeMatchType(matchType: Parameters<App['commands']['changeMatchType']>[0]): void {
-    this.#writeState(() => {
-      this.#requireApp().commands.changeMatchType(matchType);
+    this.writeState(() => {
+      this.requireApp().commands.changeMatchType(matchType);
     });
   }
 
   clearUserTiles(): void {
-    this.#writePlayfield(() => {
-      this.#requireApp().commands.clearUserTiles();
+    this.writePlayfield(() => {
+      this.requireApp().commands.clearUserTiles();
     });
   }
 
   findCellWithTile(tile: DomainInventoryTile): DomainPlayfieldCell | undefined {
-    return this.#readPlayfield(queries => queries.findCellWithTile(tile));
+    return this.readPlayfield(queries => queries.findCellWithTile(tile));
   }
 
   findTileOnCell(cell: DomainPlayfieldCell): DomainInventoryTile | undefined {
-    void this.#playfieldVersion;
-    return this.#tileByCellCache.get(cell);
+    return this.readPlayfield(queries => queries.findTileOnCell(cell));
   }
 
   getAdjacentCells(cell: DomainPlayfieldCell): ReadonlyArray<DomainPlayfieldCell> {
-    return this.#requireApp().queries.getAdjacentCells(cell);
+    return this.requireApp().queries.getAdjacentCells(cell);
   }
 
   getCellBonus(cell: DomainPlayfieldCell): DomainPlayfieldBonus | null {
-    return this.#readPlayfield(queries => queries.getCellBonus(cell));
+    return this.readState(queries => queries.getCellBonus(cell));
   }
 
   getCellColumnIndex(cell: DomainPlayfieldCell): number {
-    return this.#requireApp().queries.getCellColumnIndex(cell);
+    return this.requireApp().queries.getCellColumnIndex(cell);
   }
 
   getCellRowIndex(cell: DomainPlayfieldCell): number {
-    return this.#requireApp().queries.getCellRowIndex(cell);
+    return this.requireApp().queries.getCellRowIndex(cell);
   }
 
   getLetterPoints(letter: DomainInventoryLetter): number {
-    return this.#requireApp().queries.getLetterPoints(letter);
+    return this.requireApp().queries.getLetterPoints(letter);
   }
 
   getTileLetter(tile: DomainInventoryTile): DomainInventoryLetter {
-    return this.#requireApp().queries.getTileLetter(tile);
+    return this.requireApp().queries.getTileLetter(tile);
   }
 
   async initiate(): Promise<void> {
     const { bootProgressPublisher, promise } = createAppRuntime();
     bootProgressPublisher.subscribe(progress => {
-      this.#bootProgress = progress;
+      this.bootProgress = progress;
     });
     try {
-      this.#app = await promise;
-      this.#syncTileByCellCache();
+      this.app = await promise;
     } catch (error: unknown) {
-      this.#bootError = error instanceof Error ? error.message : String(error);
+      this.bootError = error instanceof Error ? error.message : String(error);
     }
   }
 
   isCellCenter(cell: DomainPlayfieldCell): boolean {
-    return this.#requireApp().queries.isCellCenter(cell);
+    return this.requireApp().queries.isCellCenter(cell);
   }
 
   isTilePlaced(tile: DomainInventoryTile): boolean {
-    return this.#readPlayfield(queries => queries.isTilePlaced(tile));
+    return this.readPlayfield(queries => queries.isTilePlaced(tile));
   }
 
   pass(): void {
-    const { opponentTurn } = this.#writeAndPlaySound(() => this.#requireApp().commands.passTurn());
+    const { opponentTurn } = this.writeAndPlaySound(() => this.requireApp().commands.passTurn());
     void opponentTurn?.then(() => {
-      this.#syncAndPlaySound();
+      this.syncAndPlaySound();
     });
   }
 
   placeTile(args: { cell: DomainPlayfieldCell; tile: DomainInventoryTile }): void {
-    this.#writePlayfieldAndPlaySound(() => {
-      this.#requireApp().commands.placeTile(args);
-    }, [args.cell]);
-    this.#scheduleDeferredValidation();
+    this.writePlayfieldAndPlaySound(() => {
+      this.requireApp().commands.placeTile(args);
+    });
+    this.scheduleDeferredValidation();
   }
 
   resign(): void {
-    this.#writeAndPlaySound(() => {
-      this.#requireApp().commands.resignMatch();
+    this.writeAndPlaySound(() => {
+      this.requireApp().commands.resignMatch();
     });
   }
 
   restartGame(): void {
-    this.#writeState(() => {
-      this.#requireApp().commands.restartGame();
+    this.writeState(() => {
+      this.requireApp().commands.restartGame();
     });
   }
 
   save(): void {
-    const { opponentTurn } = this.#writeAndPlaySound(() => this.#requireApp().commands.saveTurn());
+    const { opponentTurn } = this.writeAndPlaySound(() => this.requireApp().commands.saveTurn());
     void opponentTurn?.then(() => {
-      this.#syncAndPlaySound();
+      this.syncAndPlaySound();
     });
   }
 
   shuffleUserTiles(): void {
-    this.#requireApp().commands.shuffleUserTiles();
+    this.requireApp().commands.shuffleUserTiles();
   }
 
   undoPlaceTile(tile: DomainInventoryTile): void {
-    const previousCell = this.#requireApp().queries.findCellWithTile(tile);
-    const affectedCells = previousCell === undefined ? undefined : [previousCell];
-    this.#writePlayfieldAndPlaySound(() => {
-      this.#requireApp().commands.undoPlaceTile(tile);
-    }, affectedCells);
-    this.#scheduleDeferredValidation();
+    this.writePlayfieldAndPlaySound(() => {
+      this.requireApp().commands.undoPlaceTile(tile);
+    });
+    this.scheduleDeferredValidation();
   }
 
   wasTileUsedInPreviousTurn(tile: DomainInventoryTile): boolean {
-    return this.#readPlayfield(queries => queries.wasTileUsedInPreviousTurn(tile));
+    return this.readPlayfield(queries => queries.wasTileUsedInPreviousTurn(tile));
   }
 
-  #incrementVersions(): void {
-    this.#playfieldVersion++;
-    this.#stateVersion++;
-    this.#syncTileByCellCache();
+  private incrementVersions(): void {
+    this.playfieldVersion++;
+    this.stateVersion++;
   }
 
-  #playPendingSounds(): void {
-    const events = this.#requireApp().queries.eventsView;
-    if (this.#lastDrainedEventCount > events.length) this.#lastDrainedEventCount = 0;
+  private playPendingSounds(): void {
+    const events = this.requireApp().queries.eventsView;
+    if (this.lastDrainedEventCount > events.length) this.lastDrainedEventCount = 0;
     let lastSound: null | Sound = null;
-    for (const event of events.slice(this.#lastDrainedEventCount)) {
+    for (let idx = this.lastDrainedEventCount; idx < events.length; idx++) {
+      const event = events[idx];
+      if (event === undefined) continue;
       const sound = getEventSound(event);
       if (sound !== null) lastSound = sound;
     }
-    this.#lastDrainedEventCount = events.length;
+    this.lastDrainedEventCount = events.length;
     if (lastSound !== null) SoundPlayer.execute(lastSound);
   }
 
-  #readPlayfield<T>(fn: (queries: Queries) => T): T {
-    void this.#playfieldVersion;
-    return fn(this.#requireApp().queries);
+  private readPlayfield<T>(fn: (queries: Queries) => T): T {
+    void this.playfieldVersion;
+    return fn(this.requireApp().queries);
   }
 
-  #readState<T>(fn: (queries: Queries) => T): T {
-    void this.#stateVersion;
-    return fn(this.#requireApp().queries);
+  private readState<T>(fn: (queries: Queries) => T): T {
+    void this.stateVersion;
+    return fn(this.requireApp().queries);
   }
 
-  #requireApp(): App {
-    if (this.#app === null) throw new Error('Main: app is not ready');
-    return this.#app;
+  private requireApp(): App {
+    if (this.app === null) throw new Error('Main: app is not ready');
+    return this.app;
   }
 
-  #scheduleDeferredValidation(): void {
-    const validationId = ++this.#pendingValidationId;
-    void this.#requireApp()
+  private scheduleDeferredValidation(): void {
+    const validationId = ++this.pendingValidationId;
+    void this.requireApp()
       .yield()
       .then(() => {
-        if (validationId !== this.#pendingValidationId) return;
-        this.#writePlayfieldAndPlaySound(() => {
-          this.#requireApp().commands.validateTurn();
-        }, []);
+        if (validationId !== this.pendingValidationId) return;
+        this.writePlayfieldAndPlaySound(() => {
+          this.requireApp().commands.validateTurn();
+        });
       });
   }
 
-  #syncAndPlaySound(): void {
-    this.#incrementVersions();
-    this.#playPendingSounds();
+  private syncAndPlaySound(): void {
+    this.incrementVersions();
+    this.playPendingSounds();
   }
 
-  #syncTileByCellCache(affectedCells?: ReadonlyArray<DomainPlayfieldCell>): void {
-    if (this.#app === null) return;
-    const cells = affectedCells ?? this.#app.queries.playfieldCells;
-    for (const cell of cells) {
-      const tile = this.#app.queries.findTileOnCell(cell);
-      if (tile !== undefined) {
-        if (this.#tileByCellCache.get(cell) !== tile) this.#tileByCellCache.set(cell, tile);
-      } else if (this.#tileByCellCache.has(cell)) {
-        this.#tileByCellCache.delete(cell);
-      }
-    }
-  }
-
-  #writeAndPlaySound<R>(fn: () => R): R {
-    const response = this.#writeState(fn);
-    this.#playPendingSounds();
+  private writeAndPlaySound<R>(fn: () => R): R {
+    const response = this.writeState(fn);
+    this.playPendingSounds();
     return response;
   }
 
-  #writePlayfield<R>(fn: () => R, affectedCells?: ReadonlyArray<DomainPlayfieldCell>): R {
+  private writePlayfield<R>(fn: () => R): R {
     const result = fn();
-    this.#playfieldVersion++;
-    this.#syncTileByCellCache(affectedCells);
+    this.playfieldVersion++;
     return result;
   }
 
-  #writePlayfieldAndPlaySound<R>(fn: () => R, affectedCells?: ReadonlyArray<DomainPlayfieldCell>): R {
-    const response = this.#writePlayfield(fn, affectedCells);
-    this.#playPendingSounds();
+  private writePlayfieldAndPlaySound<R>(fn: () => R): R {
+    const response = this.writePlayfield(fn);
+    this.playPendingSounds();
     return response;
   }
 
-  #writeState<R>(fn: () => R): R {
+  private writeState<R>(fn: () => R): R {
     const result = fn();
-    this.#incrementVersions();
+    this.incrementVersions();
     if (result instanceof Promise) {
       void result.then(
         () => {
-          this.#incrementVersions();
+          this.incrementVersions();
         },
         () => {
-          this.#incrementVersions();
+          this.incrementVersions();
         },
       );
     }

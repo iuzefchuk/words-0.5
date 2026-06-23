@@ -34,7 +34,7 @@ text {
 
 :root {
   color-scheme: light dark;
-  
+
   --bg-primary: light-dark(var(--color-level-3), var(--color-level-9));
   --bg-secondary: transparent;
   --color-primary: light-dark(var(--color-level-11), var(--color-level-2));
@@ -46,6 +46,7 @@ text {
   --padding-primary: var(--space-m);
   --gap-grid: var(--space-2xs);
   --radius-grid: var(--space-xs);
+  --outline: 2px solid light-dark(var(--color-level-10), var(--color-level-1));
 }
 
 #app {
@@ -67,8 +68,7 @@ text {
 }
 
 :focus-visible {
-  outline: 2px solid light-dark(var(--palette-rose-500), var(--palette-yellow-300));
-  outline-offset: 2px;
+  outline: var(--outline);
 }
 
 :focus:not(:focus-visible) {

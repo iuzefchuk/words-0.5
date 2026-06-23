@@ -23,7 +23,7 @@
     height: 2px;
     appearance: none;
     transition-timing-function: var(--transition-timing-function);
-    transition-duration: 1s;
+    transition-duration: var(--transition-duration-long);
     transition-property: width;
 
     &,

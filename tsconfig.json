@@ -9,6 +9,7 @@
     "paths": {
       "@/*.ts": ["./src/*.ts"],
       "@/*.svelte": ["./src/*.svelte"],
+      "@/*.css": ["./src/*.css"],
       "$/*.ts": ["./tests/*.ts"]
     },
     "types": ["node", "vite/client", "svelte"],
