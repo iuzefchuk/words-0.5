@@ -13,6 +13,6 @@
     position: relative;
     width: 100%;
     max-width: 34rem;
-    padding: var(--layout-padding);
+    padding: var(--padding-primary);
   }
 </style>

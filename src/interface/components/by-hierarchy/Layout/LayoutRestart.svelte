@@ -28,7 +28,7 @@
 
 <div role="alertdialog" aria-modal="true" aria-labelledby={ID_RESULT} class="restart">
   <p id={ID_RESULT} role="status">{result}</p>
-  <button class="restart__button app__make-secondary" ondblclick={onDblClick} onkeydown={onKeydown}>{t('new_match')}</button>
+  <button class="restart__button app__secondary" ondblclick={onDblClick} onkeydown={onKeydown}>{t('new_match')}</button>
 </div>
 
 <style>

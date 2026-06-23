@@ -10,11 +10,11 @@
   <div
     class="outline"
     role="presentation"
-    style:--outline-grid-step="calc((100% + var(--grid-gap)) / var(--grid-items-per-axis))"
+    style:--outline-grid-step="calc((100% + var(--gap-grid)) / var(--grid-items-per-axis))"
     style:top={`calc(var(--outline-grid-step) * ${group.row})`}
     style:left={`calc(var(--outline-grid-step) * ${group.col})`}
-    style:width={`calc(var(--outline-grid-step) * ${group.colSpan} - var(--grid-gap) - 1px)`}
-    style:height={`calc(var(--outline-grid-step) * ${group.rowSpan} - var(--grid-gap) - 1px)`}
+    style:width={`calc(var(--outline-grid-step) * ${group.colSpan} - var(--gap-grid) - 1px)`}
+    style:height={`calc(var(--outline-grid-step) * ${group.rowSpan} - var(--gap-grid) - 1px)`}
   >
     {#if outline.isAnchorAt(idx)}
       <span transition:fade={{ duration: 250 }}>
@@ -29,10 +29,10 @@
     position: absolute;
     z-index: var(--z-index-level-1);
     pointer-events: none;
-    outline: var(--tile-outline);
-    border-radius: var(--grid-item-radius);
+    outline: light-dark(2px solid var(--color-level-10), 2px solid var(--color-level-1));
+    border-radius: var(--radius-grid);
     transition-timing-function: var(--transition-timing-function);
-    transition-duration: var(--transition-duration-half);
+    transition-duration: var(--transition-duration-short);
     transition-property: top, left, width, height, outline;
   }
 </style>

@@ -20,7 +20,7 @@
 
 <div
   bind:this={gridEl}
-  class="grid app__create-grid--for-main-grid"
+  class="grid app__grid"
   role="grid"
   tabindex="-1"
   aria-rowcount={mainStore.playfieldCellsPerAxis}
@@ -41,6 +41,9 @@
   .grid {
     position: relative;
     width: 100%;
+    grid-template-rows: repeat(var(--grid-items-per-axis), auto);
+    grid-template-columns: repeat(var(--grid-items-per-axis), minmax(0, 1fr));
+    gap: var(--gap-grid);
   }
 
   .grid__row {

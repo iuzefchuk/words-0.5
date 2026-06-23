@@ -36,32 +36,29 @@
     cursor: pointer;
     user-select: none;
     border-radius: inherit;
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--shadow-level-1);
     fill: currentcolor;
     transition-timing-function: var(--transition-timing-function);
-    transition-duration: var(--transition-duration-half);
+    transition-duration: var(--transition-duration-short);
     transition-property: background, color, outline;
   }
 
   .tile--primary {
-    --tile-pts-color: var(--tile-pts-color-primary);
-
-    color: var(--tile-color-primary);
-    background: var(--tile-bg-primary);
+    --tile-pts-color: light-dark(var(--color-level-4), var(--color-level-8));
+    color: light-dark(var(--color-level-3), var(--color-level-9));
+    background: light-dark(var(--color-level-9), var(--color-level-2));
   }
 
   .tile--secondary {
-    --tile-pts-color: var(--tile-pts-color-secondary);
-
-    color: var(--tile-color-secondary);
-    background: var(--tile-bg-secondary);
+    --tile-pts-color: light-dark(var(--color-level-4), var(--color-level-8));
+    color: light-dark(var(--color-level-3), var(--color-level-9));
+    background: light-dark(var(--color-level-7), var(--color-level-4));
   }
 
   .tile--tertiary {
-    --tile-pts-color: var(--tile-pts-color-tertiary);
-
-    color: var(--tile-color-tertiary);
-    background: var(--tile-bg-tertiary);
+    --tile-pts-color: light-dark(var(--color-level-4), var(--color-level-8));
+    color: light-dark(var(--color-level-3), var(--color-level-9));
+    background: light-dark(var(--color-level-6), var(--color-level-5));
   }
 
   .tile__letter {

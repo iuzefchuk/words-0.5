@@ -16,9 +16,9 @@
     place-items: center;
     width: 100vh;
     height: 100vh;
-    padding: var(--layout-padding);
-    color: var(--alert-color);
-    background: var(--alert-bg);
+    padding: var(--padding-primary);
+    color: light-dark(var(--color-level-11), var(--color-level-1));
+    background: light-dark(var(--color-level-1), var(--color-level-11));
 
     :global(em) {
       font-style: italic;

@@ -73,13 +73,13 @@
     display: grid;
     grid-area: auto;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
-    max-width: var(--grid-item-size);
+    max-width: var(--space-4xl);
     aspect-ratio: 1 / 1;
     cursor: pointer;
     user-select: none;
-    background: var(--cell-bg);
-    border-radius: var(--grid-item-radius);
-    box-shadow: var(--cell-shadow);
+    background: light-dark(var(--color-level-1), var(--color-level-10));
+    border-radius: var(--radius-grid);
+    box-shadow: light-dark(none, var(--shadow-level-0));
 
     & > * {
       grid-area: 1 / 1;
@@ -87,7 +87,7 @@
   }
 
   .cell--highlighted {
-    background: var(--cell-bg-highlighted);
+    background: light-dark(var(--color-level-4), var(--color-level-8));
   }
 
   .cell--highlighted,
@@ -103,18 +103,18 @@
   }
 
   .cell__bonus--primary text {
-    fill: var(--cell-color-primary);
+    fill: light-dark(var(--color-level-8), var(--color-level-5));
   }
 
   .cell__bonus--secondary text {
-    fill: var(--cell-color-secondary);
+    fill: light-dark(var(--color-level-7), var(--color-level-6));
   }
 
   .cell__bonus--tertiary text {
-    fill: var(--cell-color-tertiary);
+    fill: light-dark(var(--color-level-6), var(--color-level-7));
   }
 
   .cell__bonus--quaternary text {
-    fill: var(--cell-color-quaternary);
+    fill: light-dark(var(--color-level-5), var(--color-level-8));
   }
 </style>

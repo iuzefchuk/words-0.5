@@ -36,10 +36,10 @@
     padding: var(--space-4xs) var(--space-2xs);
     font-size: var(--font-size-small);
     font-weight: var(--font-weight);
-    color: var(--tooltip-color);
-    background: var(--tooltip-bg);
+    color: light-dark(var(--color-level-1), var(--color-level-11));
+    background: light-dark(var(--color-level-11), var(--color-level-0));
     border-radius: var(--space-3xs);
-    box-shadow: var(--shadow-2xl);
+    box-shadow: var(--shadow-level-3);
   }
 
   .tooltip__value--shimmer {
@@ -55,21 +55,21 @@
       content: '';
       background: linear-gradient(
         90deg,
-        var(--color-red-500),
-        var(--color-orange-500),
-        var(--color-yellow-500),
-        var(--color-green-500),
-        var(--color-cyan-500),
-        var(--color-blue-500),
-        var(--color-violet-500),
-        var(--color-red-500),
-        var(--color-orange-500),
-        var(--color-yellow-500),
-        var(--color-green-500),
-        var(--color-cyan-500),
-        var(--color-blue-500),
-        var(--color-violet-500),
-        var(--color-red-500)
+        var(--palette-red-500),
+        var(--palette-orange-500),
+        var(--palette-yellow-500),
+        var(--palette-green-500),
+        var(--palette-cyan-500),
+        var(--palette-blue-500),
+        var(--palette-violet-500),
+        var(--palette-red-500),
+        var(--palette-orange-500),
+        var(--palette-yellow-500),
+        var(--palette-green-500),
+        var(--palette-cyan-500),
+        var(--palette-blue-500),
+        var(--palette-violet-500),
+        var(--palette-red-500)
       );
       background-size: 25% 100%;
       animation: shimmer 3s linear infinite;

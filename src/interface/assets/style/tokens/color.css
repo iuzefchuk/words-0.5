@@ -1,0 +1,14 @@
+:root {
+  --color-level-0: var(--palette-white);
+  --color-level-1: var(--palette-gray-50);
+  --color-level-2: var(--palette-gray-100);
+  --color-level-3: var(--palette-gray-200);
+  --color-level-4: var(--palette-gray-300);
+  --color-level-5: var(--palette-gray-400);
+  --color-level-6: var(--palette-gray-500);
+  --color-level-7: var(--palette-gray-600);
+  --color-level-8: var(--palette-gray-700);
+  --color-level-9: var(--palette-gray-800);
+  --color-level-10: var(--palette-gray-900);
+  --color-level-11: var(--palette-gray-950);
+}

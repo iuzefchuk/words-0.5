@@ -8,7 +8,7 @@
 
 {#if log.history.length > 0}
   <aside class="log" role="log">
-    <ul class="log__list app__make-secondary">
+    <ul class="log__list app__secondary">
       {#each log.history as entry (entry.key)}
         <li transition:fly={{ duration: 250, x: -16 }} animate:flip={{ duration: 250 }}>{@html entry.html}</li>
       {/each}
@@ -18,24 +18,25 @@
 
 <style>
   .log {
+    --height: 7rem;
     position: absolute;
-    top: calc(var(--layout-main-log-height) * -1 - var(--layout-padding));
-    right: var(--layout-padding);
-    width: calc(100% - var(--layout-padding));
-  }
+    top: calc(var(--height) * -1 - var(--padding-primary));
+    right: var(--padding-primary);
+    width: calc(100% - var(--padding-primary));
 
-  .log__list {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-s);
-    height: var(--layout-main-log-height);
-    padding-right: var(--layout-padding);
-    overflow: hidden auto;
-    text-align: right;
-    border-right: 1px solid currentcolor;
+    .log__list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-s);
+      height: var(--height);
+      padding-right: var(--padding-primary);
+      overflow: hidden auto;
+      text-align: right;
+      border-right: 1px solid currentcolor;
 
-    :global(em) {
-      font-style: italic;
+      :global(em) {
+        font-style: italic;
+      }
     }
   }
 </style>

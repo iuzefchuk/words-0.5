@@ -38,7 +38,7 @@
 </script>
 
 <fieldset class="radio-group">
-  <legend class="radio-group__legend app__make-secondary">{legend}</legend>
+  <legend class="radio-group__legend app__secondary">{legend}</legend>
   <div class="radio-group__option-group">
     {#if isMounted}
       <div class="radio-group__indicator" style={indicatorStyle}></div>
@@ -76,7 +76,7 @@
     align-items: stretch;
     height: var(--space-5xl);
     padding: var(--space-3xs);
-    background: var(--radio-group-bg);
+    background: light-dark(var(--color-level-4), var(--color-level-8));
     border-radius: var(--space-s);
   }
 
@@ -86,7 +86,7 @@
     bottom: var(--space-3xs);
     left: 0;
     pointer-events: none;
-    background: var(--radio-group-bg-selected);
+    background: light-dark(var(--color-level-1), var(--color-level-7));
     border-radius: calc(var(--space-xs) + 2px);
     transition-timing-function: var(--transition-timing-function);
     transition-duration: var(--transition-duration);
@@ -100,25 +100,25 @@
     padding: var(--space-xs) var(--space-l);
     font-size: var(--font-size-small);
     font-weight: var(--font-weight);
-    color: var(--radio-group-color);
+    color: light-dark(var(--color-level-7), var(--color-level-5));
     cursor: pointer;
     user-select: none;
     transition-timing-function: var(--transition-timing-function);
-    transition-duration: var(--transition-duration-half);
+    transition-duration: var(--transition-duration-short);
     transition-property: color;
 
     &:hover {
-      color: var(--radio-group-color-hover);
+      color: light-dark(var(--color-level-10), var(--color-level-1));
     }
 
     &:has(:focus-visible) {
-      outline: 2px solid var(--radio-group-color-selected);
+      outline: 2px solid light-dark(var(--color-level-9), var(--color-level-3));
       outline-offset: -1px;
     }
   }
 
   .radio-group__option--selected {
-    color: var(--radio-group-color-selected);
+    color: light-dark(var(--color-level-9), var(--color-level-3));
     cursor: default;
   }
 

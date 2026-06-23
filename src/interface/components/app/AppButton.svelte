@@ -65,7 +65,7 @@
     user-select: none;
     border: 1px solid transparent;
     border-radius: var(--space-xs);
-    box-shadow: var(--shadow-xs);
+    box-shadow: var(--shadow-level-1);
     transition-timing-function: var(--transition-timing-function);
     transition-duration: var(--transition-duration);
     transition-property: box-shadow;
@@ -75,49 +75,49 @@
     }
 
     &:disabled {
-      color: var(--btn-color-disabled);
+      color: oklch(from var(--color-primary) l c h / 50%);
       cursor: not-allowed;
-      background: var(--btn-bg-disabled);
-      border-color: var(--btn-border-color-disabled);
+      background: transparent;
+      border-color: oklch(from var(--color-primary) l c h / 30%);
       box-shadow: none;
     }
   }
 
   .btn--primary {
-    color: var(--btn-color-primary);
-    background: var(--btn-bg-primary);
-    border-color: var(--btn-border-color-primary);
+    color: light-dark(var(--color-level-1), var(--color-level-9));
+    background: light-dark(var(--color-level-10), var(--color-level-2));
+    border-color: transparent;
 
     &:hover:not(:active, :disabled) {
-      color: var(--btn-color-primary-hover);
-      background: var(--btn-bg-primary-hover);
-      border-color: var(--btn-border-color-primary-hover);
-      box-shadow: var(--shadow-s);
+      color: light-dark(var(--color-level-0), var(--color-level-11));
+      background: light-dark(var(--color-level-9), var(--color-level-0));
+      border-color: transparent;
+      box-shadow: var(--shadow-level-2);
     }
 
     &:active:not(:disabled) {
-      color: var(--btn-color-primary-active);
-      background: var(--btn-bg-primary-active);
-      border-color: var(--btn-border-color-primary-active);
+      color: light-dark(var(--color-level-3), var(--color-level-9));
+      background: light-dark(var(--color-level-11), var(--color-level-3));
+      border-color: transparent;
     }
   }
 
   .btn--secondary {
-    color: var(--btn-color-secondary);
-    background: var(--btn-bg-secondary);
-    border-color: var(--btn-border-color-secondary);
+    color: light-dark(var(--color-level-9), var(--color-level-2));
+    background: light-dark(var(--color-level-1), var(--color-level-7));
+    border-color: light-dark(var(--color-level-5), var(--color-level-6));
 
     &:hover:not(:active, :disabled) {
-      color: var(--btn-color-secondary-hover);
-      background: var(--btn-bg-secondary-hover);
-      border-color: var(--btn-border-color-secondary-hover);
-      box-shadow: var(--shadow-s);
+      color: light-dark(var(--color-level-11), var(--color-level-0));
+      background: light-dark(var(--color-level-0), var(--color-level-6));
+      border-color: light-dark(var(--color-level-11), var(--color-level-0));
+      box-shadow: var(--shadow-level-2);
     }
 
     &:active:not(:disabled) {
-      color: var(--btn-color-secondary-active);
-      background: var(--btn-bg-secondary-active);
-      border-color: var(--btn-border-color-secondary-active);
+      color: light-dark(var(--color-level-8), var(--color-level-3));
+      background: light-dark(var(--color-level-2), var(--color-level-8));
+      border-color: light-dark(var(--color-level-6), var(--color-level-5));
     }
   }
 </style>

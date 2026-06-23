@@ -1,4 +1,4 @@
-import '@/interface/assets/style/global.css';
+import '@/interface/assets/style/index.css';
 import { mount } from 'svelte';
 import Index from '@/interface/components/by-hierarchy/index.svelte';
 import TextLocalizer from '@/interface/services/TextLocalizer/TextLocalizer.ts';

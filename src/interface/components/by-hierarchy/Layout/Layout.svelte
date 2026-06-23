@@ -37,7 +37,7 @@
     role="presentation"
     onclick={() => userStore.deselectTile()}
   >
-    <h1 class="app__make-sr-only">Words</h1>
+    <h1 class="app__hidden">Words</h1>
     <LayoutHeader />
     <LayoutMain />
     <LayoutFooter />

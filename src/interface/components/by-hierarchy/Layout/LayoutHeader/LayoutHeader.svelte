@@ -17,6 +17,6 @@
   .header {
     place-self: flex-start flex-start;
     width: 100%;
-    padding: var(--layout-padding);
+    padding: var(--padding-primary);
   }
 </style>

@@ -1,7 +1,0 @@
-@layer tokens {
-  :root {
-    --transition-duration: 250ms;
-    --transition-duration-half: 125ms;
-    --transition-timing-function: ease;
-  }
-}

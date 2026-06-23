@@ -58,7 +58,7 @@
     grid-column: 3;
     gap: var(--space-s);
     place-self: end end;
-    padding: var(--layout-padding);
+    padding: var(--padding-primary);
 
     @media screen and (width <= 34rem) {
       flex-direction: row-reverse;

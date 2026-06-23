@@ -22,7 +22,7 @@
 </script>
 
 <div class="toolbar" role="toolbar" aria-label="Tile rack" tabindex="-1">
-  <ul class="toolbar__grid app__create-grid--for-footer-toolbar">
+  <ul class="toolbar__grid app__grid">
     {#each paddedTiles as tile, idx (idx)}
       <li class="toolbar__cell">
         <button
@@ -60,7 +60,7 @@
     justify-content: flex-end;
     width: 100%;
     max-width: 34rem;
-    padding: calc(var(--layout-padding) * 2) var(--layout-padding) 0;
+    padding: calc(var(--padding-primary) * 2) var(--padding-primary) 0;
 
     @media screen and (width <= 34rem) {
       grid-column: 1;
@@ -69,12 +69,15 @@
 
   .toolbar__grid {
     width: 100%;
+    grid-template-rows: repeat(1, auto);
+    grid-template-columns: repeat(8, minmax(0, 1fr));
+    gap: calc(var(--gap-grid) * 2);
   }
 
   .toolbar__cell {
-    background: var(--toolbar-cell-bg);
-    border-radius: calc(var(--grid-item-radius) * 2);
-    box-shadow: var(--toolbar-cell-shadow);
+    background: light-dark(var(--color-level-4), var(--color-level-8));
+    border-radius: calc(var(--radius-grid) * 2);
+    box-shadow: var(--shadow-level-0);
   }
 
   .toolbar__button {

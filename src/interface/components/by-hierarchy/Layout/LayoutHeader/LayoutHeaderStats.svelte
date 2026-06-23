@@ -16,7 +16,7 @@
     <div class="stats__row">
       <dt class="stats__title">{player.name}:</dt>
       <dd class="stats__desc">
-        <span class="app__make-sr-only">{player.score}</span>
+        <span class="app__hidden">{player.score}</span>
         <span use:animateNumber={{ number: player.score }} aria-hidden="true"></span>
       </dd>
     </div>
@@ -27,7 +27,7 @@
   .stats {
     display: inline-flex;
     flex-direction: column;
-    gap: var(--space-s);
+    gap: var(--space-xs);
   }
 
   .stats__row {

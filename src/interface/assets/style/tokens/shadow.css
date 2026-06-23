@@ -1,25 +1,9 @@
-@layer tokens {
-  :root {
-    --shadow-color: var(--color-gray-900);
-    --shadow-2xs: 0 1px color-mix(in oklch, var(--shadow-color) 5%, transparent);
-    --shadow-xs: 0 1px 2px 0 color-mix(in oklch, var(--shadow-color) 5%, transparent);
-    --shadow-s:
-      0 1px 3px 0 color-mix(in oklch, var(--shadow-color) 10%, transparent),
-      0 1px 2px -1px color-mix(in oklch, var(--shadow-color) 10%, transparent);
-    --shadow-m:
-      0 4px 6px -1px color-mix(in oklch, var(--shadow-color) 10%, transparent),
-      0 2px 4px -2px color-mix(in oklch, var(--shadow-color) 10%, transparent);
-    --shadow-l:
-      0 10px 15px -3px color-mix(in oklch, var(--shadow-color) 10%, transparent),
-      0 4px 6px -4px color-mix(in oklch, var(--shadow-color) 10%, transparent);
-    --shadow-xl:
-      0 20px 25px -5px color-mix(in oklch, var(--shadow-color) 10%, transparent),
-      0 8px 10px -6px color-mix(in oklch, var(--shadow-color) 10%, transparent);
-    --shadow-2xl: 0 25px 50px -12px color-mix(in oklch, var(--shadow-color) 25%, transparent);
-    --shadow-none: 0 0 transparent;
-    --inset-shadow-2xs: inset 0 1px color-mix(in oklch, var(--shadow-color) 5%, transparent);
-    --inset-shadow-xs: inset 0 1px 1px color-mix(in oklch, var(--shadow-color) 5%, transparent);
-    --inset-shadow-s: inset 0 2px 4px color-mix(in oklch, var(--shadow-color) 5%, transparent);
-    --inset-shadow-none: inset 0 0 transparent;
-  }
+:root {
+  --shadow-color: var(--palette-gray-900);
+  --shadow-level-0: inset 0 2px 4px color-mix(in oklch, var(--shadow-color) 5%, transparent);
+  --shadow-level-1: 0 1px 2px 0 color-mix(in oklch, var(--shadow-color) 5%, transparent);
+  --shadow-level-2:
+    0 1px 3px 0 color-mix(in oklch, var(--shadow-color) 10%, transparent),
+    0 1px 2px -1px color-mix(in oklch, var(--shadow-color) 10%, transparent);
+  --shadow-level-3: 0 25px 50px -12px color-mix(in oklch, var(--shadow-color) 25%, transparent);
 }

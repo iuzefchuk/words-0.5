@@ -62,7 +62,7 @@
 >
   <div class="dialog__content">
     {#if dialogStore.title !== null}<h2 id={ID_TITLE}>{dialogStore.title}</h2>{/if}
-    <div id={ID_HTML} class="app__make-secondary">{@html dialogStore.html ?? ''}</div>
+    <div id={ID_HTML} class="app__secondary">{@html dialogStore.html ?? ''}</div>
   </div>
   <div class="dialog__footer">
     <AppButton
@@ -86,12 +86,12 @@
     gap: var(--space-2xl);
     max-width: min(28rem, calc(100vw - 2 * var(--space-l)));
     padding: var(--space-xl);
-    color: var(--primary-color);
+    color: var(--color-primary);
     color-scheme: dark;
-    background: var(--primary-bg);
+    background: var(--bg-primary);
     border: none;
     border-radius: var(--space-s);
-    box-shadow: var(--shadow-2xl);
+    box-shadow: var(--shadow-level-3);
     opacity: 0;
     transition:
       opacity var(--transition-duration) var(--transition-timing-function),

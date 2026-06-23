@@ -1,5 +1,7 @@
 <script lang="ts">
   import mainStore from '@/interface/runes/main.svelte.ts';
+  const ADDED_PERCENTAGE = 25;
+  const displayedPercentage = $derived(mainStore.bootProgress ? mainStore.bootProgress + ADDED_PERCENTAGE : 0);
 </script>
 
 <progress
@@ -7,9 +9,7 @@
   value={mainStore.bootProgress}
   max="100"
   aria-label="Boot progress"
-  style="
-
---boot-progress: {mainStore.bootProgress}%"
+  style="--boot-progress: {displayedPercentage}%"
 ></progress>
 
 <style>
@@ -23,13 +23,13 @@
     height: 2px;
     appearance: none;
     transition-timing-function: var(--transition-timing-function);
-    transition-duration: var(--transition-duration);
+    transition-duration: 1s;
     transition-property: width;
 
     &,
     &::-webkit-progress-value,
     &::-moz-progress-bar {
-      background: var(--progress-color);
+      background: var(--color-primary);
     }
 
     &::-webkit-progress-bar {
