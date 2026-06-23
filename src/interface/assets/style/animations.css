@@ -1,0 +1,63 @@
+@keyframes horizontal-shake {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(4px);
+  }
+
+  50% {
+    transform: translateX(-4px);
+  }
+
+  75% {
+    transform: translateX(4px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-75%);
+  }
+}
+
+@keyframes double-tap {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  5% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+
+  10% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  15% {
+    opacity: 0.5;
+    transform: scale(0.9);
+  }
+
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

@@ -1,0 +1,7 @@
+@layer tokens {
+  :root {
+    --grid-gap: var(--space-2xs);
+    --grid-item-radius: var(--space-xs);
+    --grid-item-size: var(--space-4xl);
+  }
+}

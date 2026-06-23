@@ -1,0 +1,65 @@
+@layer themes {
+  :root {
+    color-scheme: light dark;
+
+    --primary-font-weight: light-dark(var(--font-weight), var(--font-weight-small));
+    --primary-font-size: var(--font-size);
+    --primary-bg: light-dark(var(--color-gray-200), var(--color-gray-800));
+    --primary-color: light-dark(var(--color-gray-950), var(--color-gray-100));
+    --secondary-font-weight: var(--primary-font-weight);
+    --secondary-font-size: var(--font-size-small);
+    --secondary-bg: transparent;
+    --secondary-color: light-dark(var(--color-gray-500), var(--color-gray-400));
+    --outline-color: light-dark(var(--color-rose-500), var(--color-yellow-300));
+    --progress-color: var(--primary-color);
+    --cell-bg: light-dark(var(--color-gray-50), var(--color-gray-900));
+    --cell-bg-highlighted: light-dark(var(--color-gray-300), var(--color-gray-700));
+    --cell-color-quaternary: light-dark(var(--color-gray-400), var(--color-gray-700));
+    --cell-color-tertiary: light-dark(var(--color-gray-500), var(--color-gray-600));
+    --cell-color-secondary: light-dark(var(--color-gray-600), var(--color-gray-500));
+    --cell-color-primary: light-dark(var(--color-gray-700), var(--color-gray-400));
+    --cell-shadow: light-dark(none, var(--inset-shadow-s));
+    --tile-bg-primary: light-dark(var(--color-gray-800), var(--color-gray-100));
+    --tile-color-primary: light-dark(var(--color-gray-200), var(--color-gray-800));
+    --tile-pts-color-primary: light-dark(var(--color-gray-300), var(--color-gray-700));
+    --tile-bg-secondary: light-dark(var(--color-gray-600), var(--color-gray-300));
+    --tile-color-secondary: light-dark(var(--color-gray-200), var(--color-gray-800));
+    --tile-pts-color-secondary: light-dark(var(--color-gray-300), var(--color-gray-700));
+    --tile-bg-tertiary: light-dark(var(--color-gray-500), var(--color-gray-400));
+    --tile-color-tertiary: light-dark(var(--color-gray-200), var(--color-gray-800));
+    --tile-pts-color-tertiary: light-dark(var(--color-gray-300), var(--color-gray-700));
+    --tile-outline: light-dark(2px solid var(--color-gray-900), 2px solid var(--color-gray-50));
+    --tooltip-bg: light-dark(var(--color-gray-950), var(--color-white));
+    --tooltip-color: light-dark(var(--color-gray-50), var(--color-gray-950));
+    --alert-bg: light-dark(var(--color-gray-50), var(--color-gray-950));
+    --alert-color: light-dark(var(--color-gray-950), var(--color-gray-50));
+    --toolbar-cell-bg: light-dark(var(--color-gray-300), var(--color-gray-700));
+    --toolbar-cell-shadow: var(--inset-shadow-s);
+    --btn-bg-primary: light-dark(var(--color-gray-900), var(--color-gray-100));
+    --btn-color-primary: light-dark(var(--color-gray-50), var(--color-gray-800));
+    --btn-border-color-primary: transparent;
+    --btn-bg-primary-hover: light-dark(var(--color-gray-800), var(--color-white));
+    --btn-color-primary-hover: light-dark(var(--color-white), var(--color-gray-950));
+    --btn-border-color-primary-hover: transparent;
+    --btn-bg-primary-active: light-dark(var(--color-gray-950), var(--color-gray-200));
+    --btn-color-primary-active: light-dark(var(--color-gray-200), var(--color-gray-800));
+    --btn-border-color-primary-active: transparent;
+    --btn-bg-secondary: light-dark(var(--color-gray-50), var(--color-gray-600));
+    --btn-color-secondary: light-dark(var(--color-gray-800), var(--color-gray-100));
+    --btn-border-color-secondary: light-dark(var(--color-gray-400), var(--color-gray-500));
+    --btn-bg-secondary-hover: light-dark(var(--color-white), var(--color-gray-500));
+    --btn-color-secondary-hover: light-dark(var(--color-gray-950), var(--color-white));
+    --btn-border-color-secondary-hover: light-dark(var(--color-gray-950), var(--color-white));
+    --btn-bg-secondary-active: light-dark(var(--color-gray-100), var(--color-gray-700));
+    --btn-color-secondary-active: light-dark(var(--color-gray-700), var(--color-gray-200));
+    --btn-border-color-secondary-active: light-dark(var(--color-gray-500), var(--color-gray-400));
+    --btn-bg-disabled: var(--primary-bg);
+    --btn-color-disabled: oklch(from var(--primary-color) l c h / 50%);
+    --btn-border-color-disabled: oklch(from var(--primary-color) l c h / 30%);
+    --radio-group-bg: light-dark(var(--color-gray-300), var(--color-gray-700));
+    --radio-group-color: light-dark(var(--color-gray-600), var(--color-gray-400));
+    --radio-group-color-hover: light-dark(var(--color-gray-900), var(--color-gray-50));
+    --radio-group-bg-selected: light-dark(var(--color-gray-50), var(--color-gray-600));
+    --radio-group-color-selected: light-dark(var(--color-gray-800), var(--color-gray-200));
+  }
+}
