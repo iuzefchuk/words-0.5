@@ -89,7 +89,7 @@
     background: light-dark(var(--color-level-1), var(--color-level-7));
     border-radius: calc(var(--space-xs) + 2px);
     transition-timing-function: var(--transition-timing-function);
-    transition-duration: var(--transition-duration);
+    transition-duration: var(--transition-duration-short);
     transition-property: transform, width;
   }
 

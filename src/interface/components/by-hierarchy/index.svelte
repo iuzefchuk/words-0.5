@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
+  import { TransitionDuration } from '@/interface/enums.ts';
   import BootAlert from '@/interface/components/by-hierarchy/BootAlert.svelte';
   import Dialog from '@/interface/components/by-hierarchy/Dialog.svelte';
   import Layout from '@/interface/components/by-hierarchy/Layout/Layout.svelte';
@@ -18,11 +19,18 @@
   });
 </script>
 
-{#if mainStore.bootError !== null}
-  <BootAlert html={t('boot_error', { error: mainStore.bootError })} />
-{:else if mainStore.appReady}
-  <Layout />
-{:else}
-  <BootProgress />
-{/if}
-<Dialog />
+<div
+  style:display="contents"
+  style:--transition-duration-long="{TransitionDuration.Long}ms"
+  style:--transition-duration-normal="{TransitionDuration.Normal}ms"
+  style:--transition-duration-short="{TransitionDuration.Short}ms"
+>
+  {#if mainStore.bootError !== null}
+    <BootAlert html={t('boot_error', { error: mainStore.bootError })} />
+  {:else if mainStore.appReady}
+    <Layout />
+  {:else}
+    <BootProgress />
+  {/if}
+  <Dialog />
+</div>

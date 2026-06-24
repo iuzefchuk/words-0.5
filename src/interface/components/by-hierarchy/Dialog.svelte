@@ -94,9 +94,9 @@
     box-shadow: var(--shadow-level-3);
     opacity: 0;
     transition:
-      opacity var(--transition-duration) var(--transition-timing-function),
-      display var(--transition-duration) allow-discrete,
-      overlay var(--transition-duration) allow-discrete;
+      opacity var(--transition-duration-normal) var(--transition-timing-function),
+      display var(--transition-duration-normal) allow-discrete,
+      overlay var(--transition-duration-normal) allow-discrete;
 
     @media (prefers-color-scheme: dark) {
       color-scheme: light;
@@ -114,9 +114,9 @@
     &::backdrop {
       background: oklch(0% 0 0deg / 20%);
       transition:
-        background var(--transition-duration) var(--transition-timing-function),
-        display var(--transition-duration) allow-discrete,
-        overlay var(--transition-duration) allow-discrete;
+        background var(--transition-duration-normal) var(--transition-timing-function),
+        display var(--transition-duration-normal) allow-discrete,
+        overlay var(--transition-duration-normal) allow-discrete;
 
       @starting-style {
         background: oklch(0% 0 0deg / 0%);
@@ -129,7 +129,7 @@
   }
 
   .dialog--shaking {
-    animation: horizontal-shake var(--transition-duration) linear forwards;
+    animation: horizontal-shake var(--transition-duration-short) linear forwards;
   }
 
   .dialog__content {

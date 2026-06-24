@@ -4,7 +4,6 @@
 @import url('./tokens/palette.css');
 @import url('./tokens/shadow.css');
 @import url('./tokens/space.css');
-@import url('./tokens/transition-duration.css');
 @import url('./tokens/transition-timing-function.css');
 @import url('./tokens/z-index.css');
 @import url('./keyframes.css');

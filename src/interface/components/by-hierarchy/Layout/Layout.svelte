@@ -57,7 +57,7 @@
     min-height: 100vh;
     max-height: 100vh;
     transition-timing-function: var(--transition-timing-function);
-    transition-duration: var(--transition-duration);
+    transition-duration: var(--transition-duration-normal);
     transition-property: opacity;
   }
 

@@ -67,7 +67,7 @@
     border-radius: var(--space-xs);
     box-shadow: var(--shadow-level-1);
     transition-timing-function: var(--transition-timing-function);
-    transition-duration: var(--transition-duration);
+    transition-duration: var(--transition-duration-short);
     transition-property: box-shadow;
 
     @media screen and (width <= 34rem) {
