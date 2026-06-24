@@ -1,11 +1,11 @@
 <script lang="ts">
-  import LayoutMainGrid from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMainGrid/LayoutMainGrid.svelte';
+  import LayoutMainBoard from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMainBoard/LayoutMainBoard.svelte';
   import LayoutMainLog from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMainLog.svelte';
 </script>
 
 <main class="main">
   <LayoutMainLog />
-  <LayoutMainGrid />
+  <LayoutMainBoard />
 </main>
 
 <style>

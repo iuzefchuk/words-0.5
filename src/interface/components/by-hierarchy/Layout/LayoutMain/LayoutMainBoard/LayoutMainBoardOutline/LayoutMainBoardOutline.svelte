@@ -1,5 +1,5 @@
 <script lang="ts">
-  import LayoutMainGridOutlineTooltip from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMainGrid/LayoutMainGridOutline/LayoutMainGridOutlineTooltip.svelte';
+  import LayoutMainBoardOutlineTooltip from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMainBoard/LayoutMainBoardOutline/LayoutMainBoardOutlineTooltip.svelte';
   import Outline from '@/interface/runes/outline.svelte.ts';
   const outline = new Outline();
 </script>
@@ -15,7 +15,7 @@
     style:height={`calc(var(--step) * ${group.rowSpan} - var(--gap-grid) - 1px)`}
   >
     {#if outline.isAnchorAt(idx)}
-      <LayoutMainGridOutlineTooltip isFlipped={outline.isOnRightmostColumnAt(idx)} />
+      <LayoutMainBoardOutlineTooltip isFlipped={outline.isOnRightmostColumnAt(idx)} />
     {/if}
   </div>
 {/each}
