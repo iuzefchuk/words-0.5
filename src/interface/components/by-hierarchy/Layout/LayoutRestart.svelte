@@ -1,8 +1,10 @@
 <script lang="ts">
+  import { TransitionDuration } from '@/interface/enums.ts';
   import { handleRestartGame } from '@/interface/handlers/restart.ts';
   import { getMatchResultText } from '@/interface/mappings.ts';
   import mainStore from '@/interface/runes/main.svelte.ts';
   import TextLocalizer from '@/interface/services/TextLocalizer/TextLocalizer.ts';
+  import { fade } from 'svelte/transition';
 
   const ID_RESULT = 'result';
   const t = TextLocalizer.namespace('end');
@@ -26,7 +28,13 @@
   }
 </script>
 
-<div role="alertdialog" aria-modal="true" aria-labelledby={ID_RESULT} class="restart">
+<div
+  transition:fade={{ duration: TransitionDuration.Normal }}
+  role="alertdialog"
+  aria-modal="true"
+  aria-labelledby={ID_RESULT}
+  class="restart"
+>
   <p id={ID_RESULT} role="status">{result}</p>
   <button class="restart__button app__secondary" ondblclick={onDblClick} onkeydown={onKeydown}>{t('new_match')}</button>
 </div>

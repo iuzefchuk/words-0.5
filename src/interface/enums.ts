@@ -18,3 +18,9 @@ export enum Key {
   R = 'r',
   Space = ' ',
 }
+
+export enum TransitionDuration {
+  Long = 500,
+  Normal = 250,
+  Short = 125,
+}

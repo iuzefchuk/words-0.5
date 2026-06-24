@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { TransitionDuration } from '@/interface/enums.ts';
   import mainStore from '@/interface/runes/main.svelte.ts';
+  import { fade } from 'svelte/transition';
 
   type Props = { isFlipped?: boolean };
 
@@ -10,7 +12,7 @@
 </script>
 
 {#if score}
-  <output class="tooltip" class:tooltip--flipped={isFlipped}>
+  <output transition:fade|global={{ duration: TransitionDuration.Normal }} class="tooltip" class:tooltip--flipped={isFlipped}>
     <span class="tooltip__value" class:tooltip__value--shimmer={score > SHIMMER_THRESHOLD}>{score}</span>
   </output>
 {/if}

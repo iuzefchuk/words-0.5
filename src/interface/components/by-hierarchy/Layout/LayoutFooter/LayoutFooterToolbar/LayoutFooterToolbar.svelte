@@ -1,11 +1,12 @@
 <script lang="ts">
   import AppTile from '@/interface/components/app/AppTile.svelte';
   import LayoutFooterToolbarStats from '@/interface/components/by-hierarchy/Layout/LayoutFooter/LayoutFooterToolbar/LayoutFooterToolbarStats.svelte';
-  import { Accent } from '@/interface/enums.ts';
+  import { Accent, TransitionDuration } from '@/interface/enums.ts';
   import { handlePressToolbarCell, handlePressToolbarTile } from '@/interface/handlers/toolbar.ts';
   import mainStore from '@/interface/runes/main.svelte.ts';
   import userStore from '@/interface/runes/user.svelte.ts';
   import type { DomainInventoryTile } from '@/app/types/index.ts';
+  import { fly } from 'svelte/transition';
 
   const paddedTiles = $derived(
     Array.from({ length: mainStore.tilesPerPlayer }, (_, idx): DomainInventoryTile | null => userStore.tiles[idx] ?? null),
@@ -21,7 +22,13 @@
   }
 </script>
 
-<div class="toolbar" role="toolbar" aria-label="Tile rack" tabindex="-1">
+<div
+  transition:fly|global={{ duration: TransitionDuration.Normal, y: '1rem' }}
+  class="toolbar"
+  role="toolbar"
+  aria-label="Tile rack"
+  tabindex="-1"
+>
   <ul class="toolbar__grid app__grid">
     {#each paddedTiles as tile, idx (idx)}
       <li class="toolbar__cell">

@@ -1,6 +1,5 @@
 <script lang="ts">
   import { onMount, tick } from 'svelte';
-  import { fade } from 'svelte/transition';
   import LayoutFooter from '@/interface/components/by-hierarchy/Layout/LayoutFooter/LayoutFooter.svelte';
   import LayoutHeader from '@/interface/components/by-hierarchy/Layout/LayoutHeader/LayoutHeader.svelte';
   import LayoutMain from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMain.svelte';
@@ -44,9 +43,7 @@
   </div>
 {/if}
 {#if mainStore.matchIsFinished}
-  <div transition:fade={{ duration: 250 }}>
-    <LayoutRestart />
-  </div>
+  <LayoutRestart />
 {/if}
 
 <style>

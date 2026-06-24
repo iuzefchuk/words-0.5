@@ -2,6 +2,7 @@
   import { flip } from 'svelte/animate';
   import { fly } from 'svelte/transition';
   import History from '@/interface/runes/history.svelte.ts';
+  import { TransitionDuration } from '@/interface/enums.ts';
 
   const log = new History();
 </script>
@@ -10,7 +11,12 @@
   <aside class="log" role="log">
     <ul class="log__list app__secondary">
       {#each log.history as entry (entry.key)}
-        <li transition:fly={{ duration: 250, x: -16 }} animate:flip={{ duration: 250 }}>{@html entry.html}</li>
+        <li
+          transition:fly|global={{ duration: TransitionDuration.Normal, x: '-1rem' }}
+          animate:flip={{ duration: TransitionDuration.Normal }}
+        >
+          {@html entry.html}
+        </li>
       {/each}
     </ul>
   </aside>

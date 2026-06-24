@@ -1,8 +1,6 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
   import LayoutMainGridOutlineTooltip from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMainGrid/LayoutMainGridOutline/LayoutMainGridOutlineTooltip.svelte';
   import Outline from '@/interface/runes/outline.svelte.ts';
-
   const outline = new Outline();
 </script>
 
@@ -17,9 +15,7 @@
     style:height={`calc(var(--step) * ${group.rowSpan} - var(--gap-grid) - 1px)`}
   >
     {#if outline.isAnchorAt(idx)}
-      <span transition:fade={{ duration: 250 }}>
-        <LayoutMainGridOutlineTooltip isFlipped={outline.isOnRightmostColumnAt(idx)} />
-      </span>
+      <LayoutMainGridOutlineTooltip isFlipped={outline.isOnRightmostColumnAt(idx)} />
     {/if}
   </div>
 {/each}
