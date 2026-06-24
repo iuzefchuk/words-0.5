@@ -4,16 +4,16 @@
   import LayoutHeader from '@/interface/components/by-hierarchy/Layout/LayoutHeader/LayoutHeader.svelte';
   import LayoutMain from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMain.svelte';
   import { Key } from '@/interface/enums.ts';
-  import dialogStore from '@/interface/runes/dialog.svelte.ts';
-  import mainStore from '@/interface/runes/main.svelte.ts';
-  import userStore from '@/interface/runes/user.svelte.ts';
+  import dialog from '@/interface/runes/dialog.svelte.ts';
+  import main from '@/interface/runes/main.svelte.ts';
+  import user from '@/interface/runes/user.svelte.ts';
 
   let isMounted = $state(false);
 
   function onKeydown(event: KeyboardEvent): void {
     if ((event.key as Key) !== Key.Escape) return;
-    if (dialogStore.isOpen) return;
-    userStore.deselectTile();
+    if (dialog.isOpen) return;
+    user.deselectTile();
   }
 
   onMount(() => {
@@ -30,10 +30,10 @@
 {#if isMounted}
   <div
     class="layout"
-    class:layout--inactive={mainStore.matchIsFinished}
-    style:--grid-items-per-axis={mainStore.playfieldCellsPerAxis}
+    class:layout--inactive={main.matchIsFinished}
+    style:--grid-items-per-axis={main.playfieldCellsPerAxis}
     role="presentation"
-    onclick={() => userStore.deselectTile()}
+    onclick={() => user.deselectTile()}
   >
     <h1 class="app__hidden">Words</h1>
     <LayoutHeader />

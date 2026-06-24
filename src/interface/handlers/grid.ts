@@ -1,45 +1,45 @@
-import mainStore from '@/interface/runes/main.svelte.ts';
-import userStore from '@/interface/runes/user.svelte.ts';
+import main from '@/interface/runes/main.svelte.ts';
+import user from '@/interface/runes/user.svelte.ts';
 import type { DomainInventoryTile, DomainPlayfieldCell } from '@/app/types/index.ts';
 
 export function handleDoublePressGridTile(tile: DomainInventoryTile): void {
-  if (!userStore.isTileInToolbar(tile)) return;
-  userStore.deselectTile();
-  mainStore.undoPlaceTile(tile);
+  if (!user.isTileInToolbar(tile)) return;
+  user.deselectTile();
+  main.undoPlaceTile(tile);
 }
 
 export function handlePressGridCell(cell: DomainPlayfieldCell): void {
-  const { selectedTile } = userStore;
+  const { selectedTile } = user;
   if (selectedTile === null) return;
-  if (mainStore.findTileOnCell(cell) !== undefined) return;
-  if (userStore.selectedTileIsPlaced) mainStore.undoPlaceTile(selectedTile);
-  mainStore.placeTile({ cell, tile: selectedTile });
-  userStore.deselectTile();
+  if (main.findTileOnCell(cell) !== undefined) return;
+  if (user.selectedTileIsPlaced) main.undoPlaceTile(selectedTile);
+  main.placeTile({ cell, tile: selectedTile });
+  user.deselectTile();
 }
 
 export function handlePressGridTile(tile: DomainInventoryTile): void {
-  if (!userStore.isTileInToolbar(tile)) return;
-  if (userStore.isTileSelected(tile)) {
-    userStore.deselectTile();
+  if (!user.isTileInToolbar(tile)) return;
+  if (user.isTileSelected(tile)) {
+    user.deselectTile();
     return;
   }
-  const { selectedTile } = userStore;
+  const { selectedTile } = user;
   if (selectedTile === null) {
-    userStore.selectTile(tile);
+    user.selectTile(tile);
     return;
   }
-  const targetCell = mainStore.findCellWithTile(tile);
+  const targetCell = main.findCellWithTile(tile);
   if (targetCell === undefined) return;
-  const selectedCell = mainStore.findCellWithTile(selectedTile);
+  const selectedCell = main.findCellWithTile(selectedTile);
   if (selectedCell !== undefined) {
-    mainStore.undoPlaceTile(selectedTile);
-    mainStore.undoPlaceTile(tile);
-    mainStore.placeTile({ cell: selectedCell, tile });
-    mainStore.placeTile({ cell: targetCell, tile: selectedTile });
+    main.undoPlaceTile(selectedTile);
+    main.undoPlaceTile(tile);
+    main.placeTile({ cell: selectedCell, tile });
+    main.placeTile({ cell: targetCell, tile: selectedTile });
   } else {
-    mainStore.undoPlaceTile(tile);
-    mainStore.placeTile({ cell: targetCell, tile: selectedTile });
-    userStore.switchTiles(selectedTile, tile);
+    main.undoPlaceTile(tile);
+    main.placeTile({ cell: targetCell, tile: selectedTile });
+    user.switchTiles(selectedTile, tile);
   }
-  userStore.deselectTile();
+  user.deselectTile();
 }

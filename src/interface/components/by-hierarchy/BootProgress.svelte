@@ -1,12 +1,12 @@
 <script lang="ts">
-  import mainStore from '@/interface/runes/main.svelte.ts';
+  import main from '@/interface/runes/main.svelte.ts';
   const ADDED_PERCENTAGE = 25;
-  const displayedPercentage = $derived(mainStore.bootProgress ? mainStore.bootProgress + ADDED_PERCENTAGE : 0);
+  const displayedPercentage = $derived(main.bootProgress ? main.bootProgress + ADDED_PERCENTAGE : 0);
 </script>
 
 <progress
   class="progress"
-  value={mainStore.bootProgress}
+  value={main.bootProgress}
   max="100"
   aria-label="Boot progress"
   style="--boot-progress: {displayedPercentage}%"

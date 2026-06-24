@@ -2,12 +2,12 @@
   import { fly } from 'svelte/transition';
   import LayoutHeaderSettings from '@/interface/components/by-hierarchy/Layout/LayoutHeader/LayoutHeaderSettings.svelte';
   import LayoutHeaderStats from '@/interface/components/by-hierarchy/Layout/LayoutHeader/LayoutHeaderStats.svelte';
-  import mainStore from '@/interface/runes/main.svelte.ts';
+  import main from '@/interface/runes/main.svelte.ts';
   import { TransitionDuration } from '@/interface/enums.ts';
 </script>
 
 <header class="header">
-  {#if mainStore.settingsChangeIsAllowed}
+  {#if main.settingsChangeIsAllowed}
     <div transition:fly|global={{ duration: TransitionDuration.Normal, y: '-1rem' }}><LayoutHeaderSettings /></div>
   {:else}
     <div transition:fly|global={{ duration: TransitionDuration.Normal, y: '-1rem' }}><LayoutHeaderStats /></div>

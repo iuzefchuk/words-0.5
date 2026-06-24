@@ -1,33 +1,33 @@
-import mainStore from '@/interface/runes/main.svelte.ts';
-import userStore from '@/interface/runes/user.svelte.ts';
+import main from '@/interface/runes/main.svelte.ts';
+import user from '@/interface/runes/user.svelte.ts';
 import type { DomainInventoryTile } from '@/app/types/index.ts';
 
 export function handlePressToolbarCell(idx: number): void {
-  const tile = userStore.tiles[idx];
+  const tile = user.tiles[idx];
   if (tile === undefined) throw new ReferenceError(`expected tile at inventory index ${String(idx)}, got undefined`);
-  const { selectedTile } = userStore;
+  const { selectedTile } = user;
   if (selectedTile === null) {
-    if (mainStore.isTilePlaced(tile)) mainStore.undoPlaceTile(tile);
+    if (main.isTilePlaced(tile)) main.undoPlaceTile(tile);
     return;
   }
-  if (userStore.selectedTileIsPlaced) mainStore.undoPlaceTile(selectedTile);
-  userStore.switchTiles(selectedTile, tile);
-  userStore.deselectTile();
+  if (user.selectedTileIsPlaced) main.undoPlaceTile(selectedTile);
+  user.switchTiles(selectedTile, tile);
+  user.deselectTile();
 }
 
 export function handlePressToolbarTile(tile: DomainInventoryTile): void {
-  const { selectedTile } = userStore;
+  const { selectedTile } = user;
   if (selectedTile === null) {
-    userStore.selectTile(tile);
+    user.selectTile(tile);
     return;
   }
-  if (!userStore.isTileSelected(tile)) {
-    const selectedCell = mainStore.findCellWithTile(selectedTile);
+  if (!user.isTileSelected(tile)) {
+    const selectedCell = main.findCellWithTile(selectedTile);
     if (selectedCell !== undefined) {
-      mainStore.undoPlaceTile(selectedTile);
-      mainStore.placeTile({ cell: selectedCell, tile });
+      main.undoPlaceTile(selectedTile);
+      main.placeTile({ cell: selectedCell, tile });
     }
-    userStore.switchTiles(selectedTile, tile);
+    user.switchTiles(selectedTile, tile);
   }
-  userStore.deselectTile();
+  user.deselectTile();
 }

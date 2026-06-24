@@ -1,6 +1,6 @@
-import dialogStore from '@/interface/runes/dialog.svelte.ts';
-import mainStore from '@/interface/runes/main.svelte.ts';
-import userStore from '@/interface/runes/user.svelte.ts';
+import dialog from '@/interface/runes/dialog.svelte.ts';
+import main from '@/interface/runes/main.svelte.ts';
+import user from '@/interface/runes/user.svelte.ts';
 import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
 import type { DialogResult } from '@/interface/runes/dialog.svelte.ts';
 import { DomainMatchResult } from '@/app/enums/index.ts';
@@ -8,10 +8,10 @@ import { DomainMatchResult } from '@/app/enums/index.ts';
 const RESIGN_DELAY_MS = 500;
 
 export async function handlePass(): Promise<void> {
-  if (mainStore.userPassWillBeResign) return handleResign();
+  if (main.userPassWillBeResign) return handleResign();
   const { isConfirmed } = await triggerPassDialog();
   if (!isConfirmed) return;
-  await mainStore.pass();
+  await main.pass();
   await handleTurnEnd();
 }
 
@@ -19,36 +19,36 @@ export async function handleResign(): Promise<void> {
   const { isConfirmed } = await triggerResignDialog();
   if (!isConfirmed) return;
   setTimeout(() => {
-    mainStore.resign();
+    main.resign();
     void handleTurnEnd();
   }, RESIGN_DELAY_MS);
 }
 
 export async function handleSave(): Promise<void> {
-  const promise = mainStore.save();
-  userStore.initialize();
+  const promise = main.save();
+  user.initialize();
   await promise;
   await handleTurnEnd();
 }
 
 export async function handleTurnEnd(): Promise<void> {
-  if (!mainStore.matchIsFinished) return;
+  if (!main.matchIsFinished) return;
   const { isConfirmed } = await triggerFinishDialog()
   if (!isConfirmed) return;
-  mainStore.restartGame();
-  userStore.initialize();
+  main.restartGame();
+  user.initialize();
 }
 
 
 async function triggerPassDialog(): Promise<DialogResult> {
-  return await dialogStore.trigger({
+  return await dialog.trigger({
     html: TextLocalizer.text('dialog.html_pass'),
     title: TextLocalizer.text('dialog.title_pass'),
   });
 }
 
 async function triggerResignDialog(): Promise<DialogResult> {
-  return await dialogStore.trigger({
+  return await dialog.trigger({
     html: TextLocalizer.text('dialog.html_resign'),
     isDestructive: true,
     title: TextLocalizer.text('dialog.title_resign'),
@@ -56,12 +56,12 @@ async function triggerResignDialog(): Promise<DialogResult> {
 }
 
 async function triggerFinishDialog(): Promise<DialogResult> {
-  const {matchResult} = mainStore;
-  const scoreDiff = mainStore.userScore - mainStore.opponentScore;
+  const {matchResult} = main;
+  const scoreDiff = main.userScore - main.opponentScore;
   if (matchResult === DomainMatchResult.Undecided) {
     throw new Error(`cannot render match result text: result is ${DomainMatchResult.Undecided}`);
   }
-  return await dialogStore.trigger({
+  return await dialog.trigger({
     title: TextLocalizer.text('dialog.title_finish'),
     html: TextLocalizer.text(
       {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import { Accent } from '@/interface/enums.ts';
-  import dialogStore from '@/interface/runes/dialog.svelte.ts';
+  import dialog from '@/interface/runes/dialog.svelte.ts';
 
   type Props = {
     accent: Accent;
@@ -24,7 +24,7 @@
   }
 
   function onKeydown(event: KeyboardEvent): void {
-    if (dialogStore.isOpen) return;
+    if (dialog.isOpen) return;
     if (!keys.includes(event.key)) return;
     if (isDisabled) return;
     event.preventDefault();

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { TransitionDuration } from '@/interface/enums.ts';
-  import mainStore from '@/interface/runes/main.svelte.ts';
+  import main from '@/interface/runes/main.svelte.ts';
   import { fade } from 'svelte/transition';
 
   type Props = { isFlipped?: boolean };
@@ -8,7 +8,7 @@
   const { isFlipped = false }: Props = $props();
   const SHIMMER_THRESHOLD = 29;
 
-  const score = $derived(mainStore.currentTurnScore);
+  const score = $derived(main.currentTurnScore);
 </script>
 
 {#if score}

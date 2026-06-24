@@ -2,16 +2,16 @@
   import { setContext } from 'svelte';
   import LayoutMainGridCell from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMainGrid/LayoutMainGridCell.svelte';
   import LayoutMainGridOutline from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMainGrid/LayoutMainGridOutline/LayoutMainGridOutline.svelte';
-  import mainStore from '@/interface/runes/main.svelte.ts';
+  import main from '@/interface/runes/main.svelte.ts';
   import RovingTabindex from '@/interface/runes/roving-tabindex.svelte.ts';
 
   let gridEl: HTMLElement | undefined;
-  const rovingTabindex = new RovingTabindex(() => gridEl ?? null, '[role="gridcell"]', mainStore.playfieldCellsPerAxis);
+  const rovingTabindex = new RovingTabindex(() => gridEl ?? null, '[role="gridcell"]', main.playfieldCellsPerAxis);
 
   const rows = $derived.by(() => {
-    const size = mainStore.playfieldCellsPerAxis;
+    const size = main.playfieldCellsPerAxis;
     return Array.from({ length: size }, (_, row) =>
-      mainStore.playfieldCells.slice(row * size, (row + 1) * size).map((cell, col) => ({ cell, index: row * size + col })),
+      main.playfieldCells.slice(row * size, (row + 1) * size).map((cell, col) => ({ cell, index: row * size + col })),
     );
   });
 
@@ -23,8 +23,8 @@
   class="grid app__grid"
   role="grid"
   tabindex="-1"
-  aria-rowcount={mainStore.playfieldCellsPerAxis}
-  aria-colcount={mainStore.playfieldCellsPerAxis}
+  aria-rowcount={main.playfieldCellsPerAxis}
+  aria-colcount={main.playfieldCellsPerAxis}
   onkeydown={rovingTabindex.onKeydown}
 >
   {#each rows as row, rowIdx (rowIdx)}

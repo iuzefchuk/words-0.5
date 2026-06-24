@@ -2,7 +2,7 @@
   import AppButton from '@/interface/components/app/AppButton.svelte';
   import { Accent, Key, TransitionDuration } from '@/interface/enums.ts';
   import { handlePass, handleResign, handleSave } from '@/interface/handlers/menubar.ts';
-  import mainStore from '@/interface/runes/main.svelte.ts';
+  import main from '@/interface/runes/main.svelte.ts';
   import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
   import { fly } from 'svelte/transition';
 
@@ -14,7 +14,7 @@
       action: (): void => {
         void handleSave();
       },
-      isDisabled: mainStore.allActionsAreDisabled || !mainStore.currentTurnIsValid,
+      isDisabled: main.allActionsAreDisabled || !main.currentTurnIsValid,
       keys: [Key.Enter],
       name: t('action_play'),
     },
@@ -23,7 +23,7 @@
       action: (): void => {
         void handlePass();
       },
-      isDisabled: mainStore.allActionsAreDisabled,
+      isDisabled: main.allActionsAreDisabled,
       keys: [Key.P],
       name: t('action_pass'),
     },
@@ -32,14 +32,20 @@
       action: (): void => {
         void handleResign();
       },
-      isDisabled: mainStore.allActionsAreDisabled,
+      isDisabled: main.allActionsAreDisabled,
       keys: [Key.R],
       name: t('action_resign'),
     },
   ]);
 </script>
 
-<div transition:fly|global={{ duration: TransitionDuration.Normal, x: '1rem' }} class="menubar" role="menubar" aria-label="Match actions" tabindex="-1">
+<div
+  transition:fly|global={{ duration: TransitionDuration.Normal, x: '1rem' }}
+  class="menubar"
+  role="menubar"
+  aria-label="Match actions"
+  tabindex="-1"
+>
   {#each buttons as button (button.name)}
     <AppButton
       accent={button.accent}

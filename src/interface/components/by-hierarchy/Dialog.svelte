@@ -2,7 +2,7 @@
   import { tick } from 'svelte';
   import AppButton from '@/interface/components/app/AppButton.svelte';
   import { Accent } from '@/interface/enums.ts';
-  import dialogStore, { DialogStatus } from '@/interface/runes/dialog.svelte.ts';
+  import dialog, { DialogStatus } from '@/interface/runes/dialog.svelte.ts';
   import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
 
   const ID_TITLE = 'title';
@@ -17,7 +17,7 @@
 
   function emitResponse(status: DialogStatus): void {
     if (refDialog?.open === true) refDialog.close();
-    dialogStore.resolve({ status });
+    dialog.resolve({ status });
     lastFocusedElement?.focus();
     lastFocusedElement = null;
   }
@@ -39,11 +39,11 @@
   }
 
   $effect(() => {
-    if (dialogStore.html === null) return;
+    if (dialog.html === null) return;
     lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     void tick().then(() => {
       refDialog?.showModal();
-      const target = dialogStore.isDestructive ? cancelButton : confirmButton;
+      const target = dialog.isDestructive ? cancelButton : confirmButton;
       target?.focus();
     });
   });
@@ -53,7 +53,7 @@
   bind:this={refDialog}
   role="alertdialog"
   aria-modal="true"
-  aria-labelledby={dialogStore.title !== null ? ID_TITLE : undefined}
+  aria-labelledby={dialog.title !== null ? ID_TITLE : undefined}
   aria-describedby={ID_HTML}
   class="dialog"
   class:dialog--shaking={dialogIsShaking}
@@ -61,19 +61,19 @@
   oncancel={onCancel}
 >
   <div class="dialog__content">
-    {#if dialogStore.title !== null}<h2 id={ID_TITLE}>{dialogStore.title}</h2>{/if}
-    <div id={ID_HTML} class="app__secondary">{@html dialogStore.html ?? ''}</div>
+    {#if dialog.title !== null}<h2 id={ID_TITLE}>{dialog.title}</h2>{/if}
+    <div id={ID_HTML} class="app__secondary">{@html dialog.html ?? ''}</div>
   </div>
   <div class="dialog__footer">
     <AppButton
       bind:this={cancelButton}
-      accent={dialogStore.isDestructive ? Accent.Primary : Accent.Secondary}
+      accent={dialog.isDestructive ? Accent.Primary : Accent.Secondary}
       text={t('cancel')}
       ontrigger={() => emitResponse(DialogStatus.Canceled)}
     />
     <AppButton
       bind:this={confirmButton}
-      accent={dialogStore.isDestructive ? Accent.Secondary : Accent.Primary}
+      accent={dialog.isDestructive ? Accent.Secondary : Accent.Primary}
       text={t('confirm')}
       ontrigger={() => emitResponse(DialogStatus.Confirmed)}
     />

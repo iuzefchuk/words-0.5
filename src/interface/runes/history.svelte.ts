@@ -1,5 +1,5 @@
 import { DomainMatchPlayer, DomainTimelineEventType } from '@/app/enums/index.ts';
-import mainStore from '@/interface/runes/main.svelte.ts';
+import main from '@/interface/runes/main.svelte.ts';
 import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
 import type { DomainTimelineEvent } from '@/app/types/index.ts';
 
@@ -9,7 +9,7 @@ export default class History {
   private static readonly MAX_DISPLAYED_EVENTS = 3;
 
   readonly history = $derived.by((): ReadonlyArray<HistoryEntry> => {
-    const all = mainStore.events.filter(History.isEventDisplayed);
+    const all = main.events.filter(History.isEventDisplayed);
     const start = Math.max(0, all.length - History.MAX_DISPLAYED_EVENTS);
     return all.slice(start).map((event, index) => ({ html: History.createEventHtml(event), key: start + index }));
   });

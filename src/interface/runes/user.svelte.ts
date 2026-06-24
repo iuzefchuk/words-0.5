@@ -1,4 +1,4 @@
-import mainStore from '@/interface/runes/main.svelte.ts';
+import main from '@/interface/runes/main.svelte.ts';
 import type { DomainInventoryTile } from '@/app/types/index.ts';
 
 // UI-only tile-rack state. `tiles` is a $state array (deep-proxied → in-place swaps are reactive).
@@ -8,7 +8,7 @@ class User {
   selectedTile = $state<DomainInventoryTile | null>(null);
 
   get selectedTileIsPlaced(): boolean {
-    return this.selectedTile !== null && mainStore.isTilePlaced(this.selectedTile);
+    return this.selectedTile !== null && main.isTilePlaced(this.selectedTile);
   }
 
   get tiles(): ReadonlyArray<DomainInventoryTile> {
@@ -20,7 +20,7 @@ class User {
   }
 
   initialize(): void {
-    this._tiles = [...mainStore.userTiles];
+    this._tiles = [...main.userTiles];
     this.selectedTile = null;
   }
 
@@ -29,7 +29,7 @@ class User {
   }
 
   isTileSelected(tile: DomainInventoryTile): boolean {
-    return this.selectedTile !== null && mainStore.areTilesSame(this.selectedTile, tile);
+    return this.selectedTile !== null && main.areTilesSame(this.selectedTile, tile);
   }
 
   selectTile(tile: DomainInventoryTile): void {
@@ -38,8 +38,8 @@ class User {
   }
 
   shuffleTiles(): void {
-    mainStore.shuffleUserTiles();
-    this._tiles = [...mainStore.userTiles];
+    main.shuffleUserTiles();
+    this._tiles = [...main.userTiles];
   }
 
   switchTiles(firstTile: DomainInventoryTile, secondTile: DomainInventoryTile): void {

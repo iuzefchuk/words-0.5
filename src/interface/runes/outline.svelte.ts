@@ -1,14 +1,14 @@
-import mainStore from '@/interface/runes/main.svelte.ts';
-import userStore from '@/interface/runes/user.svelte.ts';
+import main from '@/interface/runes/main.svelte.ts';
+import user from '@/interface/runes/user.svelte.ts';
 import type { DomainInventoryTile, DomainPlayfieldCell } from '@/app/types/index.ts';
 
 export type Bounds = { col: number; colSpan: number; row: number; rowSpan: number };
 
 export default class Outline {
-  readonly bounds = $derived.by((): ReadonlyArray<Bounds> => Outline.computeBounds(userStore.tiles));
+  readonly bounds = $derived.by((): ReadonlyArray<Bounds> => Outline.computeBounds(user.tiles));
 
   isAnchorAt(idx: number): boolean {
-    if (mainStore.currentTurnScore === undefined) return false;
+    if (main.currentTurnScore === undefined) return false;
     let minRow = Infinity;
     let anchorIdx = -1;
     let rightmostEdge = -Infinity;
@@ -33,7 +33,7 @@ export default class Outline {
   isOnRightmostColumnAt(idx: number): boolean {
     const group = this.bounds[idx];
     if (group === undefined) return false;
-    return group.col + group.colSpan >= mainStore.playfieldCellsPerAxis;
+    return group.col + group.colSpan >= main.playfieldCellsPerAxis;
   }
 
   private static computeBounds(tiles: ReadonlyArray<DomainInventoryTile>): ReadonlyArray<Bounds> {
@@ -51,7 +51,7 @@ export default class Outline {
   private static findCellsFor(tiles: ReadonlyArray<DomainInventoryTile>): Set<DomainPlayfieldCell> {
     const cells = new Set<DomainPlayfieldCell>();
     for (const tile of tiles) {
-      const cell = mainStore.findCellWithTile(tile);
+      const cell = main.findCellWithTile(tile);
       if (cell !== undefined) cells.add(cell);
     }
     return cells;
@@ -71,13 +71,13 @@ export default class Outline {
     while (stack.length > 0) {
       const cell = stack.pop();
       if (cell === undefined) throw new ReferenceError('expected cell from traversal stack, got undefined');
-      const row = mainStore.getCellRowIndex(cell);
-      const col = mainStore.getCellColumnIndex(cell);
+      const row = main.getCellRowIndex(cell);
+      const col = main.getCellColumnIndex(cell);
       if (row < minRow) minRow = row;
       if (row > maxRow) maxRow = row;
       if (col < minCol) minCol = col;
       if (col > maxCol) maxCol = col;
-      for (const adjacent of mainStore.getAdjacentCells(cell)) {
+      for (const adjacent of main.getAdjacentCells(cell)) {
         if (!cells.has(adjacent) || visited.has(adjacent)) continue;
         visited.add(adjacent);
         stack.push(adjacent);

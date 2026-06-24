@@ -5,16 +5,16 @@
   import Dialog from '@/interface/components/by-hierarchy/Dialog.svelte';
   import Layout from '@/interface/components/by-hierarchy/Layout/Layout.svelte';
   import BootProgress from '@/interface/components/by-hierarchy/BootProgress.svelte';
-  import mainStore from '@/interface/runes/main.svelte.ts';
-  import userStore from '@/interface/runes/user.svelte.ts';
+  import main from '@/interface/runes/main.svelte.ts';
+  import user from '@/interface/runes/user.svelte.ts';
   import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
 
   const t = TextLocalizer.namespace('game');
 
   onMount(() => {
     void (async (): Promise<void> => {
-      await mainStore.initiate();
-      if (mainStore.appReady) userStore.initialize();
+      await main.initiate();
+      if (main.appReady) user.initialize();
     })();
   });
 </script>
@@ -25,9 +25,9 @@
   style:--transition-duration-normal="{TransitionDuration.Normal}ms"
   style:--transition-duration-short="{TransitionDuration.Short}ms"
 >
-  {#if mainStore.bootError !== null}
-    <BootAlert html={t('boot_error', { error: mainStore.bootError })} />
-  {:else if mainStore.appReady}
+  {#if main.bootError !== null}
+    <BootAlert html={t('boot_error', { error: main.bootError })} />
+  {:else if main.appReady}
     <Layout />
   {:else}
     <BootProgress />
