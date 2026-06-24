@@ -3,7 +3,7 @@
   import { Accent, Key, TransitionDuration } from '@/interface/enums.ts';
   import { handlePass, handleResign, handleSave } from '@/interface/handlers/menubar.ts';
   import mainStore from '@/interface/runes/main.svelte.ts';
-  import TextLocalizer from '@/interface/services/TextLocalizer/TextLocalizer.ts';
+  import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
   import { fly } from 'svelte/transition';
 
   const t = TextLocalizer.namespace('game');
@@ -12,7 +12,7 @@
     {
       accent: Accent.Primary,
       action: (): void => {
-        handleSave();
+        void handleSave();
       },
       isDisabled: mainStore.allActionsAreDisabled || !mainStore.currentTurnIsValid,
       keys: [Key.Enter],

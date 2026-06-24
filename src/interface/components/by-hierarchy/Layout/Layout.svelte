@@ -3,7 +3,6 @@
   import LayoutFooter from '@/interface/components/by-hierarchy/Layout/LayoutFooter/LayoutFooter.svelte';
   import LayoutHeader from '@/interface/components/by-hierarchy/Layout/LayoutHeader/LayoutHeader.svelte';
   import LayoutMain from '@/interface/components/by-hierarchy/Layout/LayoutMain/LayoutMain.svelte';
-  import LayoutRestart from '@/interface/components/by-hierarchy/Layout/LayoutRestart.svelte';
   import { Key } from '@/interface/enums.ts';
   import dialogStore from '@/interface/runes/dialog.svelte.ts';
   import mainStore from '@/interface/runes/main.svelte.ts';
@@ -42,9 +41,6 @@
     <LayoutFooter />
   </div>
 {/if}
-{#if mainStore.matchIsFinished}
-  <LayoutRestart />
-{/if}
 
 <style>
   .layout {
@@ -62,6 +58,6 @@
   }
 
   .layout--inactive {
-    opacity: 0.5;
+    filter: blur(var(--space-2xs));
   }
 </style>

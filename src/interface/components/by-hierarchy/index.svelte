@@ -7,7 +7,7 @@
   import BootProgress from '@/interface/components/by-hierarchy/BootProgress.svelte';
   import mainStore from '@/interface/runes/main.svelte.ts';
   import userStore from '@/interface/runes/user.svelte.ts';
-  import TextLocalizer from '@/interface/services/TextLocalizer/TextLocalizer.ts';
+  import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
 
   const t = TextLocalizer.namespace('game');
 

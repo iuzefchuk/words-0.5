@@ -2,7 +2,7 @@
   import { fade } from 'svelte/transition';
   import animateNumber from '@/interface/actions/AnimateNumber.ts';
   import mainStore from '@/interface/runes/main.svelte.ts';
-  import TextLocalizer from '@/interface/services/TextLocalizer/TextLocalizer.ts';
+  import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
   import { TransitionDuration } from '@/interface/enums.ts';
 
   const t = TextLocalizer.namespace('game');

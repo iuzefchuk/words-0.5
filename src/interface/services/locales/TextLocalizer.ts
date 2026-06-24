@@ -1,5 +1,4 @@
 import dialog from './en/dialog.json';
-import end from './en/end.json';
 import game from './en/game.json';
 import settings from './en/settings.json';
 
@@ -8,7 +7,7 @@ type Namespace = Record<string, string>;
 // English uses a dot group separator (matches the source's NumberSeparatorType.Dot mapping).
 const NUMBER_LOCALE = 'de-DE';
 
-const NAMESPACES: Record<string, Namespace> = { dialog, end, game, settings };
+const NAMESPACES: Record<string, Namespace> = { dialog, game, settings };
 
 class TextLocalizer {
   private readonly formatter = new Intl.NumberFormat(NUMBER_LOCALE, { maximumFractionDigits: 2 });

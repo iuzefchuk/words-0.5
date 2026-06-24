@@ -179,11 +179,11 @@ class Main {
     return this.readPlayfield(queries => queries.isTilePlaced(tile));
   }
 
-  pass(): void {
+  async pass(): Promise<void> {
     const { opponentTurn } = this.writeAndPlaySound(() => this.requireApp().commands.passTurn());
-    void opponentTurn?.then(() => {
-      this.syncAndPlaySound();
-    });
+    if (opponentTurn === undefined) return;
+    await opponentTurn;
+    this.syncAndPlaySound();
   }
 
   placeTile(args: { cell: DomainPlayfieldCell; tile: DomainInventoryTile }): void {
@@ -205,11 +205,11 @@ class Main {
     });
   }
 
-  save(): void {
+  async save(): Promise<void> {
     const { opponentTurn } = this.writeAndPlaySound(() => this.requireApp().commands.saveTurn());
-    void opponentTurn?.then(() => {
-      this.syncAndPlaySound();
-    });
+    if (opponentTurn === undefined) return;
+    await opponentTurn;
+    this.syncAndPlaySound();
   }
 
   shuffleUserTiles(): void {

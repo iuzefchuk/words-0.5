@@ -1,4 +1,4 @@
-import TextLocalizer from '@/interface/services/TextLocalizer/TextLocalizer.ts';
+import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
 import type { Action } from 'svelte/action';
 
 export type AnimateNumberParams = { animationDelay?: number; animationDuration?: number; number: number };

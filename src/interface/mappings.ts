@@ -1,7 +1,7 @@
-import { DomainMatchPlayer, DomainMatchResult, DomainPlayfieldBonus, DomainTimelineEventType } from '@/app/enums/index.ts';
+import { DomainMatchPlayer, DomainPlayfieldBonus, DomainTimelineEventType } from '@/app/enums/index.ts';
 import { Accent } from '@/interface/enums.ts';
 import { Sound } from '@/interface/services/SoundPlayer.ts';
-import TextLocalizer from '@/interface/services/TextLocalizer/TextLocalizer.ts';
+import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
 import type { DomainTimelineEvent } from '@/app/types/index.ts';
 
 export function getBonusAccent(bonus: DomainPlayfieldBonus): Accent {
@@ -40,18 +40,4 @@ export function getEventSound(event: DomainTimelineEvent): null | Sound {
     case DomainTimelineEventType.TurnSaved:
       return event.player === DomainMatchPlayer.User ? Sound.GameShortGood : Sound.GameShortAltGood;
   }
-}
-
-export function getMatchResultText(result: DomainMatchResult, scoreDiff: number): string {
-  if (result === DomainMatchResult.Undecided) {
-    throw new Error(`cannot render match result text: result is ${DomainMatchResult.Undecided}`);
-  }
-  return TextLocalizer.text(
-    {
-      [DomainMatchResult.Lose]: scoreDiff < 0 ? 'end.lose_by' : 'end.lose',
-      [DomainMatchResult.Tie]: 'end.tie',
-      [DomainMatchResult.Win]: scoreDiff > 0 ? 'end.win_by' : 'end.win',
-    }[result],
-    { points: Math.abs(scoreDiff) },
-  );
 }

@@ -3,7 +3,7 @@
   import AppButton from '@/interface/components/app/AppButton.svelte';
   import { Accent } from '@/interface/enums.ts';
   import dialogStore, { DialogStatus } from '@/interface/runes/dialog.svelte.ts';
-  import TextLocalizer from '@/interface/services/TextLocalizer/TextLocalizer.ts';
+  import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
 
   const ID_TITLE = 'title';
   const ID_HTML = 'html';
@@ -129,7 +129,7 @@
   }
 
   .dialog--shaking {
-    animation: horizontal-shake var(--transition-duration-short) linear forwards;
+    animation: horizontal-shake var(--transition-duration-normal) linear forwards;
   }
 
   .dialog__content {
