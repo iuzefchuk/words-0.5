@@ -78,6 +78,7 @@
     padding: var(--space-3xs);
     background: light-dark(var(--color-level-4), var(--color-level-8));
     border-radius: var(--space-s);
+    box-shadow: var(--shadow-level-0);
   }
 
   .radio-group__indicator {
