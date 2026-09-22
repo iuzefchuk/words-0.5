@@ -6,6 +6,7 @@
 @import url('./tokens/space.css');
 @import url('./tokens/transition-timing-function.css');
 @import url('./tokens/z-index.css');
+@import url('./root.css');
 @import url('./keyframes.css');
 @import url('./reset.css');
 
@@ -30,23 +31,6 @@ text {
   fill: currentcolor;
 }
 
-:root {
-  color-scheme: light dark;
-
-  --bg-primary: light-dark(var(--color-level-3), var(--color-level-9));
-  --bg-secondary: transparent;
-  --color-primary: light-dark(var(--color-level-11), var(--color-level-2));
-  --color-secondary: light-dark(var(--color-level-6), var(--color-level-5));
-  --font-size-primary: var(--font-size);
-  --font-size-secondary: var(--font-size-small);
-  --font-weight-primary: light-dark(var(--font-weight), var(--font-weight-small));
-  --font-weight-secondary: var(--font-weight-primary);
-  --padding-primary: var(--space-m);
-  --gap-grid: var(--space-2xs);
-  --radius-grid: var(--space-xs);
-  --outline: 2px solid light-dark(var(--color-level-10), var(--color-level-1));
-}
-
 #app {
   font-size: var(--font-size-primary);
   font-weight: var(--font-weight-primary);
@@ -63,10 +47,6 @@ text {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
-}
-
-:focus-visible {
-  outline: var(--outline);
 }
 
 :focus:not(:focus-visible) {
