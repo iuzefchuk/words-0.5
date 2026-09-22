@@ -206,23 +206,6 @@ class TaskDispatcher {
     return new TaskDispatcher(context, state, computeds);
   }
 
-  execute(task: Task): TaskCommand {
-    switch (task.type) {
-      case TurnGenerationTask.ApplyResolution:
-        return this.applyResolution(task);
-      case TurnGenerationTask.CalculateCandidate:
-        return this.calculateCandidate(task);
-      case TurnGenerationTask.EvaluateTraversal:
-        return this.evaluateTraversal(task);
-      case TurnGenerationTask.ResolveCandidate:
-        return this.resolveCandidate(task);
-      case TurnGenerationTask.ReverseResolution:
-        return this.reverseResolution(task);
-      case TurnGenerationTask.ValidateTraversal:
-        return this.validateTraversal(task);
-    }
-  }
-
   *dispatchTraversal(anchorPos: number): Generator<TurnGenerationResult> {
     try {
       const { axisCells } = this.computeds;
@@ -257,6 +240,23 @@ class TaskDispatcher {
       }
     } finally {
       this.restorePlacements();
+    }
+  }
+
+  execute(task: Task): TaskCommand {
+    switch (task.type) {
+      case TurnGenerationTask.ApplyResolution:
+        return this.applyResolution(task);
+      case TurnGenerationTask.CalculateCandidate:
+        return this.calculateCandidate(task);
+      case TurnGenerationTask.EvaluateTraversal:
+        return this.evaluateTraversal(task);
+      case TurnGenerationTask.ResolveCandidate:
+        return this.resolveCandidate(task);
+      case TurnGenerationTask.ReverseResolution:
+        return this.reverseResolution(task);
+      case TurnGenerationTask.ValidateTraversal:
+        return this.validateTraversal(task);
     }
   }
 
@@ -350,22 +350,6 @@ class TaskDispatcher {
     return this.emitContinue([{ ...task, type: TurnGenerationTask.ValidateTraversal }]);
   }
 
-  private resolveCandidate(task: ResolveTask): ContinueTaskCommand | StopTaskCommand {
-    const { candidate, traversal } = task;
-    return candidate.resolution !== undefined
-      ? this.createTraversalFromCandidate(traversal, candidate)
-      : this.calculateAndExploreResolution(traversal, candidate);
-  }
-
-  private reverseResolution(task: ReverseTask): ContinueTaskCommand {
-    const { tile } = task.resolution;
-    const { letterTiles } = task.resolutionComputeds;
-    letterTiles.push(tile);
-    this.placement.pop();
-    this.match.undoPlaceTile(tile);
-    return this.emitContinue();
-  }
-
   private *extendLeftPart(
     node: DictionaryNode,
     anchorPos: number,
@@ -399,6 +383,13 @@ class TaskDispatcher {
     }
   }
 
+  private resolveCandidate(task: ResolveTask): ContinueTaskCommand | StopTaskCommand {
+    const { candidate, traversal } = task;
+    return candidate.resolution !== undefined
+      ? this.createTraversalFromCandidate(traversal, candidate)
+      : this.calculateAndExploreResolution(traversal, candidate);
+  }
+
   private restorePlacements(): void {
     while (this.placement.length > 0) {
       const link = this.placement.pop();
@@ -406,6 +397,15 @@ class TaskDispatcher {
       this.match.undoPlaceTile(link.tile);
       this.tiles.get(this.match.getTileLetter(link.tile))?.push(link.tile);
     }
+  }
+
+  private reverseResolution(task: ReverseTask): ContinueTaskCommand {
+    const { tile } = task.resolution;
+    const { letterTiles } = task.resolutionComputeds;
+    letterTiles.push(tile);
+    this.placement.pop();
+    this.match.undoPlaceTile(tile);
+    return this.emitContinue();
   }
 
   private *traverseLeft(anchorPos: number, leftLimit: number): Generator<TurnGenerationResult> {

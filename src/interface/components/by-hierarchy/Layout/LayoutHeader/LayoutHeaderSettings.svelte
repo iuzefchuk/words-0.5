@@ -8,7 +8,7 @@
   const t = TextLocalizer.namespace('settings');
 </script>
 
-<form class="setup" aria-label="Match setup" onsubmit={event => event.preventDefault()}>
+<form class="setup" aria-label="Match setup" onsubmit={event => { event.preventDefault(); }}>
   <AppRadioGroup
     legend={t('difficulty')}
     modelValue={main.matchDifficulty}

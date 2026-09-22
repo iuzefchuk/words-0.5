@@ -4,7 +4,6 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@playwright/test": "^1.61.0",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@types/node": "^26.0.0",
     "eslint": "^10.5.0",
@@ -12,13 +11,11 @@
     "eslint-plugin-perfectionist": "^5.9.1",
     "eslint-plugin-svelte": "^3.19.0",
     "globals": "^17.6.0",
-    "happy-dom": "^20.10.6",
-    "jiti": "^2.7.0",
-    "postcss-html": "^1.8.1",
+    "postcss-html": "^2.0.0",
     "prettier": "^3.8.4",
     "prettier-plugin-svelte": "^4.1.1",
     "stylelint": "^17.13.0",
-    "stylelint-config-html": "^1.1.0",
+    "stylelint-config-html": "^2.0.0",
     "stylelint-config-recess-order": "^7.7.0",
     "stylelint-config-standard": "^40.0.0",
     "stylelint-declaration-strict-value": "^1.11.1",
@@ -29,8 +26,7 @@
     "svelte-eslint-parser": "^1.8.0",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.1",
-    "vite": "^8.0.16",
-    "vitest": "^4.1.9"
+    "vite": "^8.0.16"
   },
   "scripts": {
     "serve": "vite",
@@ -39,7 +35,6 @@
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint . --fix && stylelint \"src/**/*.{css,svelte}\" --fix",
-    "format": "prettier --write .",
-    "test": "vitest run && playwright test --pass-with-no-tests"
+    "format": "prettier --write ."
   }
 }

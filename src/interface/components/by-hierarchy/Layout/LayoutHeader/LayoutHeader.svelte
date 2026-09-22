@@ -2,8 +2,8 @@
   import { fly } from 'svelte/transition';
   import LayoutHeaderSettings from '@/interface/components/by-hierarchy/Layout/LayoutHeader/LayoutHeaderSettings.svelte';
   import LayoutHeaderStats from '@/interface/components/by-hierarchy/Layout/LayoutHeader/LayoutHeaderStats.svelte';
-  import main from '@/interface/runes/main.svelte.ts';
   import { TransitionDuration } from '@/interface/enums.ts';
+  import main from '@/interface/runes/main.svelte.ts';
 </script>
 
 <header class="header">

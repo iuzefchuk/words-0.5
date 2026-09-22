@@ -7,9 +7,9 @@ export type AnimateNumberParams = { animationDelay?: number; animationDuration?:
 class AnimateNumber {
   private frameId: number | undefined;
 
-  private value: number;
-
   private readonly node: HTMLElement;
+
+  private value: number;
 
   constructor(node: HTMLElement, params: AnimateNumberParams) {
     this.node = node;
@@ -48,7 +48,6 @@ class AnimateNumber {
 }
 
 const animateNumber: Action<HTMLElement, AnimateNumberParams> = (node, params) => {
-  if (params === undefined) throw new Error('animateNumber: params are required');
   const instance = new AnimateNumber(node, params);
   return {
     destroy: () => {

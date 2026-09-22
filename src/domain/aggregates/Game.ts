@@ -38,7 +38,7 @@ export default class Game {
   }
 
   private constructor(
-    private readonly players: MatchPlayer[],
+    private readonly players: Array<MatchPlayer>,
     private timeline: Timeline,
     private readonly gateways: Gateways,
     private match: Match,

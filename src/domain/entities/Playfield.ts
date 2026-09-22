@@ -135,12 +135,12 @@ class BonusService {
 
   private static readonly CELL_COUNT = this.CELLS_PER_AXIS ** 2;
 
-  private static readonly CENTER_CELL = Math.floor(this.CELL_COUNT / 2) as PlayfieldCell;
-
   private static readonly ALL_CELLS: ReadonlyArray<PlayfieldCell> = Array.from(
     { length: this.CELL_COUNT },
     (_, idx) => idx as PlayfieldCell,
   );
+
+  private static readonly CENTER_CELL = Math.floor(this.CELL_COUNT / 2) as PlayfieldCell;
 
   private static readonly NON_CENTER_CELLS: ReadonlyArray<PlayfieldCell> = this.ALL_CELLS.filter(
     cell => cell !== this.CENTER_CELL,

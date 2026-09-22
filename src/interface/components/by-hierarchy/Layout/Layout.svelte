@@ -33,7 +33,7 @@
     class:layout--inactive={main.matchIsFinished}
     style:--grid-items-per-axis={main.playfieldCellsPerAxis}
     role="presentation"
-    onclick={() => user.deselectTile()}
+    onclick={() => { user.deselectTile(); }}
   >
     <h1 class="app__hidden">Words</h1>
     <LayoutHeader />

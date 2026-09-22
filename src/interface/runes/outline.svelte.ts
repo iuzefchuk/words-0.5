@@ -7,35 +7,6 @@ export type Bounds = { col: number; colSpan: number; row: number; rowSpan: numbe
 export default class Outline {
   readonly bounds = $derived.by((): ReadonlyArray<Bounds> => Outline.computeBounds(user.tiles));
 
-  isAnchorAt(idx: number): boolean {
-    if (main.currentTurnScore === undefined) return false;
-    let minRow = Infinity;
-    let anchorIdx = -1;
-    let rightmostEdge = -Infinity;
-    for (let cursor = 0; cursor < this.bounds.length; cursor++) {
-      const group = this.bounds[cursor];
-      if (group === undefined) throw new ReferenceError(`expected bounds at index ${String(cursor)}, got undefined`);
-      if (group.row < minRow) {
-        minRow = group.row;
-        anchorIdx = cursor;
-        rightmostEdge = group.col + group.colSpan;
-      } else if (group.row === minRow) {
-        const edge = group.col + group.colSpan;
-        if (edge > rightmostEdge) {
-          anchorIdx = cursor;
-          rightmostEdge = edge;
-        }
-      }
-    }
-    return idx === anchorIdx;
-  }
-
-  isOnRightmostColumnAt(idx: number): boolean {
-    const group = this.bounds[idx];
-    if (group === undefined) return false;
-    return group.col + group.colSpan >= main.playfieldCellsPerAxis;
-  }
-
   private static computeBounds(tiles: ReadonlyArray<DomainInventoryTile>): ReadonlyArray<Bounds> {
     const cells = Outline.findCellsFor(tiles);
     if (cells.size === 0) return [];
@@ -84,5 +55,34 @@ export default class Outline {
       }
     }
     return { col: minCol, colSpan: maxCol - minCol + 1, row: minRow, rowSpan: maxRow - minRow + 1 };
+  }
+
+  isAnchorAt(idx: number): boolean {
+    if (main.currentTurnScore === undefined) return false;
+    let minRow = Infinity;
+    let anchorIdx = -1;
+    let rightmostEdge = -Infinity;
+    for (let cursor = 0; cursor < this.bounds.length; cursor++) {
+      const group = this.bounds[cursor];
+      if (group === undefined) throw new ReferenceError(`expected bounds at index ${String(cursor)}, got undefined`);
+      if (group.row < minRow) {
+        minRow = group.row;
+        anchorIdx = cursor;
+        rightmostEdge = group.col + group.colSpan;
+      } else if (group.row === minRow) {
+        const edge = group.col + group.colSpan;
+        if (edge > rightmostEdge) {
+          anchorIdx = cursor;
+          rightmostEdge = edge;
+        }
+      }
+    }
+    return idx === anchorIdx;
+  }
+
+  isOnRightmostColumnAt(idx: number): boolean {
+    const group = this.bounds[idx];
+    if (group === undefined) return false;
+    return group.col + group.colSpan >= main.playfieldCellsPerAxis;
   }
 }

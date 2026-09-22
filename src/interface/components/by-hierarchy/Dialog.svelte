@@ -69,13 +69,13 @@
       bind:this={cancelButton}
       accent={dialog.isDestructive ? Accent.Primary : Accent.Secondary}
       text={t('cancel')}
-      ontrigger={() => emitResponse(DialogStatus.Canceled)}
+      ontrigger={() => { emitResponse(DialogStatus.Canceled); }}
     />
     <AppButton
       bind:this={confirmButton}
       accent={dialog.isDestructive ? Accent.Secondary : Accent.Primary}
       text={t('confirm')}
-      ontrigger={() => emitResponse(DialogStatus.Confirmed)}
+      ontrigger={() => { emitResponse(DialogStatus.Confirmed); }}
     />
   </div>
 </dialog>

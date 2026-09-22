@@ -11,19 +11,9 @@ type Queries = App['queries'];
 // Wraps the framework-agnostic App with version-counter reactivity: reads touch a counter so they
 // re-run when a write bumps it. Two counters keep playfield-only changes from re-deriving everything.
 class Main {
-  private app = $state<App | null>(null);
-
   bootError = $state<null | string>(null);
 
   bootProgress = $state(0);
-
-  private stateVersion = $state(0);
-
-  private playfieldVersion = $state(0);
-
-  private lastDrainedEventCount = 0;
-
-  private pendingValidationId = 0;
 
   get allActionsAreDisabled(): boolean {
     return !this.readState(queries => queries.currentPlayerIsUser);
@@ -104,6 +94,16 @@ class Main {
   get userTiles(): ReadonlyArray<DomainInventoryTile> {
     return this.readState(queries => queries.userTiles);
   }
+
+  private app = $state<App | null>(null);
+
+  private lastDrainedEventCount = 0;
+
+  private pendingValidationId = 0;
+
+  private playfieldVersion = $state(0);
+
+  private stateVersion = $state(0);
 
   areTilesSame(firstTile: DomainInventoryTile, secondTile: DomainInventoryTile): boolean {
     return this.requireApp().queries.areTilesSame(firstTile, secondTile);

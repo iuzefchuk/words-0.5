@@ -20,7 +20,7 @@ export enum Key {
 }
 
 export enum TransitionDuration {
-  Long = 500,
-  Normal = 250,
   Short = 125,
+  Normal = 250,
+  Long = 500,
 }

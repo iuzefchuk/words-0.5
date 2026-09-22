@@ -1,7 +1,7 @@
 <script lang="ts">
   import main from '@/interface/runes/main.svelte.ts';
   const ADDED_PERCENTAGE = 25;
-  const displayedPercentage = $derived(main.bootProgress ? main.bootProgress + ADDED_PERCENTAGE : 0);
+  const displayedPercentage = $derived(main.bootProgress > 0 ? main.bootProgress + ADDED_PERCENTAGE : 0);
 </script>
 
 <progress

@@ -19,15 +19,15 @@ type DialogTriggerParams = {
 class Dialog {
   html = $state<null | string>(null);
 
-  title = $state<null | string>(null);
-
   isDestructive = $state(false);
 
-  private pendingResolve: ((result: DialogResult) => void) | null = null;
+  title = $state<null | string>(null);
 
   get isOpen(): boolean {
     return this.html !== null;
   }
+
+  private pendingResolve: ((result: DialogResult) => void) | null = null;
 
   resolve({ status }: { status: DialogStatus }): void {
     if (this.pendingResolve !== null) {

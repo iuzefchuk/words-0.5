@@ -1,8 +1,16 @@
 import { svelte } from '@sveltejs/vite-plugin-svelte';
-import { defineConfig } from 'vite';
-import { DIRECTORY } from './meta/constants.ts';
-import EnvVariableFinder from './meta/EnvVariableFinder.ts';
+import { defineConfig, loadEnv } from 'vite';
 import type { Plugin, UserConfig } from 'vite';
+
+const ROOT = process.cwd();
+
+const resolvePort = (mode: string): number => {
+  const value = loadEnv(mode, ROOT, '')['VITE_PORT'];
+  if (value === undefined) throw new Error('VITE_PORT must be defined.');
+  const port = Number(value);
+  if (!Number.isInteger(port) || port <= 0) throw new Error('VITE_PORT is invalid.');
+  return port;
+};
 
 const crossOriginIsolation = (): Plugin => {
   const setHeaders = (res: { setHeader(name: string, value: string): void }): void => {
@@ -31,25 +39,22 @@ export default defineConfig(({ mode }) => {
     build: {
       chunkSizeWarningLimit: 1_000,
       emptyOutDir: true,
-      outDir: DIRECTORY.dist,
+      outDir: `${ROOT}/dist`,
       target: 'esnext',
     },
-    // Keep Vite's dep cache at the project root, not under the src/interface root.
-    cacheDir: `${DIRECTORY.root}/node_modules/.vite`,
-    envDir: DIRECTORY.root,
-    plugins: [svelte({ configFile: `${DIRECTORY.root}/svelte.config.ts` }), crossOriginIsolation()],
-    publicDir: DIRECTORY.public,
+    cacheDir: `${ROOT}/node_modules/.vite`,
+    envDir: ROOT,
+    plugins: [svelte({ configFile: `${ROOT}/svelte.config.ts` }), crossOriginIsolation()],
+    publicDir: `${ROOT}/public`,
     resolve: {
+      // Explicit alias: Vite 8.3's resolver no longer honours the extension-scoped
+      // ("@/*.svelte", "@/*.css") path patterns in tsconfig.json.
+      alias: { '@': `${ROOT}/src` },
       tsconfigPaths: true,
     },
-    root: DIRECTORY.srcInterface,
+    root: `${ROOT}/src/interface`,
     server: {
-      port: EnvVariableFinder.getFromConfig('VITE_PORT', {
-        envDir: DIRECTORY.root,
-        mode,
-        parse: value => Number(value),
-        validate: value => !Number.isInteger(value) || value <= 0,
-      }),
+      port: resolvePort(mode),
       strictPort: true,
     },
     worker: {

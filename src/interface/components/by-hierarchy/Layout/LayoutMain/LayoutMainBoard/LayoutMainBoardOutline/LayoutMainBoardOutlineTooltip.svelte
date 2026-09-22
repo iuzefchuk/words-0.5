@@ -1,7 +1,7 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition';
   import { TransitionDuration } from '@/interface/enums.ts';
   import main from '@/interface/runes/main.svelte.ts';
-  import { fade } from 'svelte/transition';
 
   type Props = { isFlipped?: boolean };
 

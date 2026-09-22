@@ -60,17 +60,17 @@ export default class Match {
     return false;
   }
 
+  get nextPlayer(): MatchPlayer {
+    if (this.history.length === 0) return Match.FIRST_PLAYER;
+    return this.currentPlayer === MatchPlayer.User ? MatchPlayer.Opponent : MatchPlayer.User;
+  }
+
   get playfieldCells(): ReadonlyArray<PlayfieldCell> {
     return this.playfield.cells;
   }
 
   get playfieldCellsPerAxis(): number {
     return this.playfield.cellsPerAxis;
-  }
-
-  get nextPlayer(): MatchPlayer {
-    if (this.history.length === 0) return Match.FIRST_PLAYER;
-    return this.currentPlayer === MatchPlayer.User ? MatchPlayer.Opponent : MatchPlayer.User;
   }
 
   get previousTurnTiles(): ReadonlyArray<InventoryTile> | undefined {
@@ -232,10 +232,6 @@ export default class Match {
     this.currentTurn.addReference(linkId);
   }
 
-  resolvePlacement(tiles: ReadonlyArray<InventoryTile>): ReadonlyArray<TurnLink> {
-    return this.playfield.resolvePlacement(tiles);
-  }
-
   recordCompletion(winner: MatchPlayer, loser: MatchPlayer): void {
     this.ensureMutability();
     this.recordResult(winner, MatchResult.Win);
@@ -261,6 +257,10 @@ export default class Match {
       this.playfield.undoPlaceTile(this.playfield.getLinkTile(linkId));
     }
     this.replaceTurn(this.currentTurn.player);
+  }
+
+  resolvePlacement(tiles: ReadonlyArray<InventoryTile>): ReadonlyArray<TurnLink> {
+    return this.playfield.resolvePlacement(tiles);
   }
 
   saveCurrentTurn(player: MatchPlayer): void {

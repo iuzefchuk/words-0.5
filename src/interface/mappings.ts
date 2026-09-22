@@ -1,7 +1,7 @@
 import { DomainMatchPlayer, DomainPlayfieldBonus, DomainTimelineEventType } from '@/app/enums/index.ts';
 import { Accent } from '@/interface/enums.ts';
-import { Sound } from '@/interface/services/SoundPlayer.ts';
 import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
+import { Sound } from '@/interface/services/SoundPlayer.ts';
 import type { DomainTimelineEvent } from '@/app/types/index.ts';
 
 export function getBonusAccent(bonus: DomainPlayfieldBonus): Accent {

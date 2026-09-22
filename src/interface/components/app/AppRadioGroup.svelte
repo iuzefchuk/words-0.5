@@ -13,7 +13,7 @@
   const { legend, modelValue, onchange, options }: Props = $props();
 
   const inputName = $props.id();
-  let labelEls = $state<Array<HTMLLabelElement | undefined>>([]);
+  const labelEls = $state<Array<HTMLLabelElement | undefined>>([]);
   let indicatorStyle = $state('transform: translateX(0); width: 0;');
   let isMounted = $state(false);
 

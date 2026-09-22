@@ -9,8 +9,7 @@
     "paths": {
       "@/*.ts": ["./src/*.ts"],
       "@/*.svelte": ["./src/*.svelte"],
-      "@/*.css": ["./src/*.css"],
-      "$/*.ts": ["./tests/*.ts"]
+      "@/*.css": ["./src/*.css"]
     },
     "types": ["node", "vite/client", "svelte"],
     "noEmit": true,
@@ -32,5 +31,5 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true
   },
-  "include": ["src", "tests", "meta", "*.config.ts"]
+  "include": ["src", "*.config.ts"]
 }

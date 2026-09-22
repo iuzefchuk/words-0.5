@@ -26,16 +26,16 @@
     onactivate?.();
   }
 
+  function onDoubleClick(event: MouseEvent): void {
+    event.stopPropagation();
+    ondoubleActivate?.();
+  }
+
   function onKeydown(event: KeyboardEvent): void {
     if (event.key !== 'Enter') return;
     event.preventDefault();
     event.stopPropagation();
     onactivate?.();
-  }
-
-  function onDoubleClick(event: MouseEvent): void {
-    event.stopPropagation();
-    ondoubleActivate?.();
   }
 </script>
 

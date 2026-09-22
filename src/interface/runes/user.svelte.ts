@@ -3,8 +3,6 @@ import type { DomainInventoryTile } from '@/app/types/index.ts';
 
 // UI-only tile-rack state. `tiles` is a $state array (deep-proxied → in-place swaps are reactive).
 class User {
-  private _tiles = $state<Array<DomainInventoryTile>>([]);
-
   selectedTile = $state<DomainInventoryTile | null>(null);
 
   get selectedTileIsPlaced(): boolean {
@@ -14,6 +12,8 @@ class User {
   get tiles(): ReadonlyArray<DomainInventoryTile> {
     return this._tiles;
   }
+
+  private _tiles = $state<Array<DomainInventoryTile>>([]);
 
   deselectTile(): void {
     this.selectedTile = null;

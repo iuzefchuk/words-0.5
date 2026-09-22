@@ -1,10 +1,10 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { TransitionDuration } from '@/interface/enums.ts';
   import BootAlert from '@/interface/components/by-hierarchy/BootAlert.svelte';
+  import BootProgress from '@/interface/components/by-hierarchy/BootProgress.svelte';
   import Dialog from '@/interface/components/by-hierarchy/Dialog.svelte';
   import Layout from '@/interface/components/by-hierarchy/Layout/Layout.svelte';
-  import BootProgress from '@/interface/components/by-hierarchy/BootProgress.svelte';
+  import { TransitionDuration } from '@/interface/enums.ts';
   import main from '@/interface/runes/main.svelte.ts';
   import user from '@/interface/runes/user.svelte.ts';
   import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';

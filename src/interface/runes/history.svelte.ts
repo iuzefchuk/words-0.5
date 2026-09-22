@@ -40,7 +40,7 @@ export default class History {
       : TextLocalizer.text('game.event_save_opponent', { score, words: joinedWords });
   }
 
-  private static isEventDisplayed(event: DomainTimelineEvent): boolean {
+  private static isEventDisplayed(this: void, event: DomainTimelineEvent): boolean {
     return event.type === DomainTimelineEventType.TurnPassed || event.type === DomainTimelineEventType.TurnSaved;
   }
 }

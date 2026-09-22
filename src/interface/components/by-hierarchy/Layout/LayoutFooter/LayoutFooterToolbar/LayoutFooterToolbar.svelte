@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { fly } from 'svelte/transition';
   import AppTile from '@/interface/components/app/AppTile.svelte';
   import LayoutFooterToolbarStats from '@/interface/components/by-hierarchy/Layout/LayoutFooter/LayoutFooterToolbar/LayoutFooterToolbarStats.svelte';
   import { Accent, TransitionDuration } from '@/interface/enums.ts';
@@ -6,7 +7,6 @@
   import main from '@/interface/runes/main.svelte.ts';
   import user from '@/interface/runes/user.svelte.ts';
   import type { DomainInventoryTile } from '@/app/types/index.ts';
-  import { fly } from 'svelte/transition';
 
   const paddedTiles = $derived(
     Array.from({ length: main.tilesPerPlayer }, (_, idx): DomainInventoryTile | null => user.tiles[idx] ?? null),

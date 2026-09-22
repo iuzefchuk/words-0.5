@@ -1,9 +1,9 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import animateNumber from '@/interface/actions/AnimateNumber.ts';
+  import { TransitionDuration } from '@/interface/enums.ts';
   import main from '@/interface/runes/main.svelte.ts';
   import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
-  import { TransitionDuration } from '@/interface/enums.ts';
 
   const t = TextLocalizer.namespace('game');
 </script>

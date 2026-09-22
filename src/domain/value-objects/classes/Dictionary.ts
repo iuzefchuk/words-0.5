@@ -90,7 +90,7 @@ export default class Dictionary implements DictionaryGraph {
   }
 
   isNodeFinal(node: DictionaryNode): boolean {
-    return (this.view.getUint32(node as number, true) & Dictionary.FINAL_BIT) !== 0;
+    return (this.view.getUint32(node, true) & Dictionary.FINAL_BIT) !== 0;
   }
 
   private readPointer(offset: number): number {

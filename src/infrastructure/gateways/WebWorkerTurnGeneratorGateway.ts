@@ -19,7 +19,7 @@ type TurnGenerationWorkerConstructor = new () => Worker;
 export default class WebWorkerTurnGeneratorGateway {
   private static dictionaryBuffer: DictionaryBuffer | null = null;
 
-  private static initPromise: Promise<void> | null = null;
+  private static initPromise: null | Promise<void> = null;
 
   private static pool: Array<Worker> = [];
 

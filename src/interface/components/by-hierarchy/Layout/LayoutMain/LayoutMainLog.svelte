@@ -1,8 +1,8 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { fly } from 'svelte/transition';
-  import History from '@/interface/runes/history.svelte.ts';
   import { TransitionDuration } from '@/interface/enums.ts';
+  import History from '@/interface/runes/history.svelte.ts';
 
   const log = new History();
 </script>
