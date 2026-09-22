@@ -7,7 +7,6 @@
 @import url('./tokens/transition-timing-function.css');
 @import url('./tokens/z-index.css');
 @import url('./keyframes.css');
-@import url('./app.css');
 @import url('./reset.css');
 
 html {

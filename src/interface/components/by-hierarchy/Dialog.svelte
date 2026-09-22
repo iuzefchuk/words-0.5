@@ -62,7 +62,7 @@
 >
   <div class="dialog__content">
     {#if dialog.title !== null}<h2 id={ID_TITLE}>{dialog.title}</h2>{/if}
-    <div id={ID_HTML} class="app__secondary">{@html dialog.html ?? ''}</div>
+    <div id={ID_HTML} class="dialog__html">{@html dialog.html ?? ''}</div>
   </div>
   <div class="dialog__footer">
     <AppButton
@@ -136,6 +136,13 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-s);
+  }
+
+  .dialog__html {
+    font-size: var(--font-size-secondary);
+    font-weight: var(--font-weight-secondary);
+    color: var(--color-secondary);
+    background: var(--bg-secondary);
   }
 
   .dialog__footer {

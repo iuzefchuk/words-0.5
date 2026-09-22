@@ -58,7 +58,7 @@
   aria-label="Tile rack"
   tabindex="-1"
 >
-  <ul class="toolbar__grid app__grid">
+  <ul class="toolbar__grid">
     {#each paddedTiles as tile, idx (idx)}
       <li class="toolbar__cell">
         <button
@@ -104,10 +104,16 @@
   }
 
   .toolbar__grid {
-    width: 100%;
+    display: grid;
     grid-template-rows: repeat(1, auto);
     grid-template-columns: repeat(8, minmax(0, 1fr));
     gap: calc(var(--gap-grid) * 2);
+    width: 100%;
+
+    > li {
+      display: grid;
+      aspect-ratio: 1 / 1;
+    }
   }
 
   .toolbar__cell {

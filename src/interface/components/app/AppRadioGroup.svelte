@@ -38,7 +38,7 @@
 </script>
 
 <fieldset class="radio-group">
-  <legend class="radio-group__legend app__secondary">{legend}</legend>
+  <legend class="radio-group__legend">{legend}</legend>
   <div class="radio-group__option-group">
     {#if isMounted}
       <div class="radio-group__indicator" style={indicatorStyle}></div>
@@ -67,6 +67,10 @@
   .radio-group__legend {
     margin-block-end: var(--space-s);
     margin-left: var(--space-3xs);
+    font-size: var(--font-size-secondary);
+    font-weight: var(--font-weight-secondary);
+    color: var(--color-secondary);
+    background: var(--bg-secondary);
   }
 
   .radio-group__option-group {

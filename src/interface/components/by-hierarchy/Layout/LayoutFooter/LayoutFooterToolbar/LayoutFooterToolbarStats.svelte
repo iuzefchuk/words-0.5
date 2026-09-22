@@ -9,7 +9,7 @@
 </script>
 
 {#if main.tilesRemaining > 0}
-  <p role="note" class="stats app__secondary" transition:fade|global={{ duration: TransitionDuration.Short }}>
+  <p role="note" class="stats" transition:fade|global={{ duration: TransitionDuration.Short }}>
     <span use:animateNumber={{ number: main.tilesRemaining }} class="stats__number"></span>
     <span>{t('unassigned_count')}</span>
   </p>
@@ -19,6 +19,10 @@
   .stats {
     display: flex;
     gap: var(--space-2xs);
+    font-size: var(--font-size-secondary);
+    font-weight: var(--font-weight-secondary);
+    color: var(--color-secondary);
     user-select: none;
+    background: var(--bg-secondary);
   }
 </style>

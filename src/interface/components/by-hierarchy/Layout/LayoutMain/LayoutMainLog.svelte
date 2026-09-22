@@ -9,7 +9,7 @@
 
 {#if log.history.length > 0}
   <aside class="log" role="log">
-    <ul class="log__list app__secondary">
+    <ul class="log__list">
       {#each log.history as entry (entry.key)}
         <li
           transition:fly|global={{ duration: TransitionDuration.Normal, x: '-1rem' }}
@@ -37,7 +37,11 @@
       height: var(--height);
       padding-right: var(--padding-primary);
       overflow: hidden auto;
+      font-size: var(--font-size-secondary);
+      font-weight: var(--font-weight-secondary);
+      color: var(--color-secondary);
       text-align: right;
+      background: var(--bg-secondary);
       border-right: 1px solid currentcolor;
 
       :global(em) {

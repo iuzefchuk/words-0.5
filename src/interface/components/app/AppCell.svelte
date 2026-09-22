@@ -72,7 +72,6 @@
 <style>
   .cell {
     display: grid;
-    grid-area: auto;
     grid-template: minmax(0, 1fr) / minmax(0, 1fr);
     max-width: var(--space-4xl);
     aspect-ratio: 1 / 1;
