@@ -1,3 +1,4 @@
+import { prefersReducedMotion } from 'svelte/motion';
 import { TransitionDuration } from '@/interface/enums.ts';
 import TextLocalizer from '@/interface/services/TextLocalizer.ts';
 import type { ActionReturn } from 'svelte/action';
@@ -16,17 +17,20 @@ export default function animateNumber(node: HTMLElement, params: Params): Action
     node.textContent = TextLocalizer.number(value);
   }
 
-  function stop(): void {
+  function destroy(): void {
     clearTimeout(timeoutId);
     if (frameId !== undefined) cancelAnimationFrame(frameId);
   }
 
   function animate({ animationDelay = 0, animationDuration = TransitionDuration.Long, number: to }: Params): void {
-    stop();
+    destroy();
+    if (prefersReducedMotion.current) {
+      render(to);
+      return;
+    }
     const from = displayed ?? 0;
     render(from);
     if (from === to) return;
-
     let startTime: number | undefined;
 
     function frame(now: number): void {
@@ -56,5 +60,5 @@ export default function animateNumber(node: HTMLElement, params: Params): Action
 
   animate(params);
 
-  return { destroy: stop, update };
+  return { destroy, update };
 }

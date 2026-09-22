@@ -10,8 +10,7 @@
 
 {#if main.tilesRemaining > 0}
   <p role="note" class="stats app__secondary" transition:fade|global={{ duration: TransitionDuration.Short }}>
-    <span class="app__hidden">{main.tilesRemaining}</span>
-    <span use:animateNumber={{ number: main.tilesRemaining }} aria-hidden="true" class="stats__number"></span>
+    <span use:animateNumber={{ number: main.tilesRemaining }} class="stats__number"></span>
     <span>{t('unassigned_count')}</span>
   </p>
 {/if}

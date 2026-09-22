@@ -35,7 +35,6 @@
     role="presentation"
     onclick={() => { user.deselectTile(); }}
   >
-    <h1 class="app__hidden">Words</h1>
     <LayoutHeader />
     <LayoutMain />
     <LayoutFooter />

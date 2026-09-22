@@ -16,8 +16,7 @@
     <div class="stats__row">
       <dt class="stats__title">{player.name}:</dt>
       <dd class="stats__desc">
-        <span class="app__hidden">{player.score}</span>
-        <span use:animateNumber={{ number: player.score }} aria-hidden="true"></span>
+        <span use:animateNumber={{ number: player.score }}></span>
       </dd>
     </div>
   {/each}

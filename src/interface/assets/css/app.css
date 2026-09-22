@@ -1,13 +1,3 @@
-.app__hidden {
-  position: absolute;
-  width: var(--space-6xs);
-  height: var(--space-6xs);
-  margin: calc(var(--space-6xs) * -1);
-  overflow: hidden;
-  white-space: nowrap;
-  clip-path: inset(50%);
-}
-
 .app__secondary {
   font-size: var(--font-size-secondary);
   font-weight: var(--font-weight-secondary);
