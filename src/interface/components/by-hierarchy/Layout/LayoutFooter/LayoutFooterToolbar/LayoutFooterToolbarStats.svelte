@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
-  import animateNumber from '@/interface/actions/AnimateNumber.ts';
+  import animateNumber from '@/interface/actions/animateNumber.ts';
   import { TransitionDuration } from '@/interface/enums.ts';
   import main from '@/interface/runes/main.svelte.ts';
   import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';

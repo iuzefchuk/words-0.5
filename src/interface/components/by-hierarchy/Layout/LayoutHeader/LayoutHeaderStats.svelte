@@ -1,5 +1,5 @@
 <script lang="ts">
-  import animateNumber from '@/interface/actions/AnimateNumber.ts';
+  import animateNumber from '@/interface/actions/animateNumber.ts';
   import main from '@/interface/runes/main.svelte.ts';
   import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
 
