@@ -1,11 +1,20 @@
 <script lang="ts">
   import { DomainMatchDifficulty, DomainMatchType } from '@/app/enums/index.ts';
   import AppRadioGroup from '@/interface/components/app/AppRadioGroup.svelte';
-  import { handleChangeMatchDifficulty, handleChangeMatchType } from '@/interface/handlers/setup.ts';
   import main from '@/interface/runes/main.svelte.ts';
+  import user from '@/interface/runes/user.svelte.ts';
   import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
 
   const t = TextLocalizer.namespace('settings');
+
+  function handleChangeMatchDifficulty(matchDifficulty: DomainMatchDifficulty): void {
+    main.changeMatchDifficulty(matchDifficulty);
+  }
+
+  function handleChangeMatchType(matchType: DomainMatchType): void {
+    main.changeMatchType(matchType);
+    user.initialize();
+  }
 </script>
 
 <form class="setup" aria-label="Match setup" onsubmit={event => { event.preventDefault(); }}>

@@ -3,10 +3,9 @@
   import AppCell from '@/interface/components/app/AppCell.svelte';
   import AppTile from '@/interface/components/app/AppTile.svelte';
   import { Accent } from '@/interface/enums.ts';
-  import { handleDoublePressGridTile, handlePressGridCell, handlePressGridTile } from '@/interface/handlers/grid.ts';
   import main from '@/interface/runes/main.svelte.ts';
   import user from '@/interface/runes/user.svelte.ts';
-  import type { DomainPlayfieldCell } from '@/app/types/index.ts';
+  import type { DomainInventoryTile, DomainPlayfieldCell } from '@/app/types/index.ts';
 
   type Props = { cell: DomainPlayfieldCell; index: number };
   const { cell, index }: Props = $props();
@@ -32,6 +31,48 @@
 
   function doubleActivate(): void {
     if (tile !== undefined) handleDoublePressGridTile(tile);
+  }
+
+  function handleDoublePressGridTile(tile: DomainInventoryTile): void {
+    if (!user.isTileInToolbar(tile)) return;
+    user.deselectTile();
+    main.undoPlaceTile(tile);
+  }
+
+  function handlePressGridCell(cell: DomainPlayfieldCell): void {
+    const { selectedTile } = user;
+    if (selectedTile === null) return;
+    if (main.findTileOnCell(cell) !== undefined) return;
+    if (user.selectedTileIsPlaced) main.undoPlaceTile(selectedTile);
+    main.placeTile({ cell, tile: selectedTile });
+    user.deselectTile();
+  }
+
+  function handlePressGridTile(tile: DomainInventoryTile): void {
+    if (!user.isTileInToolbar(tile)) return;
+    if (user.isTileSelected(tile)) {
+      user.deselectTile();
+      return;
+    }
+    const { selectedTile } = user;
+    if (selectedTile === null) {
+      user.selectTile(tile);
+      return;
+    }
+    const targetCell = main.findCellWithTile(tile);
+    if (targetCell === undefined) return;
+    const selectedCell = main.findCellWithTile(selectedTile);
+    if (selectedCell !== undefined) {
+      main.undoPlaceTile(selectedTile);
+      main.undoPlaceTile(tile);
+      main.placeTile({ cell: selectedCell, tile });
+      main.placeTile({ cell: targetCell, tile: selectedTile });
+    } else {
+      main.undoPlaceTile(tile);
+      main.placeTile({ cell: targetCell, tile: selectedTile });
+      user.switchTiles(selectedTile, tile);
+    }
+    user.deselectTile();
   }
 </script>
 
