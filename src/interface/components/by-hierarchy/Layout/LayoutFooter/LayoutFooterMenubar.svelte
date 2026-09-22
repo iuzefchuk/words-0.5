@@ -6,7 +6,7 @@
   import dialog from '@/interface/runes/dialog.svelte.ts';
   import main from '@/interface/runes/main.svelte.ts';
   import user from '@/interface/runes/user.svelte.ts';
-  import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
+  import TextLocalizer from '@/interface/services/TextLocalizer.ts';
   import type { DialogResult } from '@/interface/runes/dialog.svelte.ts';
 
   const RESIGN_DELAY_MS = 500;

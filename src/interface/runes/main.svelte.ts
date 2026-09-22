@@ -1,5 +1,5 @@
 import createAppRuntime from '@/index.ts';
-import { getEventSound } from '@/interface/mappings.ts';
+import getEventSound from '@/interface/maps/getEventSound.ts';
 import SoundPlayer from '@/interface/services/SoundPlayer.ts';
 import type App from '@/app/App.ts';
 import type { DomainInventoryLetter, DomainPlayfieldBonus } from '@/app/enums/index.ts';

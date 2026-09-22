@@ -1,7 +1,7 @@
 <script lang="ts">
   import animateNumber from '@/interface/actions/animateNumber.ts';
   import main from '@/interface/runes/main.svelte.ts';
-  import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
+  import TextLocalizer from '@/interface/services/TextLocalizer.ts';
 
   const t = TextLocalizer.namespace('game');
 

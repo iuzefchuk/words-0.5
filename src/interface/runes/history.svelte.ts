@@ -1,6 +1,6 @@
 import { DomainMatchPlayer, DomainTimelineEventType } from '@/app/enums/index.ts';
 import main from '@/interface/runes/main.svelte.ts';
-import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
+import TextLocalizer from '@/interface/services/TextLocalizer.ts';
 import type { DomainTimelineEvent } from '@/app/types/index.ts';
 
 export type HistoryEntry = { html: string; key: number };

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Accent } from '@/interface/enums.ts';
-  import { getBonusAccent, getBonusName } from '@/interface/mappings.ts';
+  import getBonusAccent from '@/interface/maps/getBonusAccent.ts';
+  import getBonusName from '@/interface/maps/getBonusName.ts';
   import type { DomainPlayfieldBonus } from '@/app/enums/index.ts';
   import type { Snippet } from 'svelte';
 

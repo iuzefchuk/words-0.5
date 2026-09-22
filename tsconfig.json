@@ -9,7 +9,8 @@
     "paths": {
       "@/*.ts": ["./src/*.ts"],
       "@/*.svelte": ["./src/*.svelte"],
-      "@/*.css": ["./src/*.css"]
+      "@/*.css": ["./src/*.css"],
+      "@/*.json": ["./src/*.json"]
     },
     "types": ["node", "vite/client", "svelte"],
     "noEmit": true,

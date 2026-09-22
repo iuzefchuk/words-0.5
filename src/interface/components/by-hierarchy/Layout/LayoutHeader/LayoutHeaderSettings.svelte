@@ -3,7 +3,7 @@
   import AppRadioGroup from '@/interface/components/app/AppRadioGroup.svelte';
   import main from '@/interface/runes/main.svelte.ts';
   import user from '@/interface/runes/user.svelte.ts';
-  import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
+  import TextLocalizer from '@/interface/services/TextLocalizer.ts';
 
   const t = TextLocalizer.namespace('settings');
 

@@ -1,6 +1,6 @@
-import dialog from './en/dialog.json';
-import game from './en/game.json';
-import settings from './en/settings.json';
+import dialog from '@/interface/assets/json/en_dialog.json';
+import game from '@/interface/assets/json/en_game.json';
+import settings from '@/interface/assets/json/en_settings.json';
 
 type Namespace = Record<string, string>;
 

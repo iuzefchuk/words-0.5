@@ -1,43 +1,60 @@
-import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
-import type { Action } from 'svelte/action';
+import { TransitionDuration } from '@/interface/enums.ts';
+import TextLocalizer from '@/interface/services/TextLocalizer.ts';
+import type { ActionReturn } from 'svelte/action';
 
 export type Params = { animationDelay?: number; animationDuration?: number; number: number };
 
-const animateNumber: Action<HTMLElement, Params> = (node, initialParams) => {
+export default function animateNumber(node: HTMLElement, params: Params): ActionReturn<Params> {
+  let displayed: number | undefined;
   let frameId: number | undefined;
-  let value = initialParams.number;
+  let target = params.number;
+  let timeoutId: Timeout | undefined;
 
-  const animate = (from: number, params: Params): void => {
+  function render(value: number): void {
+    if (value === displayed) return;
+    displayed = value;
+    node.textContent = TextLocalizer.number(value);
+  }
+
+  function stop(): void {
+    clearTimeout(timeoutId);
     if (frameId !== undefined) cancelAnimationFrame(frameId);
-    const startTime = performance.now() + (params.animationDelay ?? 0);
-    const duration = params.animationDuration ?? 500;
-    const target = params.number;
-    const frame = (now: number): void => {
-      if (now < startTime) {
-        frameId = requestAnimationFrame(frame);
+  }
+
+  function animate({ animationDelay = 0, animationDuration = TransitionDuration.Long, number: to }: Params): void {
+    stop();
+    const from = displayed ?? 0;
+    render(from);
+    if (from === to) return;
+
+    let startTime: number | undefined;
+
+    function frame(now: number): void {
+      startTime ??= now;
+      const elapsed = now - startTime;
+      if (elapsed >= animationDuration) {
+        render(to);
         return;
       }
-      const progress = Math.min((now - startTime) / duration, 1);
-      const unfinished = progress < 1;
-      const next = unfinished ? Math.floor(from + (target - from) * progress) : target;
-      node.textContent = TextLocalizer.number(next);
-      if (unfinished) frameId = requestAnimationFrame(frame);
-    };
-    frameId = requestAnimationFrame(frame);
-  };
+      render(Math.round(from + (to - from) * (elapsed / animationDuration)));
+      frameId = requestAnimationFrame(frame);
+    }
 
-  animate(0, initialParams);
+    function start(): void {
+      frameId = requestAnimationFrame(frame);
+    }
 
-  return {
-    destroy: () => {
-      if (frameId !== undefined) cancelAnimationFrame(frameId);
-    },
-    update: params => {
-      if (params.number === value) return;
-      animate(value, params);
-      value = params.number;
-    },
-  };
-};
+    if (animationDelay > 0) timeoutId = setTimeout(start, animationDelay);
+    else start();
+  }
 
-export default animateNumber;
+  function update(next: Params): void {
+    if (next.number === target) return;
+    target = next.number;
+    animate(next);
+  }
+
+  animate(params);
+
+  return { destroy: stop, update };
+}

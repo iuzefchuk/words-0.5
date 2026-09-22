@@ -3,7 +3,7 @@
   import AppButton from '@/interface/components/app/AppButton.svelte';
   import { Accent } from '@/interface/enums.ts';
   import dialog, { DialogStatus } from '@/interface/runes/dialog.svelte.ts';
-  import TextLocalizer from '@/interface/services/locales/TextLocalizer.ts';
+  import TextLocalizer from '@/interface/services/TextLocalizer.ts';
 
   const ID_TITLE = 'title';
   const ID_HTML = 'html';
