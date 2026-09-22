@@ -1,0 +1,62 @@
+<script lang="ts">
+  import { onMount, tick } from 'svelte';
+  import LayoutFooter from '@/client/components/by-hierarchy/Layout/LayoutFooter/LayoutFooter.svelte';
+  import LayoutHeader from '@/client/components/by-hierarchy/Layout/LayoutHeader/LayoutHeader.svelte';
+  import LayoutMain from '@/client/components/by-hierarchy/Layout/LayoutMain/LayoutMain.svelte';
+  import { Key } from '@/client/enums.ts';
+  import dialog from '@/client/runes/dialog.svelte.ts';
+  import main from '@/client/runes/main.svelte.ts';
+  import user from '@/client/runes/user.svelte.ts';
+
+  let isMounted = $state(false);
+
+  function onKeydown(event: KeyboardEvent): void {
+    if ((event.key as Key) !== Key.Escape) return;
+    if (dialog.isOpen) return;
+    user.deselectTile();
+  }
+
+  onMount(() => {
+    window.addEventListener('keydown', onKeydown);
+    void tick().then(() => {
+      isMounted = true;
+    });
+    return () => {
+      window.removeEventListener('keydown', onKeydown);
+    };
+  });
+</script>
+
+{#if isMounted}
+  <div
+    class="layout"
+    class:layout--inactive={main.matchIsFinished}
+    style:--grid-items-per-axis={main.playfieldCellsPerAxis}
+    role="presentation"
+    onclick={() => { user.deselectTile(); }}
+  >
+    <LayoutHeader />
+    <LayoutMain />
+    <LayoutFooter />
+  </div>
+{/if}
+
+<style>
+  .layout {
+    display: grid;
+    grid-template-rows: 1fr auto 1fr;
+    gap: var(--space-s);
+    place-items: center center;
+    width: 100%;
+    height: 100vh;
+    min-height: 100vh;
+    max-height: 100vh;
+    transition-timing-function: var(--transition-timing-function);
+    transition-duration: var(--transition-duration-normal);
+    transition-property: opacity;
+  }
+
+  .layout--inactive {
+    filter: blur(var(--space-2xs));
+  }
+</style>

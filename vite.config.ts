@@ -45,12 +45,12 @@ export default defineConfig(({ mode }) => {
     cacheDir: `${ROOT}/node_modules/.vite`,
     envDir: ROOT,
     plugins: [svelte({ configFile: `${ROOT}/svelte.config.ts` }), crossOriginIsolation()],
-    publicDir: `${ROOT}/public`,
+    publicDir: `${ROOT}/src/client/public`,
     resolve: {
       alias: { '@': `${ROOT}/src` },
       tsconfigPaths: true,
     },
-    root: `${ROOT}/src/interface`,
+    root: `${ROOT}/src/client`,
     server: {
       port: resolvePort(mode),
       strictPort: true,

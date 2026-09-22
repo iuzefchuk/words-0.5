@@ -1,6 +1,6 @@
-import App from '@/app/App.ts';
-import AppDependenciesFactory from '@/infrastructure/AppDependenciesFactory.ts';
-import type { AppBootProgressPublisher } from '@/app/types/publishers.ts';
+import App from '@/server/app/App.ts';
+import AppDependenciesFactory from '@/server/infrastructure/AppDependenciesFactory.ts';
+import type { AppBootProgressPublisher } from '@/server/app/types/publishers.ts';
 
 export default function createAppRuntime(): {
   bootProgressPublisher: Pick<AppBootProgressPublisher, 'subscribe'>;

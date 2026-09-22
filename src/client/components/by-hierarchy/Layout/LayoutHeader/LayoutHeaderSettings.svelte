@@ -1,0 +1,48 @@
+<script lang="ts">
+  import AppRadioGroup from '@/client/components/app/AppRadioGroup.svelte';
+  import main from '@/client/runes/main.svelte.ts';
+  import user from '@/client/runes/user.svelte.ts';
+  import TextLocalizer from '@/client/services/TextLocalizer.ts';
+  import { DomainMatchDifficulty, DomainMatchType } from '@/server/app/enums/index.ts';
+
+  const t = TextLocalizer.namespace('settings');
+
+  function handleChangeMatchDifficulty(matchDifficulty: DomainMatchDifficulty): void {
+    main.changeMatchDifficulty(matchDifficulty);
+  }
+
+  function handleChangeMatchType(matchType: DomainMatchType): void {
+    main.changeMatchType(matchType);
+    user.initialize();
+  }
+</script>
+
+<form class="setup" aria-label="Match setup" onsubmit={event => { event.preventDefault(); }}>
+  <AppRadioGroup
+    legend={t('difficulty')}
+    modelValue={main.matchDifficulty}
+    options={[
+      { text: t('difficulty_low'), value: DomainMatchDifficulty.Low },
+      { text: t('difficulty_medium'), value: DomainMatchDifficulty.Medium },
+      { text: t('difficulty_high'), value: DomainMatchDifficulty.High },
+    ]}
+    onchange={handleChangeMatchDifficulty}
+  />
+  <AppRadioGroup
+    legend={t('bonuses')}
+    modelValue={main.matchType}
+    options={[
+      { text: t('bonus_distribution_classic'), value: DomainMatchType.Classic },
+      { text: t('bonus_distribution_random'), value: DomainMatchType.Random },
+    ]}
+    onchange={handleChangeMatchType}
+  />
+</form>
+
+<style>
+  .setup {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-l);
+  }
+</style>

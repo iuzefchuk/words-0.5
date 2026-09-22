@@ -8,21 +8,21 @@ import tseslint from 'typescript-eslint';
 const ROOT = process.cwd();
 
 const FILE_GLOB = {
-  app: 'src/app/**',
-  domain: 'src/domain/**',
-  infrastructure: 'src/infrastructure/**',
-  interface: 'src/interface/**',
+  app: 'src/server/app/**',
+  client: 'src/client/**',
+  domain: 'src/server/domain/**',
+  infrastructure: 'src/server/infrastructure/**',
 };
 
 const IMPORT_GLOB = {
-  app: '@/app/**',
-  domain: '@/domain/**',
-  domainEntities: '@/domain/entities/**',
-  domainEvents: '@/domain/events/**',
-  domainPolicies: '@/domain/policies/**',
-  domainServices: '@/domain/services/**',
-  infrastructure: '@/infrastructure/**',
-  interface: '@/interface/**',
+  app: '@/server/app/**',
+  client: '@/client/**',
+  domain: '@/server/domain/**',
+  domainEntities: '@/server/domain/entities/**',
+  domainEvents: '@/server/domain/events/**',
+  domainPolicies: '@/server/domain/policies/**',
+  domainServices: '@/server/domain/services/**',
+  infrastructure: '@/server/infrastructure/**',
 };
 
 export default defineConfig(
@@ -143,8 +143,8 @@ export default defineConfig(
         {
           patterns: [
             {
-              group: [IMPORT_GLOB.app, IMPORT_GLOB.infrastructure, IMPORT_GLOB.interface],
-              message: 'domain must not import from app, infrastructure, or interface',
+              group: [IMPORT_GLOB.app, IMPORT_GLOB.infrastructure, IMPORT_GLOB.client],
+              message: 'domain must not import from app, infrastructure, or client',
             },
           ],
         },
@@ -159,8 +159,8 @@ export default defineConfig(
         {
           patterns: [
             {
-              group: [IMPORT_GLOB.infrastructure, IMPORT_GLOB.interface],
-              message: 'app must not import from infrastructure or interface',
+              group: [IMPORT_GLOB.infrastructure, IMPORT_GLOB.client],
+              message: 'app must not import from infrastructure or client',
             },
             {
               group: [
@@ -184,8 +184,8 @@ export default defineConfig(
         {
           patterns: [
             {
-              group: [IMPORT_GLOB.domain, IMPORT_GLOB.interface],
-              message: 'infrastructure must not import from domain or interface',
+              group: [IMPORT_GLOB.domain, IMPORT_GLOB.client],
+              message: 'infrastructure must not import from domain or client',
             },
           ],
         },
@@ -193,7 +193,7 @@ export default defineConfig(
     },
   },
   {
-    files: [FILE_GLOB.interface],
+    files: [FILE_GLOB.client],
     rules: {
       'no-restricted-imports': [
         'error',
@@ -201,7 +201,7 @@ export default defineConfig(
           patterns: [
             {
               group: [IMPORT_GLOB.domain, IMPORT_GLOB.infrastructure],
-              message: 'interface must not import from domain or infrastructure',
+              message: 'client must not import from domain or infrastructure',
             },
           ],
         },
