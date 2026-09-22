@@ -33,15 +33,14 @@ export async function handleSave(): Promise<void> {
 
 export async function handleTurnEnd(): Promise<void> {
   if (!main.matchIsFinished) return;
-  const { isConfirmed } = await triggerFinishDialog()
+  const { isConfirmed } = await triggerFinishDialog();
   if (!isConfirmed) return;
   main.restartGame();
   user.initialize();
 }
 
-
 async function triggerFinishDialog(): Promise<DialogResult> {
-  const {matchResult} = main;
+  const { matchResult } = main;
   const scoreDiff = main.userScore - main.opponentScore;
   if (matchResult === DomainMatchResult.Undecided) {
     throw new Error(`cannot render match result text: result is ${DomainMatchResult.Undecided}`);

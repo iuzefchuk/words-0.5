@@ -3,7 +3,6 @@ import type { Action } from 'svelte/action';
 
 export type AnimateNumberParams = { animationDelay?: number; animationDuration?: number; number: number };
 
-// Tweens an element's textContent toward a target number across animation frames.
 class AnimateNumber {
   private frameId: number | undefined;
 

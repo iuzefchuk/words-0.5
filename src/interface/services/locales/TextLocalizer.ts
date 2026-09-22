@@ -4,7 +4,6 @@ import settings from './en/settings.json';
 
 type Namespace = Record<string, string>;
 
-// English uses a dot group separator (matches the source's NumberSeparatorType.Dot mapping).
 const NUMBER_LOCALE = 'de-DE';
 
 const NAMESPACES: Record<string, Namespace> = { dialog, game, settings };
@@ -13,7 +12,6 @@ class TextLocalizer {
   private readonly formatter = new Intl.NumberFormat(NUMBER_LOCALE, { maximumFractionDigits: 2 });
 
   load(): Promise<void> {
-    // Every 'en' namespace is statically bundled, so there is nothing to fetch before first paint.
     return Promise.resolve();
   }
 
@@ -23,9 +21,8 @@ class TextLocalizer {
     return namespace;
   }
 
-  // Returns a translator bound to a namespace, so callers use short keys: `const t = namespace('game'); t('player_user')`.
   namespace(file: string): (key: string, props?: Record<string, number | string>) => string {
-    this.loadNamespace(file); // fail fast if the namespace does not exist
+    this.loadNamespace(file);
     return (key, props) => this.text(`${file}.${key}`, props);
   }
 

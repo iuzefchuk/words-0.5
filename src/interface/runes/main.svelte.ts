@@ -8,8 +8,6 @@ import type { Sound } from '@/interface/services/SoundPlayer.ts';
 
 type Queries = App['queries'];
 
-// Wraps the framework-agnostic App with version-counter reactivity: reads touch a counter so they
-// re-run when a write bumps it. Two counters keep playfield-only changes from re-deriving everything.
 class Main {
   bootError = $state<null | string>(null);
 

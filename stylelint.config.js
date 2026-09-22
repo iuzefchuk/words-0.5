@@ -1,13 +1,6 @@
 export default {
-  extends: [
-    'stylelint-config-standard',
-    'stylelint-config-recess-order',
-    'stylelint-config-html/svelte',
-  ],
-  plugins: [
-    'stylelint-no-unsupported-browser-features',
-    'stylelint-declaration-strict-value',
-  ],
+  extends: ['stylelint-config-standard', 'stylelint-config-recess-order', 'stylelint-config-html/svelte'],
+  plugins: ['stylelint-no-unsupported-browser-features', 'stylelint-declaration-strict-value'],
   reportDescriptionlessDisables: true,
   reportInvalidScopeDisables: true,
   reportNeedlessDisables: true,
@@ -26,13 +19,7 @@ export default {
     'plugin/no-unsupported-browser-features': [
       true,
       {
-        ignore: [
-          'css-clip-path', // .sr-only uses clip-path: inset(50%), the modern visually-hidden technique; the only flag-free alternative (`clip`) is itself deprecated
-          'css-marker-pseudo', // ::marker { content: initial } in the CSS reset — no non-pseudo equivalent
-          'css-display-contents', // .grid__row pass-through into the parent grid — rewrite collides with the shared grid utility
-          'css-touch-action', // touch-action: manipulation — only CSS way to kill double-tap-zoom; no fallback
-          'css3-cursors', // cursor: not-allowed on :disabled buttons — only flag-free option (default) drops the affordance
-        ],
+        ignore: ['css-clip-path', 'css-marker-pseudo', 'css-display-contents', 'css-touch-action', 'css3-cursors'],
       },
     ],
     'scale-unlimited/declaration-strict-value': [
@@ -42,8 +29,7 @@ export default {
     'selector-class-pattern': [
       '^[a-z][a-z0-9]*(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$',
       {
-        message:
-          'Expected class to follow BEM: block, block__element, block--modifier, or block__element--modifier',
+        message: 'Expected class to follow BEM: block, block__element, block--modifier, or block__element--modifier',
       },
     ],
     'selector-max-compound-selectors': 4,

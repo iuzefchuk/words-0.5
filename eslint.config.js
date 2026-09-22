@@ -85,18 +85,13 @@ export default defineConfig(
       ],
       '@typescript-eslint/no-extraneous-class': ['error', { allowStaticOnly: true }],
       '@typescript-eslint/no-floating-promises': 'error',
-      // Permits the `this: void` annotation that unbound-method itself recommends for static helpers.
       '@typescript-eslint/no-invalid-void-type': ['error', { allowAsThisParameter: true }],
-      // `void someVersionCounter;` is how the runes layer subscribes a reader to a $state
-      // dependency; the autofix would strip `void` and leave a bare expression statement.
       '@typescript-eslint/no-meaningless-void-operator': 'off',
       '@typescript-eslint/no-misused-promises': 'error',
       '@typescript-eslint/no-non-null-assertion': 'error',
       '@typescript-eslint/no-unnecessary-condition': 'error',
       '@typescript-eslint/prefer-nullish-coalescing': 'error',
       '@typescript-eslint/prefer-readonly': 'error',
-      // Numbers are interpolated into CSS calc() strings in style: directives; strictTypeChecked
-      // otherwise forces String() around every grid coordinate.
       '@typescript-eslint/restrict-template-expressions': ['error', { allowNumber: true }],
       '@typescript-eslint/strict-boolean-expressions': [
         'error',
@@ -111,8 +106,6 @@ export default defineConfig(
       ],
       '@typescript-eslint/switch-exhaustiveness-check': 'error',
       eqeqeq: ['error', 'always'],
-      // `properties: never` because Svelte's own transition API takes `x`/`y` option keys, and `t` is the
-      // conventional TextLocalizer.namespace() binding — neither is a name this codebase gets to choose.
       'id-length': ['error', { exceptions: ['_', 't'], min: 2, properties: 'never' }],
       'lines-between-class-members': ['error', 'always'],
       'max-depth': ['error', 4],
@@ -130,10 +123,7 @@ export default defineConfig(
         },
       ],
       'prefer-const': 'error',
-      // Localized/game strings rendered via {@html} are trusted (mirrors the source's no-v-html: off).
       'svelte/no-at-html-tags': 'off',
-      // Reactivity is managed explicitly via version counters; the tile cache / flood-fill collections
-      // are intentionally plain (non-reactive) Map/Set.
       'svelte/prefer-svelte-reactivity': 'off',
     },
   },

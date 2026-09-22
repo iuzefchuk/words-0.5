@@ -25,7 +25,6 @@ export default class IndexedDbEventRepository implements AppEventsRepository {
 
   async save(events: ReadonlyArray<DomainTimelineEvent>): Promise<void> {
     const start = this.persistedEventsCount;
-    // claim the range synchronously so back-to-back fire-and-forget calls don't double-write.
     this.persistedEventsCount = events.length;
     await IndexedDbGateway.append(IndexedDbEventRepository.DB_NAME, this.eventsSchemaVersion, events.slice(start));
   }

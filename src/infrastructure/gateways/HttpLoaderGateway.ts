@@ -22,8 +22,6 @@ export default class HttpLoaderGateway {
       new Uint8Array(sab).set(new Uint8Array(compressed));
       return sab;
     }
-    // The gzip trailer's last 4 bytes (ISIZE) hold the uncompressed size mod 2^32 — read it to
-    // pre-allocate the SharedArrayBuffer and stream the inflate directly into it.
     const uncompressedSize = new DataView(compressed).getUint32(compressed.byteLength - 4, true);
     const sab = new SharedArrayBuffer(uncompressedSize);
     const target = new Uint8Array(sab);

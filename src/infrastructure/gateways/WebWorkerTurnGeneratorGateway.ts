@@ -44,8 +44,6 @@ export default class WebWorkerTurnGeneratorGateway {
     this.dictionaryBuffer = buffer;
     if (this.pool.length === 0) this.spawn();
     this.initPromise = Promise.all(this.pool.map(worker => this.initWorker(worker, buffer))).then(() => undefined);
-    // Avoid an unhandled rejection in the window before generateBestResult() awaits this promise;
-    // the real failure still surfaces when generateBestResult() awaits the stored promise.
     void this.initPromise.catch(() => undefined);
     return this.initPromise;
   }

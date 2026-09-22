@@ -1,11 +1,6 @@
 import { InventoryLetter as Letter } from '@/domain/value-objects/enums.ts';
 import type { DictionaryGraph, DictionaryNode } from '@/domain/value-objects/types.ts';
 
-// Byte-packed DAWG (see meta/dictionary/build.mjs).
-//   node @ byte offset p:
-//     bytes [p .. p+3]  uint32 LE: bits 0..25 = child bitmap, bit 26 = final flag
-//     bytes [p+4 ..]    childCount x 3-byte LE child byte-offsets, ascending letter
-// A node's identity is its byte offset; the root is at offset 0.
 export default class Dictionary implements DictionaryGraph {
   private static readonly BITMAP_MASK = 0x03ff_ffff;
 

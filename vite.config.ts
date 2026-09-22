@@ -47,8 +47,6 @@ export default defineConfig(({ mode }) => {
     plugins: [svelte({ configFile: `${ROOT}/svelte.config.ts` }), crossOriginIsolation()],
     publicDir: `${ROOT}/public`,
     resolve: {
-      // Explicit alias: Vite 8.3's resolver no longer honours the extension-scoped
-      // ("@/*.svelte", "@/*.css") path patterns in tsconfig.json.
       alias: { '@': `${ROOT}/src` },
       tsconfigPaths: true,
     },

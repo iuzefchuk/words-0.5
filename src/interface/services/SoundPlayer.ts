@@ -106,8 +106,6 @@ export default class SoundPlayer {
         time = end;
       }
       this.queueEnd = time;
-    } catch {
-      // silently fail — sound playback is best-effort
-    }
+    } catch {}
   }
 }

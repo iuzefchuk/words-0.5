@@ -1,7 +1,6 @@
 import main from '@/interface/runes/main.svelte.ts';
 import type { DomainInventoryTile } from '@/app/types/index.ts';
 
-// UI-only tile-rack state. `tiles` is a $state array (deep-proxied → in-place swaps are reactive).
 class User {
   selectedTile = $state<DomainInventoryTile | null>(null);
 
