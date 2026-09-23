@@ -23,6 +23,7 @@ const IMPORT_GLOB = {
   domainPolicies: '@/server/domain/policies/**',
   domainServices: '@/server/domain/services/**',
   infrastructure: '@/server/infrastructure/**',
+  server: '@/server/**',
 };
 
 export default defineConfig(
@@ -200,8 +201,8 @@ export default defineConfig(
         {
           patterns: [
             {
-              group: [IMPORT_GLOB.domain, IMPORT_GLOB.infrastructure],
-              message: 'client must not import from domain or infrastructure',
+              group: [IMPORT_GLOB.server],
+              message: 'client must not import from server',
             },
           ],
         },
