@@ -1,0 +1,23 @@
+name: words
+
+services:
+  client:
+    build:
+      context: .
+      dockerfile: client/Dockerfile
+    depends_on:
+      server:
+        condition: service_healthy
+    environment:
+      SERVER_PORT: ${SERVER_PORT:-5678}
+    ports:
+      - '${CLIENT_PORT:-1234}:80'
+    restart: unless-stopped
+
+  server:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    environment:
+      SERVER_PORT: ${SERVER_PORT:-5678}
+    restart: unless-stopped

@@ -1,0 +1,22 @@
+services:
+  client:
+    build:
+      target: dev
+    develop:
+      watch:
+        - action: sync
+          path: ./client/src
+          target: /app/client/src
+        - action: sync
+          path: ./engine/src
+          target: /app/engine/src
+        - action: rebuild
+          path: ./client
+          ignore:
+            - src/
+    environment:
+      CLIENT_PORT: ${CLIENT_PORT:-1234}
+      SERVER_HOST: server
+    image: words-client-dev
+    ports: !override
+      - '${CLIENT_PORT:-1234}:${CLIENT_PORT:-1234}'
