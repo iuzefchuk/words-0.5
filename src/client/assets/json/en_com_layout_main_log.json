@@ -1,6 +1,0 @@
-{
-  "pass_opponent": "Opponent passed",
-  "pass_user": "You passed",
-  "save_opponent": "Opponent played <em>{words}</em> for {score} pts",
-  "save_user": "You played <em>{words}</em> for {score} pts"
-}

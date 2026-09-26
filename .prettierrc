@@ -5,5 +5,12 @@
   "trailingComma": "all",
   "printWidth": 130,
   "plugins": ["prettier-plugin-svelte"],
-  "overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }]
+  "overrides": [
+    {
+      "files": "*.svelte",
+      "options": {
+        "parser": "svelte"
+      }
+    }
+  ]
 }

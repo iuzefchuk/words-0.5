@@ -2,17 +2,9 @@
   "compilerOptions": {
     "strict": true,
     "target": "esnext",
-    "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "module": "preserve",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "paths": {
-      "@/*.ts": ["./src/*.ts"],
-      "@/*.svelte": ["./src/*.svelte"],
-      "@/*.css": ["./src/*.css"],
-      "@/*.json": ["./src/*.json"]
-    },
-    "types": ["node", "vite/client", "svelte"],
     "noEmit": true,
     "allowImportingTsExtensions": true,
     "isolatedModules": true,
@@ -30,7 +22,7 @@
     "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
-  },
-  "include": ["src", "*.config.ts"]
+    "noUnusedParameters": true,
+    "types": ["node"]
+  }
 }

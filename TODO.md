@@ -1,18 +1,19 @@
 # Finish
 
-Finish client 
+Server-engine-client split
 Finish endscreen + bug with tooltip
+Docker
 
 # New features
 
-Client to proper routing
-Server-client split
-Docker, Kubernetes, Sentry?
-Server Rust rewrite
-Pixelated font
-Add color + inhouse fonts
-Online play + design
-3rd party auth + design
-DIY avatar + design
+Add tests
+Server & engine rewrite to Rust
+Multiple matches (routing included)
+Auth / save progress on server
+Multiplayer
+Sentry
+
+# Design
+
 Change name
 Unlockable themes
