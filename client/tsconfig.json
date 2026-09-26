@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "esnext",
+    "module": "preserve",
+    "moduleResolution": "bundler",
+    "noEmit": true,
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "allowUnreachableCode": false,
+    "allowUnusedLabels": false,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "paths": {
+      "@/client/*.ts": ["./src/*.ts"],
+      "@/client/*.svelte": ["./src/*.svelte"],
+      "@/client/*.css": ["./src/*.css"],
+      "@/client/*.json": ["./src/*.json"],
+      "@/engine/*.ts": ["../engine/src/*.ts"]
+    },
+    "types": ["node", "vite/client", "svelte"]
+  },
+  "include": ["src", "*.config.ts"]
+}

@@ -1,0 +1,140 @@
+{
+  "name": "client",
+  "private": true,
+  "type": "module",
+  "browserslist": [
+    "baseline widely available"
+  ],
+  "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^7.1.2",
+    "@types/node": "^26.0.0",
+    "eslint": "^10.5.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-perfectionist": "^5.9.1",
+    "eslint-plugin-svelte": "^3.19.0",
+    "jiti": "^2.7.0",
+    "postcss-html": "^2.0.0",
+    "prettier": "^3.8.4",
+    "prettier-plugin-svelte": "^4.1.1",
+    "stylelint": "^17.13.0",
+    "stylelint-config-html": "^2.0.0",
+    "stylelint-config-recess-order": "^7.7.0",
+    "stylelint-config-standard": "^40.0.0",
+    "stylelint-declaration-strict-value": "^1.11.1",
+    "stylelint-no-unsupported-browser-features": "^8.1.1",
+    "stylelint-order": "^8.1.1",
+    "svelte": "^5.56.3",
+    "svelte-check": "^4.6.0",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.1",
+    "vite": "^8.0.16"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "arrowParens": "avoid",
+    "trailingComma": "all",
+    "printWidth": 130,
+    "plugins": [
+      "prettier-plugin-svelte"
+    ],
+    "overrides": [
+      {
+        "files": "*.svelte",
+        "options": {
+          "parser": "svelte"
+        }
+      }
+    ]
+  },
+  "scripts": {
+    "build": "vite build",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "dev": "vite",
+    "format": "prettier --write .",
+    "lint": "eslint . --fix && stylelint \"src/**/*.{css,svelte}\" --fix",
+    "preview": "vite preview"
+  },
+  "stylelint": {
+    "extends": [
+      "stylelint-config-standard",
+      "stylelint-config-recess-order",
+      "stylelint-config-html/svelte"
+    ],
+    "plugins": [
+      "stylelint-no-unsupported-browser-features",
+      "stylelint-declaration-strict-value"
+    ],
+    "reportDescriptionlessDisables": true,
+    "reportInvalidScopeDisables": true,
+    "reportNeedlessDisables": true,
+    "rules": {
+      "color-named": "never",
+      "color-no-hex": true,
+      "custom-property-pattern": null,
+      "declaration-block-no-duplicate-properties": true,
+      "declaration-property-value-no-unknown": true,
+      "font-weight-notation": "numeric",
+      "function-disallowed-list": [
+        "rgb",
+        "rgba",
+        "hsl",
+        "hsla",
+        "hwb",
+        "lab",
+        "lch",
+        "oklab",
+        "color"
+      ],
+      "max-nesting-depth": 3,
+      "media-feature-name-value-no-unknown": true,
+      "no-descending-specificity": true,
+      "no-empty-source": null,
+      "plugin/no-unsupported-browser-features": [
+        true,
+        {
+          "ignore": [
+            "css-clip-path",
+            "css-marker-pseudo",
+            "css-display-contents",
+            "css-touch-action",
+            "css3-cursors"
+          ]
+        }
+      ],
+      "scale-unlimited/declaration-strict-value": [
+        [
+          "/color$/",
+          "fill",
+          "stroke"
+        ],
+        {
+          "ignoreValues": [
+            "currentcolor",
+            "transparent",
+            "inherit",
+            "initial",
+            "unset",
+            "revert",
+            "none"
+          ]
+        }
+      ],
+      "selector-class-pattern": [
+        "^[a-z][a-z0-9]*(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+        {
+          "message": "Expected class to follow BEM: block, block__element, block--modifier, or block__element--modifier"
+        }
+      ],
+      "selector-max-compound-selectors": 4,
+      "selector-max-id": 1,
+      "selector-pseudo-class-no-unknown": [
+        true,
+        {
+          "ignorePseudoClasses": [
+            "global"
+          ]
+        }
+      ]
+    }
+  }
+}
