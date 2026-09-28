@@ -11,20 +11,20 @@ export type DialogResult = {
 };
 
 type DialogTriggerParams = {
-  html: string;
+  body: string;
   isDestructive?: boolean;
   title?: string;
 };
 
 class DialogStore {
-  html = $state<null | string>(null);
+  body = $state<null | string>(null);
 
   isDestructive = $state(false);
 
   title = $state<null | string>(null);
 
   get isOpen(): boolean {
-    return this.html !== null;
+    return this.body !== null;
   }
 
   private pendingResolve: ((result: DialogResult) => void) | null = null;
@@ -40,8 +40,8 @@ class DialogStore {
     }
   }
 
-  async trigger({ html, isDestructive = false, title }: DialogTriggerParams): Promise<DialogResult> {
-    this.html = html;
+  async trigger({ body, isDestructive = false, title }: DialogTriggerParams): Promise<DialogResult> {
+    this.body = body;
     this.title = title ?? null;
     this.isDestructive = isDestructive;
     const result = await new Promise<DialogResult>(resolve => {
@@ -53,7 +53,7 @@ class DialogStore {
 
   private resetState(): void {
     this.title = null;
-    this.html = null;
+    this.body = null;
     this.isDestructive = false;
   }
 }
