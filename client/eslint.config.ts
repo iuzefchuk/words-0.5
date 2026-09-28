@@ -78,6 +78,7 @@ export default defineConfig(
       'svelte/no-at-html-tags': 'off',
       'svelte/prefer-svelte-reactivity': 'off',
     },
+    settings: { svelte: { kit: { files: { routes: 'src/svelte/components/routes' } } } },
   },
   { files: ['**/*.svelte', '**/*.svelte.ts'], languageOptions: { parserOptions: { parser: tseslint.parser } } },
   {
@@ -88,26 +89,42 @@ export default defineConfig(
       '@typescript-eslint/no-unsafe-return': 'off',
     },
   },
-  restrictImports(['src/**'], ['src/svelte/stores/AppStore.svelte.ts', 'src/services/**'], {
+  restrictImports(['src/**'], ['src/domain/**', 'src/services/**', 'src/svelte/components/routes/play/Play.svelte'], {
     'client must not import from engine or server': ['@/engine/**', '@/server/**'],
   }),
+  restrictImports(
+    ['src/domain/**', 'src/svelte/components/routes/play/Play.svelte'],
+    ['src/domain/engine/**'],
+    { 'client must not import from server': ['@/server/**'] },
+    { 'only domain/engine may import engine values': ['@/engine/**'] },
+  ),
+  restrictImports(['src/domain/engine/**'], [], { 'client must not import from server': ['@/server/**'] }),
   restrictImports(['src/services/**'], [], {
     'client must not import from engine or server': ['@/engine/**', '@/server/**'],
     'services must not import from domain or svelte': ['@/client/domain/**', '@/client/svelte/**'],
   }),
-  restrictImports(['src/svelte/stores/AppStore.svelte.ts'], [], { 'client must not import from server': ['@/server/**'] }),
   prettier,
   ...svelte.configs.prettier,
 );
 
-function restrictImports(files: Array<string>, ignores: Array<string>, patterns: Record<string, Array<string>>): Linter.Config {
+function restrictImports(
+  files: Array<string>,
+  ignores: Array<string>,
+  patterns: Record<string, Array<string>>,
+  valuePatterns: Record<string, Array<string>> = {},
+): Linter.Config {
   return {
     files,
     ignores,
     rules: {
       '@typescript-eslint/no-restricted-imports': [
         'error',
-        { patterns: Object.entries(patterns).map(([message, group]) => ({ group, message })) },
+        {
+          patterns: [
+            ...Object.entries(patterns).map(([message, group]) => ({ group, message })),
+            ...Object.entries(valuePatterns).map(([message, group]) => ({ allowTypeImports: true, group, message })),
+          ],
+        },
       ],
     },
   };

@@ -6,12 +6,18 @@ enum Method {
   Put = 'PUT',
 }
 
-export default class HttpService {
+export default class FetchService {
   static delete(path: string): Promise<void> {
     return this.request(Method.Delete, path);
   }
 
-  static get<T>(path: string): Promise<T> {
+  static async getArrayBuffer(path: string): Promise<ArrayBuffer> {
+    const response = await fetch(path);
+    if (!response.ok) throw new Error(`${Method.Get} ${path} failed with status ${String(response.status)}`);
+    return response.arrayBuffer();
+  }
+
+  static getJson<T>(path: string): Promise<T> {
     return this.request(Method.Get, path);
   }
 

@@ -24,7 +24,7 @@ COPY <<'EOF' /etc/caddy/Caddyfile
 			header Content-Type text/*
 		}
 	}
-	handle /assets/* {
+	handle /_app/immutable/* {
 		header Cache-Control "public, max-age=31536000, immutable"
 		file_server
 	}

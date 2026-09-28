@@ -5,9 +5,10 @@ Finish endscreen + bug with tooltip
 
 # Backlog
 
+Routing error page
 Tests
 Server & engine rewrite to Rust
-Multiple matches (routing included)
+Multiple matches
 Auth / save progress on server
 Multiplayer
 Sentry

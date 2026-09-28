@@ -13,6 +13,7 @@ services:
         - action: rebuild
           path: ./client
           ignore:
+            - .svelte-kit/
             - src/
     environment:
       CLIENT_PORT: ${CLIENT_PORT:-1234}

@@ -1,5 +1,7 @@
 import { resolve } from 'node:path';
-import { svelte, vitePreprocess } from '@sveltejs/vite-plugin-svelte';
+import adapter from '@sveltejs/adapter-static';
+import { sveltekit } from '@sveltejs/kit/vite';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig, loadEnv } from 'vite';
 import type { UserConfig } from 'vite';
 
@@ -9,17 +11,16 @@ const REPO = resolve(ROOT, '..');
 
 export default defineConfig(({ command, mode }) => {
   const config = {
-    build: { emptyOutDir: true, outDir: `${ROOT}/dist` },
     envDir: REPO,
     plugins: [
-      svelte({
+      sveltekit({
+        adapter: adapter({ fallback: 'index.html', pages: `${ROOT}/dist` }),
+        alias: { '@/client': `${ROOT}/src`, '@/engine': `${REPO}/engine/src` },
         compilerOptions: { experimental: { async: true } },
-        configFile: false,
+        files: { appTemplate: `${ROOT}/src/svelte/app.html`, routes: `${ROOT}/src/svelte/components/routes` },
         preprocess: vitePreprocess({ script: true }),
       }),
     ],
-    resolve: { alias: { '@/client': `${ROOT}/src`, '@/engine': `${REPO}/engine/src` } },
-    root: `${ROOT}/src`,
   } satisfies UserConfig;
   if (command === 'build') return config;
   const env = loadEnv(mode, REPO, '');

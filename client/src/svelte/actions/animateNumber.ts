@@ -8,7 +8,7 @@ export default function animateNumber(node: HTMLElement, params: Params): Action
   let displayed: number | undefined;
   let frameId: number | undefined;
   let target = params.number;
-  let timeoutId: Timeout | undefined;
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
 
   function render(value: number): void {
     if (value === displayed) return;
