@@ -89,6 +89,7 @@ export default defineConfig(
       '@typescript-eslint/no-unsafe-return': 'off',
     },
   },
+  { files: ['src/**/*.d.ts'], rules: { '@typescript-eslint/consistent-type-definitions': 'off' } },
   restrictImports(['src/**'], ['src/domain/**', 'src/services/**', 'src/svelte/components/routes/play/Play.svelte'], {
     'client must not import from engine or server': ['@/engine/**', '@/server/**'],
   }),

@@ -1,0 +1,11 @@
+import { ErrorCode } from '@/client/domain/error/enums.ts';
+import type { HandleClientError } from '@sveltejs/kit';
+
+export function handleError({ error, message, status }: Parameters<HandleClientError>[0]): App.Error {
+  console.error(error);
+  if (status === 404) return { code: ErrorCode.NotFound, message };
+  if (error instanceof Error && error.cause instanceof Response && error.cause.status >= 500) {
+    return { code: ErrorCode.ServerUnavailable, message: error.message };
+  }
+  return { code: ErrorCode.Unexpected, message: error instanceof Error ? error.message : message };
+}

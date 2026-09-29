@@ -13,7 +13,9 @@ export default class FetchService {
 
   static async getArrayBuffer(path: string): Promise<ArrayBuffer> {
     const response = await fetch(path);
-    if (!response.ok) throw new Error(`${Method.Get} ${path} failed with status ${String(response.status)}`);
+    if (!response.ok) {
+      throw new Error(`${Method.Get} ${path} failed with status ${String(response.status)}`, { cause: response });
+    }
     return response.arrayBuffer();
   }
 
@@ -52,7 +54,7 @@ export default class FetchService {
     } catch {
       payload = undefined;
     }
-    if (!response.ok) throw new Error(this.parseErrorMessage(payload, method, path, response.status));
+    if (!response.ok) throw new Error(this.parseErrorMessage(payload, method, path, response.status), { cause: response });
     if (payload === undefined) throw new Error(`${method} ${path} returned an unexpected response`);
     return payload as T;
   }

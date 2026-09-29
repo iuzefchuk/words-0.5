@@ -17,8 +17,14 @@ export default defineConfig(({ command, mode }) => {
         adapter: adapter({ fallback: 'index.html', pages: `${ROOT}/dist` }),
         alias: { '@/client': `${ROOT}/src`, '@/engine': `${REPO}/engine/src` },
         compilerOptions: { experimental: { async: true } },
-        files: { appTemplate: `${ROOT}/src/svelte/app.html`, routes: `${ROOT}/src/svelte/components/routes` },
+        experimental: { handleRenderingErrors: true },
+        files: {
+          appTemplate: `${ROOT}/src/svelte/app.html`,
+          hooks: { client: `${ROOT}/src/svelte/hooks.client` },
+          routes: `${ROOT}/src/svelte/components/routes`,
+        },
         preprocess: vitePreprocess({ script: true }),
+        version: { pollInterval: 60_000 },
       }),
     ],
   } satisfies UserConfig;
