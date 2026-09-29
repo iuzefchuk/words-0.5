@@ -5,7 +5,8 @@ Finish endscreen + bug with tooltip
 
 # Backlog
 
-Routing error page
+Loading states
+Error states
 Tests
 Server & engine rewrite to Rust
 Multiple matches

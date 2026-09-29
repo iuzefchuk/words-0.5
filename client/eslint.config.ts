@@ -90,19 +90,15 @@ export default defineConfig(
     },
   },
   { files: ['src/**/*.d.ts'], rules: { '@typescript-eslint/consistent-type-definitions': 'off' } },
-  restrictImports(['src/**'], ['src/domain/**', 'src/services/**', 'src/svelte/components/routes/play/Play.svelte'], {
+  restrictImports(['src/**'], ['src/services/**', 'src/svelte/components/routes/play/Play.svelte'], {
     'client must not import from engine or server': ['@/engine/**', '@/server/**'],
   }),
-  restrictImports(
-    ['src/domain/**', 'src/svelte/components/routes/play/Play.svelte'],
-    ['src/domain/engine/**'],
-    { 'client must not import from server': ['@/server/**'] },
-    { 'only domain/engine may import engine values': ['@/engine/**'] },
-  ),
-  restrictImports(['src/domain/engine/**'], [], { 'client must not import from server': ['@/server/**'] }),
+  restrictImports(['src/svelte/components/routes/play/Play.svelte'], [], {
+    'client must not import from server': ['@/server/**'],
+  }),
   restrictImports(['src/services/**'], [], {
     'client must not import from engine or server': ['@/engine/**', '@/server/**'],
-    'services must not import from domain or svelte': ['@/client/domain/**', '@/client/svelte/**'],
+    'services must not import from svelte': ['@/client/svelte/**'],
   }),
   prettier,
   ...svelte.configs.prettier,

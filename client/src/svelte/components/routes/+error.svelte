@@ -1,8 +1,7 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { ROUTES } from '@/client/constants.ts';
-  import { ErrorCode } from '@/client/domain/error/enums.ts';
-  import mapErrorCodeMessage from '@/client/domain/error/maps/mapErrorCodeMessage.ts';
+  import { ErrorCode } from '@/client/enums.ts';
   import LocalesService from '@/client/services/LocalesService.ts';
 
   type Props = { error: App.Error };
@@ -12,6 +11,17 @@
   await Promise.all([LocalesService.loadNamespace('com_index_error'), LocalesService.loadNamespace('map_error_code_message')]);
 
   const message = $derived(mapErrorCodeMessage(error));
+
+  function mapErrorCodeMessage({ code, message }: App.Error): string {
+    switch (code) {
+      case ErrorCode.NotFound:
+        return LocalesService.t('map_error_code_message.not_found');
+      case ErrorCode.ServerUnavailable:
+        return LocalesService.t('map_error_code_message.server_unavailable');
+      case ErrorCode.Unexpected:
+        return LocalesService.t('map_error_code_message.unexpected', { error: message });
+    }
+  }
 </script>
 
 <div class="error">

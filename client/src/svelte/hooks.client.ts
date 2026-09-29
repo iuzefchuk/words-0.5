@@ -1,4 +1,4 @@
-import { ErrorCode } from '@/client/domain/error/enums.ts';
+import { ErrorCode } from '@/client/enums.ts';
 import type { HandleClientError } from '@sveltejs/kit';
 
 export function handleError({ error, message, status }: Parameters<HandleClientError>[0]): App.Error {

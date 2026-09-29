@@ -1,4 +1,4 @@
-import type { ErrorCode } from '@/client/domain/error/enums.ts';
+import type { ErrorCode } from '@/client/enums.ts';
 
 declare global {
   namespace App {
