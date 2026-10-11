@@ -7,7 +7,7 @@ enum Method {
 }
 
 export default class FetchService {
-  static delete(path: string): Promise<void> {
+  static delete<T = void>(path: string): Promise<T> {
     return this.request(Method.Delete, path);
   }
 
@@ -23,7 +23,7 @@ export default class FetchService {
     return this.request(Method.Get, path);
   }
 
-  static patch(path: string, body: unknown): Promise<void> {
+  static patch<T = void>(path: string, body: unknown): Promise<T> {
     return this.request(Method.Patch, path, body);
   }
 
@@ -31,7 +31,7 @@ export default class FetchService {
     return this.request(Method.Post, path, body);
   }
 
-  static put(path: string, body: unknown): Promise<void> {
+  static put<T = void>(path: string, body: unknown): Promise<T> {
     return this.request(Method.Put, path, body);
   }
 

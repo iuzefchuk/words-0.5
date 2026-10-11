@@ -16,7 +16,7 @@ type Records = Record<Key, Value>;
 
 type Value = string;
 
-export default class LocalesService {
+export default class I18nLibrary {
   private static readonly LANGUAGE = this.getLanguage();
 
   private static readonly PROP_REGEX = /\{(\w+)\}/g;

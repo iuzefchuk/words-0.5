@@ -7,7 +7,6 @@
 
 <script lang="ts">
   import { onMount } from 'svelte';
-  import dialog from '@/client/svelte/stores/DialogStore.svelte.ts';
 
   type Props = {
     accent: AppButtonAccent;
@@ -30,7 +29,6 @@
   }
 
   function onKeydown(event: KeyboardEvent): void {
-    if (dialog.isOpen) return;
     if (!keys.includes(event.key)) return;
     if (isDisabled) return;
     event.preventDefault();

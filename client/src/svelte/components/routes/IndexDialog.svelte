@@ -1,10 +1,10 @@
 <script lang="ts">
   import { tick } from 'svelte';
-  import LocalesService from '@/client/services/LocalesService.ts';
+  import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
   import AppButton, { AppButtonAccent } from '@/client/svelte/components/shared/AppButton.svelte';
-  import dialog, { DialogStatus } from '@/client/svelte/stores/DialogStore.svelte.ts';
+  import dialog, { DialogStatus } from '@/client/svelte/runes/Dialog.svelte.ts';
 
-  await LocalesService.loadNamespace('com_index_dialog');
+  await I18nLibrary.loadNamespace('com_index_dialog');
 
   const ID_TITLE = 'title';
   const ID_BODY = 'body';
@@ -68,7 +68,7 @@
     <AppButton
       bind:this={cancelButton}
       accent={dialog.isDestructive ? AppButtonAccent.Primary : AppButtonAccent.Secondary}
-      text={LocalesService.t('com_index_dialog.btn_cancel')}
+      text={I18nLibrary.t('com_index_dialog.btn_cancel')}
       ontrigger={() => {
         emitResponse(DialogStatus.Canceled);
       }}
@@ -76,7 +76,7 @@
     <AppButton
       bind:this={confirmButton}
       accent={dialog.isDestructive ? AppButtonAccent.Secondary : AppButtonAccent.Primary}
-      text={LocalesService.t('com_index_dialog.btn_confirm')}
+      text={I18nLibrary.t('com_index_dialog.btn_confirm')}
       ontrigger={() => {
         emitResponse(DialogStatus.Confirmed);
       }}

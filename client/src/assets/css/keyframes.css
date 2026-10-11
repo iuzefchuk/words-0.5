@@ -61,13 +61,3 @@
     transform: scale(1);
   }
 }
-
-@keyframes horizontal-sweep {
-  0% {
-    background-position-x: 0%;
-  }
-
-  100% {
-    background-position-x: 100%;
-  }
-}

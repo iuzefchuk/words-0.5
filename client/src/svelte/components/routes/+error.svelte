@@ -2,24 +2,24 @@
   import { resolve } from '$app/paths';
   import { ROUTES } from '@/client/constants.ts';
   import { ErrorCode } from '@/client/enums.ts';
-  import LocalesService from '@/client/services/LocalesService.ts';
+  import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
 
   type Props = { error: App.Error };
 
   const { error }: Props = $props();
 
-  await Promise.all([LocalesService.loadNamespace('com_index_error'), LocalesService.loadNamespace('map_error_code_message')]);
+  await Promise.all([I18nLibrary.loadNamespace('com_index_error'), I18nLibrary.loadNamespace('map_error_code_message')]);
 
   const message = $derived(mapErrorCodeMessage(error));
 
   function mapErrorCodeMessage({ code, message }: App.Error): string {
     switch (code) {
       case ErrorCode.NotFound:
-        return LocalesService.t('map_error_code_message.not_found');
+        return I18nLibrary.t('map_error_code_message.not_found');
       case ErrorCode.ServerUnavailable:
-        return LocalesService.t('map_error_code_message.server_unavailable');
+        return I18nLibrary.t('map_error_code_message.server_unavailable');
       case ErrorCode.Unexpected:
-        return LocalesService.t('map_error_code_message.unexpected', { error: message });
+        return I18nLibrary.t('map_error_code_message.unexpected', { error: message });
     }
   }
 </script>
@@ -28,7 +28,7 @@
   {#if error.code === ErrorCode.NotFound}
     <p>
       {@html message}
-      <a href={resolve(ROUTES.Play)}>{LocalesService.t('com_index_error.link_play')}</a>
+      <a href={resolve(ROUTES.Play)}>{I18nLibrary.t('com_index_error.link_play')}</a>
     </p>
   {:else}
     <p role="alert">{@html message}</p>

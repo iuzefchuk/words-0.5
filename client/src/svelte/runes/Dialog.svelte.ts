@@ -16,7 +16,7 @@ type DialogTriggerParams = {
   title?: string;
 };
 
-class DialogStore {
+class Dialog {
   body = $state<null | string>(null);
 
   isDestructive = $state(false);
@@ -58,4 +58,4 @@ class DialogStore {
   }
 }
 
-export default new DialogStore();
+export default new Dialog();

@@ -1,23 +1,27 @@
-export default class IndexedDbService {
-  private static readonly CONNECTIONS = new Map<string, Promise<IDBDatabase>>();
+export enum DatabaseName {
+  PlayRuntimeEvents = 'play_runtime_events',
+}
+
+export default class DatabaseService {
+  private static readonly CONNECTIONS = new Map<DatabaseName, Promise<IDBDatabase>>();
 
   private static readonly STORE_NAME = 'snapshots';
 
   private static readonly VERSION = 5;
 
-  static async load(dbName: string, version: number): Promise<unknown> {
+  static async load(dbName: DatabaseName, version: number): Promise<unknown> {
     try {
       const db = await this.connect(dbName);
       const store = db.transaction(this.STORE_NAME, 'readonly').objectStore(this.STORE_NAME);
       const data = await this.awaitRequest<unknown>(store.get(version));
       return data ?? null;
     } catch (error) {
-      console.warn('IndexedDbService:', error);
+      console.warn('DatabaseService:', error);
       return null;
     }
   }
 
-  static async save(dbName: string, version: number, data: unknown): Promise<void> {
+  static async save(dbName: DatabaseName, version: number, data: unknown): Promise<void> {
     try {
       const db = await this.connect(dbName);
       const transaction = db.transaction(this.STORE_NAME, 'readwrite', { durability: 'relaxed' });
@@ -27,7 +31,7 @@ export default class IndexedDbService {
       transaction.commit();
       await this.awaitTransaction(transaction);
     } catch (error) {
-      console.warn('IndexedDbService:', error);
+      console.warn('DatabaseService:', error);
     }
   }
 
@@ -37,7 +41,7 @@ export default class IndexedDbService {
         resolve(request.result);
       };
       request.onerror = () => {
-        reject(request.error ?? new Error('IndexedDB request failed'));
+        reject(request.error ?? new Error('Database request failed'));
       };
     });
   }
@@ -48,12 +52,12 @@ export default class IndexedDbService {
         resolve();
       };
       transaction.onabort = () => {
-        reject(transaction.error ?? new Error('IndexedDB transaction aborted'));
+        reject(transaction.error ?? new Error('Database transaction aborted'));
       };
     });
   }
 
-  private static connect(dbName: string): Promise<IDBDatabase> {
+  private static connect(dbName: DatabaseName): Promise<IDBDatabase> {
     let connection = this.CONNECTIONS.get(dbName);
     if (connection === undefined) {
       connection = this.openDatabase(dbName);
@@ -65,7 +69,7 @@ export default class IndexedDbService {
     return connection;
   }
 
-  private static async openDatabase(dbName: string): Promise<IDBDatabase> {
+  private static async openDatabase(dbName: DatabaseName): Promise<IDBDatabase> {
     const request = indexedDB.open(dbName, this.VERSION);
     request.onupgradeneeded = () => {
       const db = request.result;

@@ -90,38 +90,27 @@ export default defineConfig(
     },
   },
   { files: ['src/**/*.d.ts'], rules: { '@typescript-eslint/consistent-type-definitions': 'off' } },
-  restrictImports(['src/**'], ['src/services/**', 'src/svelte/components/routes/play/Play.svelte'], {
-    'client must not import from engine or server': ['@/engine/**', '@/server/**'],
-  }),
-  restrictImports(['src/svelte/components/routes/play/Play.svelte'], [], {
+  restrictImports(['src/**'], { 'client must not import from server': ['@/server/**'] }),
+  restrictImports(['src/libraries/**'], {
     'client must not import from server': ['@/server/**'],
+    'libraries must not import from services': ['@/client/services/**'],
+    'libraries must not import from svelte': ['@/client/svelte/**'],
   }),
-  restrictImports(['src/services/**'], [], {
-    'client must not import from engine or server': ['@/engine/**', '@/server/**'],
+  restrictImports(['src/services/**'], {
+    'client must not import from server': ['@/server/**'],
     'services must not import from svelte': ['@/client/svelte/**'],
   }),
   prettier,
   ...svelte.configs.prettier,
 );
 
-function restrictImports(
-  files: Array<string>,
-  ignores: Array<string>,
-  patterns: Record<string, Array<string>>,
-  valuePatterns: Record<string, Array<string>> = {},
-): Linter.Config {
+function restrictImports(files: Array<string>, patterns: Record<string, Array<string>>): Linter.Config {
   return {
     files,
-    ignores,
     rules: {
       '@typescript-eslint/no-restricted-imports': [
         'error',
-        {
-          patterns: [
-            ...Object.entries(patterns).map(([message, group]) => ({ group, message })),
-            ...Object.entries(valuePatterns).map(([message, group]) => ({ allowTypeImports: true, group, message })),
-          ],
-        },
+        { patterns: Object.entries(patterns).map(([message, group]) => ({ group, message })) },
       ],
     },
   };

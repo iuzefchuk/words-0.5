@@ -1,10 +1,14 @@
+export enum LocalStorageKey {
+  PlayRuntimeConfig = 'play_runtime_config',
+}
+
 export enum StorageType {
   Local = 'local',
   Session = 'session',
 }
 
 export default class StorageService {
-  static delete(type: StorageType, key: string): void {
+  static delete(type: StorageType, key: LocalStorageKey): void {
     try {
       this.getStorage(type).removeItem(key);
     } catch (error) {
@@ -12,7 +16,7 @@ export default class StorageService {
     }
   }
 
-  static load(type: StorageType, key: string): unknown {
+  static load(type: StorageType, key: LocalStorageKey): unknown {
     try {
       const raw = this.getStorage(type).getItem(key);
       if (raw === null) return null;
@@ -24,7 +28,7 @@ export default class StorageService {
     }
   }
 
-  static save(type: StorageType, key: string, data: unknown): void {
+  static save(type: StorageType, key: LocalStorageKey, data: unknown): void {
     try {
       this.getStorage(type).setItem(key, JSON.stringify(data));
     } catch (error) {
