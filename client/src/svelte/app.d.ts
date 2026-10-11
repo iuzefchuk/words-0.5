@@ -1,9 +1,9 @@
-import type { ErrorCode } from '@/client/enums.ts';
+import type { RouteError } from '@/client/enums.ts';
 
 declare global {
   namespace App {
     interface Error {
-      code: ErrorCode;
+      code: RouteError;
     }
   }
 }

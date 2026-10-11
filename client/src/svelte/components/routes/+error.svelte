@@ -1,31 +1,31 @@
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { ROUTES } from '@/client/constants.ts';
-  import { ErrorCode } from '@/client/enums.ts';
+  import { RouteError } from '@/client/enums.ts';
   import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
 
   type Props = { error: App.Error };
 
   const { error }: Props = $props();
 
-  await Promise.all([I18nLibrary.loadNamespace('com_index_error'), I18nLibrary.loadNamespace('map_error_code_message')]);
+  await I18nLibrary.loadNamespace('com_index_error');
 
-  const message = $derived(mapErrorCodeMessage(error));
+  const message = $derived(getRouteErrorJson(error));
 
-  function mapErrorCodeMessage({ code, message }: App.Error): string {
+  function getRouteErrorJson({ code, message }: App.Error): string {
     switch (code) {
-      case ErrorCode.NotFound:
-        return I18nLibrary.t('map_error_code_message.not_found');
-      case ErrorCode.ServerUnavailable:
-        return I18nLibrary.t('map_error_code_message.server_unavailable');
-      case ErrorCode.Unexpected:
-        return I18nLibrary.t('map_error_code_message.unexpected', { error: message });
+      case RouteError.NotFound:
+        return I18nLibrary.t('com_index_error.not_found');
+      case RouteError.ServerUnavailable:
+        return I18nLibrary.t('com_index_error.server_unavailable');
+      case RouteError.Unexpected:
+        return I18nLibrary.t('com_index_error.unexpected', { error: message });
     }
   }
 </script>
 
 <div class="error">
-  {#if error.code === ErrorCode.NotFound}
+  {#if error.code === RouteError.NotFound}
     <p>
       {@html message}
       <a href={resolve(ROUTES.Play)}>{I18nLibrary.t('com_index_error.link_play')}</a>

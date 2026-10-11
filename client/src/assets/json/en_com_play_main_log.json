@@ -1,0 +1,4 @@
+{
+  "pass": "{player} passed",
+  "save": "{player} played <em>{words}</em> for {score} pts"
+}

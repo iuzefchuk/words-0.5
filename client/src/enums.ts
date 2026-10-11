@@ -1,14 +1,14 @@
-export enum ErrorCode {
-  NotFound = 'NotFound',
-  ServerUnavailable = 'ServerUnavailable',
-  Unexpected = 'Unexpected',
-}
-
 export enum Key {
   Enter = 'Enter',
   Escape = 'Escape',
   P = 'p',
   R = 'r',
+}
+
+export enum RouteError {
+  NotFound = 'NotFound',
+  ServerUnavailable = 'ServerUnavailable',
+  Unexpected = 'Unexpected',
 }
 
 export enum TransitionDuration {

@@ -1,0 +1,6 @@
+{
+  "link_play": "Back to the game",
+  "not_found": "This page does not exist.",
+  "server_unavailable": "The server is not responding. Try again in a moment.",
+  "unexpected": "Something went wrong: <em>{error}</em>. Try reloading the page or using different browser."
+}

@@ -1,0 +1,15 @@
+{
+  "action_pass": "Pass",
+  "action_play": "Play",
+  "action_resign": "Resign",
+  "body_finish_lose_1": "You lost by {points} pts 🦨",
+  "body_finish_lose_2": "You lost 🦨",
+  "body_finish_tie": "It's a tie 👔",
+  "body_finish_win_1": "You won by {points} pts 🏆",
+  "body_finish_win_2": "You won 🏆",
+  "body_pass": "You will lose if you pass twice in a row.",
+  "body_resign": "Your opponent will automatically win.",
+  "title_finish": "Start new match?",
+  "title_pass": "Pass?",
+  "title_resign": "Resign?"
+}
