@@ -61,3 +61,14 @@
     transform: scale(1);
   }
 }
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.25;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}

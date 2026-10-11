@@ -64,11 +64,6 @@ export type PlayRuntimeBlockId = string;
 
 export type PlayRuntimeBlockLetter = string;
 
-export type PlayRuntimeConfig = {
-  readonly hostType: PlayRuntimeHostType;
-  readonly settings: null | PlayRuntimeSettings;
-};
-
 export type PlayRuntimeEvent =
   | {
       readonly player: PlayRuntimePlayer;
@@ -125,17 +120,12 @@ type PlayRuntimeState = {
 class ClientHost {
   private constructor(private readonly app: App) {}
 
-  static async open(settings: null | PlayRuntimeSettings): Promise<ClientHost> {
+  static async open(): Promise<ClientHost> {
     const [dictionary, events] = await Promise.all([
       FetchService.getArrayBuffer(dictionaryUrl),
       DatabaseService.load(DatabaseName.PlayRuntimeEvents, eventsSchemaVersion),
     ]);
-    const app = App.open(
-      main(dictionary),
-      events as null | ReadonlyArray<DomainTimelineEvent>,
-      settings === null ? null : { difficulty: DomainMatchDifficulty[settings.difficulty], type: DomainMatchType[settings.type] },
-      CryptoService.createSeed(),
-    );
+    const app = App.open(main(dictionary), events as null | ReadonlyArray<DomainTimelineEvent>, null, CryptoService.createSeed());
     if (app.queries.opponentTurnIsDue) app.commands.playOpponentTurn();
     const host = new ClientHost(app);
     await host.persist();
@@ -204,8 +194,8 @@ class ClientHost {
 }
 
 class ServerHost {
-  static async open(settings: null | PlayRuntimeSettings): Promise<ServerHost> {
-    await FetchService.post('/api/match', settings ?? {});
+  static async open(): Promise<ServerHost> {
+    await FetchService.post('/api/match');
     return new ServerHost();
   }
 
@@ -253,9 +243,7 @@ class ServerHost {
 }
 
 export default class PlayRuntime {
-  private static readonly LOADING_MIN_TIME_MS = 500;
-
-  private static readonly OPPONENT_RESPONSE_MIN_TIME_MS = 2_000;
+  private static readonly OPPONENT_RESPONSE_ARTIFICIAL_DELAY_MS = 2_000;
 
   get blocksPerPlayer(): number {
     return this.state.tilesPerPlayer;
@@ -263,14 +251,6 @@ export default class PlayRuntime {
 
   get blocksRemaining(): number {
     return this.state.tilesRemaining;
-  }
-
-  get config(): PlayRuntimeConfig {
-    return { hostType: this.hostType, settings: this.state.settings };
-  }
-
-  get configSettingsAreChangeable(): boolean {
-    return this.state.settingsAreChangeable;
   }
 
   get currentTurnIsValid(): boolean {
@@ -283,6 +263,17 @@ export default class PlayRuntime {
 
   get events(): ReadonlyArray<PlayRuntimeEvent> {
     return this.state.events;
+  }
+
+  get hostType(): PlayRuntimeHostType {
+    switch (this.host.constructor) {
+      case ClientHost:
+        return PlayRuntimeHostType.Client;
+      case ServerHost:
+        return PlayRuntimeHostType.Server;
+      default:
+        throw new TypeError('expected host to be a ClientHost or a ServerHost');
+    }
   }
 
   get isActionableForUser(): boolean {
@@ -311,6 +302,10 @@ export default class PlayRuntime {
 
   get settings(): PlayRuntimeSettings {
     return this.state.settings;
+  }
+
+  get settingsAreChangeable(): boolean {
+    return this.state.settingsAreChangeable;
   }
 
   get slotIds(): ReadonlyArray<PlayRuntimeSlotId> {
@@ -343,33 +338,20 @@ export default class PlayRuntime {
 
   private toolbarBlocks = $state<Array<PlayRuntimeBlock>>([]);
 
-  private get hostType(): PlayRuntimeHostType {
-    switch (this.host.constructor) {
-      case ClientHost:
-        return PlayRuntimeHostType.Client;
-      case ServerHost:
-        return PlayRuntimeHostType.Server;
-      default:
-        throw new TypeError('expected host to be a ClientHost or a ServerHost');
-    }
-  }
-
   private constructor(private readonly host: ClientHost | ServerHost) {}
 
-  static async create(config: PlayRuntimeConfig): Promise<PlayRuntime> {
-    const startedAt = Date.now();
+  static async create(hostType: PlayRuntimeHostType): Promise<PlayRuntime> {
     let host: ClientHost | ServerHost;
-    switch (config.hostType) {
+    switch (hostType) {
       case PlayRuntimeHostType.Client:
-        host = await ClientHost.open(config.settings);
+        host = await ClientHost.open();
         break;
       case PlayRuntimeHostType.Server:
-        host = await ServerHost.open(config.settings);
+        host = await ServerHost.open();
         break;
     }
     const runtime = new PlayRuntime(host);
     await runtime.start();
-    await new Promise(resolve => setTimeout(resolve, PlayRuntime.LOADING_MIN_TIME_MS - (Date.now() - startedAt)));
     return runtime;
   }
 
@@ -501,7 +483,8 @@ export default class PlayRuntime {
   private applyState(state: PlayRuntimeState): void {
     this.state = state;
     const { userTiles } = state;
-    if (userTiles.length !== this.toolbarBlocks.length || userTiles.some(block => !this.isBlockInToolbar(block.id))) this.resetToolbar();
+    if (userTiles.length !== this.toolbarBlocks.length || userTiles.some(block => !this.isBlockInToolbar(block.id)))
+      this.resetToolbar();
     this.playPendingStings();
   }
 
@@ -532,7 +515,9 @@ export default class PlayRuntime {
     if (!this.state.opponentTurnIsDue) return;
     const startedAt = Date.now();
     const state = await this.host.playOpponentTurn();
-    await new Promise(resolve => setTimeout(resolve, PlayRuntime.OPPONENT_RESPONSE_MIN_TIME_MS - (Date.now() - startedAt)));
+    await new Promise(resolve =>
+      setTimeout(resolve, PlayRuntime.OPPONENT_RESPONSE_ARTIFICIAL_DELAY_MS - (Date.now() - startedAt)),
+    );
     this.applyState(state);
   }
 
