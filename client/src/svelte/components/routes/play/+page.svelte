@@ -1,11 +1,12 @@
 <script lang="ts">
+  import { PlayHostType } from '@/client/domain/enums.ts';
   import Play from '@/client/svelte/components/routes/play/Play.svelte';
   import PlayLoader from '@/client/svelte/components/routes/play/PlayLoader.svelte';
-  import PlayRuntime, { PlayRuntimeHostType } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
+  import PlayRuntime from '@/client/svelte/runes/PlayRuntime.svelte.ts';
 
-  let hostType = $state(PlayRuntimeHostType.Client);
+  let hostType = $state(PlayHostType.Client);
 
-  function setHostType(newValue: PlayRuntimeHostType): void {
+  function setHostType(newValue: PlayHostType): void {
     if (newValue === hostType) return;
     hostType = newValue;
   }

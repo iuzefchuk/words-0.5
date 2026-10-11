@@ -1,59 +1,19 @@
 <script lang="ts">
+  import { PlayHostType, PlaySettingsDifficulty, PlaySettingsType } from '@/client/domain/enums.ts';
+  import mapPlayHostTypeJson from '@/client/domain/maps/mapPlayHostTypeJson.ts';
+  import mapPlaySettingsDifficultyJson from '@/client/domain/maps/mapPlaySettingsDifficultyJson.ts';
+  import mapPlaySettingsTypeJson from '@/client/domain/maps/mapPlaySettingsTypeJson.ts';
   import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
   import AppRadioGroup from '@/client/svelte/components/shared/AppRadioGroup.svelte';
-  import {
-    PlayRuntimeHostType,
-    PlayRuntimeSettingsDifficulty,
-    PlayRuntimeSettingsType,
-  } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
 
-  type Props = { onsethosttype: (hostType: PlayRuntimeHostType) => void };
+  type Props = { onsethosttype: (hostType: PlayHostType) => void };
 
   const { onsethosttype }: Props = $props();
 
   const runtime = getPlayRuntimeContext();
 
-  await Promise.all([
-    I18nLibrary.loadNamespace('com_play_header_settings'),
-    I18nLibrary.loadNamespace('map_difficulty_name'),
-    I18nLibrary.loadNamespace('map_host_type_name'),
-    I18nLibrary.loadNamespace('map_type_name'),
-  ]);
-
-  function mapDifficultyName(difficulty: PlayRuntimeSettingsDifficulty): string {
-    return I18nLibrary.t(
-      (
-        {
-          [PlayRuntimeSettingsDifficulty.High]: 'map_difficulty_name.high',
-          [PlayRuntimeSettingsDifficulty.Low]: 'map_difficulty_name.low',
-          [PlayRuntimeSettingsDifficulty.Medium]: 'map_difficulty_name.medium',
-        } as const
-      )[difficulty],
-    );
-  }
-
-  function mapHostTypeName(hostType: PlayRuntimeHostType): string {
-    return I18nLibrary.t(
-      (
-        {
-          [PlayRuntimeHostType.Client]: 'map_host_type_name.client',
-          [PlayRuntimeHostType.Server]: 'map_host_type_name.server',
-        } as const
-      )[hostType],
-    );
-  }
-
-  function mapTypeName(type: PlayRuntimeSettingsType): string {
-    return I18nLibrary.t(
-      (
-        {
-          [PlayRuntimeSettingsType.Classic]: 'map_type_name.classic',
-          [PlayRuntimeSettingsType.Random]: 'map_type_name.random',
-        } as const
-      )[type],
-    );
-  }
+  await I18nLibrary.loadNamespace('com_play_header_settings');
 </script>
 
 <form
@@ -66,8 +26,8 @@
     legend={I18nLibrary.t('com_play_header_settings.label_host_type')}
     modelValue={runtime.hostType}
     options={[
-      { text: mapHostTypeName(PlayRuntimeHostType.Client), value: PlayRuntimeHostType.Client },
-      { text: mapHostTypeName(PlayRuntimeHostType.Server), value: PlayRuntimeHostType.Server },
+      { text: mapPlayHostTypeJson(PlayHostType.Client), value: PlayHostType.Client },
+      { text: mapPlayHostTypeJson(PlayHostType.Server), value: PlayHostType.Server },
     ]}
     onchange={onsethosttype}
   />
@@ -75,9 +35,9 @@
     legend={I18nLibrary.t('com_play_header_settings.label_difficulty')}
     modelValue={runtime.settings.difficulty}
     options={[
-      { text: mapDifficultyName(PlayRuntimeSettingsDifficulty.Low), value: PlayRuntimeSettingsDifficulty.Low },
-      { text: mapDifficultyName(PlayRuntimeSettingsDifficulty.Medium), value: PlayRuntimeSettingsDifficulty.Medium },
-      { text: mapDifficultyName(PlayRuntimeSettingsDifficulty.High), value: PlayRuntimeSettingsDifficulty.High },
+      { text: mapPlaySettingsDifficultyJson(PlaySettingsDifficulty.Low), value: PlaySettingsDifficulty.Low },
+      { text: mapPlaySettingsDifficultyJson(PlaySettingsDifficulty.Medium), value: PlaySettingsDifficulty.Medium },
+      { text: mapPlaySettingsDifficultyJson(PlaySettingsDifficulty.High), value: PlaySettingsDifficulty.High },
     ]}
     onchange={difficulty => void runtime.changeSettings({ difficulty })}
   />
@@ -85,8 +45,8 @@
     legend={I18nLibrary.t('com_play_header_settings.label_bonuses')}
     modelValue={runtime.settings.type}
     options={[
-      { text: mapTypeName(PlayRuntimeSettingsType.Classic), value: PlayRuntimeSettingsType.Classic },
-      { text: mapTypeName(PlayRuntimeSettingsType.Random), value: PlayRuntimeSettingsType.Random },
+      { text: mapPlaySettingsTypeJson(PlaySettingsType.Classic), value: PlaySettingsType.Classic },
+      { text: mapPlaySettingsTypeJson(PlaySettingsType.Random), value: PlaySettingsType.Random },
     ]}
     onchange={type => void runtime.changeSettings({ type })}
   />

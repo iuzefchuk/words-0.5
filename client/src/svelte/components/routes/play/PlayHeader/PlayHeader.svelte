@@ -2,9 +2,9 @@
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
   import PlayHeaderSettings from '@/client/svelte/components/routes/play/PlayHeader/PlayHeaderSettings.svelte';
   import PlayHeaderStats from '@/client/svelte/components/routes/play/PlayHeader/PlayHeaderStats.svelte';
-  import type { PlayRuntimeHostType } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
+  import type { PlayHostType } from '@/client/domain/enums.ts';
 
-  type Props = { onsethosttype: (hostType: PlayRuntimeHostType) => void };
+  type Props = { onsethosttype: (hostType: PlayHostType) => void };
 
   const { onsethosttype }: Props = $props();
 

@@ -4,15 +4,15 @@
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
   import PlayMainToolbarStats from '@/client/svelte/components/routes/play/PlayMain/PlayMainToolbar/PlayMainToolbarStats.svelte';
   import AppGridItem, { AppGridItemElevation, AppGridItemTone } from '@/client/svelte/components/shared/AppGridItem.svelte';
-  import type { PlayRuntimeBlock, PlayRuntimeBlockId } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
+  import type { PlayBlock, PlayBlockId } from '@/client/domain/types.ts';
 
   const runtime = getPlayRuntimeContext();
 
   const blocks = $derived(
-    Array.from({ length: runtime.blocksPerPlayer }, (_, idx): null | PlayRuntimeBlock => runtime.userBlocks[idx] ?? null),
+    Array.from({ length: runtime.blocksPerPlayer }, (_, idx): null | PlayBlock => runtime.userBlocks[idx] ?? null),
   );
 
-  function activate(idx: number, block: null | PlayRuntimeBlock): void {
+  function activate(idx: number, block: null | PlayBlock): void {
     if (block === null) return;
     if (runtime.isBlockSlotted(block.id)) {
       handlePressToolbarSlot(idx);
@@ -21,7 +21,7 @@
     handlePressToolbarBlock(block.id);
   }
 
-  function handlePressToolbarBlock(blockId: PlayRuntimeBlockId): void {
+  function handlePressToolbarBlock(blockId: PlayBlockId): void {
     const { selectedBlockId } = runtime;
     if (selectedBlockId === null) {
       runtime.selectBlock(blockId);

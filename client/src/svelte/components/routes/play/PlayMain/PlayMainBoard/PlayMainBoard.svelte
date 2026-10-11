@@ -1,12 +1,9 @@
 <script lang="ts">
-  import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
   import PlayMainBoardOutline from '@/client/svelte/components/routes/play/PlayMain/PlayMainBoard/PlayMainBoardOutline/PlayMainBoardOutline.svelte';
   import PlayMainBoardSlot from '@/client/svelte/components/routes/play/PlayMain/PlayMainBoard/PlayMainBoardSlot.svelte';
 
   const runtime = getPlayRuntimeContext();
-
-  await I18nLibrary.loadNamespace('map_slot_bonus_name');
 
   const rows = $derived.by(() => {
     const size = runtime.slotsPerAxis;

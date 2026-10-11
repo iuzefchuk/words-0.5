@@ -1,11 +1,11 @@
 <script lang="ts">
-  import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
+  import mapPlaySlotBonusAppGridItemTone from '@/client/domain/maps/mapPlaySlotBonusAppGridItemTone.ts';
+  import mapPlaySlotBonusJson from '@/client/domain/maps/mapPlaySlotBonusJson.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
   import AppGridItem, { AppGridItemElevation, AppGridItemTone } from '@/client/svelte/components/shared/AppGridItem.svelte';
-  import { PlayRuntimeSlotBonus } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
-  import type { PlayRuntimeBlockId, PlayRuntimeSlotId } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
+  import type { PlayBlockId, PlaySlotId } from '@/client/domain/types.ts';
 
-  type Props = { slotId: PlayRuntimeSlotId };
+  type Props = { slotId: PlaySlotId };
   const { slotId }: Props = $props();
 
   const runtime = getPlayRuntimeContext();
@@ -13,15 +13,7 @@
   const colIndex = $derived(runtime.getSlotColumn(slotId) + 1);
   const isCenter = $derived(runtime.isSlotCenter(slotId));
   const bonus = $derived(runtime.getSlotBonus(slotId));
-  const bonusTone = $derived.by(() => {
-    if (bonus === null) return undefined;
-    return {
-      [PlayRuntimeSlotBonus.DoubleLetter]: AppGridItemTone.Faint,
-      [PlayRuntimeSlotBonus.DoubleWord]: AppGridItemTone.Bold,
-      [PlayRuntimeSlotBonus.TripleLetter]: AppGridItemTone.Mid,
-      [PlayRuntimeSlotBonus.TripleWord]: AppGridItemTone.Bolder,
-    }[bonus];
-  });
+  const bonusTone = $derived(bonus === null ? undefined : mapPlaySlotBonusAppGridItemTone(bonus));
   const block = $derived(runtime.findBlockInSlot(slotId));
   const blockIsSelected = $derived(block !== null && runtime.isBlockSelected(block.id));
   const blockTone = $derived.by(() => {
@@ -31,7 +23,7 @@
     return AppGridItemTone.Mid;
   });
 
-  function handleDoublePressBoardBlock(blockId: PlayRuntimeBlockId): void {
+  function handleDoublePressBoardBlock(blockId: PlayBlockId): void {
     if (!runtime.isBlockInToolbar(blockId)) return;
     runtime.deselectBlock();
     void runtime.undoSlotBlock(blockId);
@@ -42,7 +34,7 @@
     else handlePressBoardSlot();
   }
 
-  function handlePressBoardBlock(blockId: PlayRuntimeBlockId): void {
+  function handlePressBoardBlock(blockId: PlayBlockId): void {
     if (!runtime.isBlockInToolbar(blockId)) return;
     if (runtime.isBlockSelected(blockId)) {
       runtime.deselectBlock();
@@ -83,19 +75,6 @@
     })();
   }
 
-  function mapSlotBonusName(value: PlayRuntimeSlotBonus): string {
-    return I18nLibrary.t(
-      (
-        {
-          [PlayRuntimeSlotBonus.DoubleLetter]: 'map_slot_bonus_name.dl',
-          [PlayRuntimeSlotBonus.DoubleWord]: 'map_slot_bonus_name.dw',
-          [PlayRuntimeSlotBonus.TripleLetter]: 'map_slot_bonus_name.tl',
-          [PlayRuntimeSlotBonus.TripleWord]: 'map_slot_bonus_name.tw',
-        } as const
-      )[value],
-    );
-  }
-
   function onClick(event: MouseEvent): void {
     event.stopPropagation();
     handlePress();
@@ -127,7 +106,7 @@
   <AppGridItem
     elevation={isCenter ? AppGridItemElevation.Low : AppGridItemElevation.Mid}
     tone={bonusTone}
-    text={bonus === null ? undefined : mapSlotBonusName(bonus)}
+    text={bonus === null ? undefined : mapPlaySlotBonusJson(bonus)}
   />
   {#if block !== null && blockTone !== null}
     <AppGridItem

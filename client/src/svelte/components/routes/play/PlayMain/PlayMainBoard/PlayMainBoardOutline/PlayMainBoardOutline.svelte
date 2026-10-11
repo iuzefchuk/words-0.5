@@ -3,7 +3,7 @@
   import { TransitionDuration } from '@/client/enums.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
   import PlayMainBoardOutlineTooltip from '@/client/svelte/components/routes/play/PlayMain/PlayMainBoard/PlayMainBoardOutline/PlayMainBoardOutlineTooltip.svelte';
-  import type { PlayRuntimeBlock, PlayRuntimeSlotId } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
+  import type { PlayBlock, PlaySlotId } from '@/client/domain/types.ts';
 
   const runtime = getPlayRuntimeContext();
 
@@ -11,10 +11,10 @@
 
   const bounds = $derived(computeBounds(runtime.userBlocks));
 
-  function computeBounds(blocks: ReadonlyArray<PlayRuntimeBlock>): ReadonlyArray<Bounds> {
+  function computeBounds(blocks: ReadonlyArray<PlayBlock>): ReadonlyArray<Bounds> {
     const slotIds = findSlotIdsFor(blocks);
     if (slotIds.size === 0) return [];
-    const visited = new Set<PlayRuntimeSlotId>();
+    const visited = new Set<PlaySlotId>();
     const groups: Array<Bounds> = [];
     for (const slotId of slotIds) {
       if (visited.has(slotId)) continue;
@@ -23,8 +23,8 @@
     return groups;
   }
 
-  function findSlotIdsFor(blocks: ReadonlyArray<PlayRuntimeBlock>): Set<PlayRuntimeSlotId> {
-    const slotIds = new Set<PlayRuntimeSlotId>();
+  function findSlotIdsFor(blocks: ReadonlyArray<PlayBlock>): Set<PlaySlotId> {
+    const slotIds = new Set<PlaySlotId>();
     for (const block of blocks) {
       const slotId = runtime.findSlotWithBlock(block.id);
       if (slotId !== undefined) slotIds.add(slotId);
@@ -32,12 +32,8 @@
     return slotIds;
   }
 
-  function floodFillBounds(
-    startId: PlayRuntimeSlotId,
-    slotIds: ReadonlySet<PlayRuntimeSlotId>,
-    visited: Set<PlayRuntimeSlotId>,
-  ): Bounds {
-    const stack: Array<PlayRuntimeSlotId> = [startId];
+  function floodFillBounds(startId: PlaySlotId, slotIds: ReadonlySet<PlaySlotId>, visited: Set<PlaySlotId>): Bounds {
+    const stack: Array<PlaySlotId> = [startId];
     visited.add(startId);
     let minRow = Infinity;
     let maxRow = -Infinity;

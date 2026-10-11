@@ -1,28 +1,15 @@
 <script lang="ts">
-  import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
+  import { PlayPlayer } from '@/client/domain/enums.ts';
+  import mapPlayPlayerJson from '@/client/domain/maps/mapPlayPlayerJson.ts';
   import animateNumber from '@/client/svelte/actions/animateNumber.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
-  import { PlayRuntimePlayer } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
 
   const runtime = getPlayRuntimeContext();
 
-  await I18nLibrary.loadNamespace('map_player_name');
-
   const players = $derived([
-    { name: mapPlayerName(PlayRuntimePlayer.User), score: runtime.userScore },
-    { name: mapPlayerName(PlayRuntimePlayer.Opponent), score: runtime.opponentScore },
+    { name: mapPlayPlayerJson(PlayPlayer.User), score: runtime.userScore },
+    { name: mapPlayPlayerJson(PlayPlayer.Opponent), score: runtime.opponentScore },
   ]);
-
-  function mapPlayerName(player: PlayRuntimePlayer): string {
-    return I18nLibrary.t(
-      (
-        {
-          [PlayRuntimePlayer.Opponent]: 'map_player_name.opponent',
-          [PlayRuntimePlayer.User]: 'map_player_name.user',
-        } as const
-      )[player],
-    );
-  }
 </script>
 
 <dl class="stats">

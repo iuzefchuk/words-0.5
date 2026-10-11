@@ -1,17 +1,18 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { fly } from 'svelte/transition';
+  import { PlayEventType } from '@/client/domain/enums.ts';
+  import mapPlayPlayerJson from '@/client/domain/maps/mapPlayPlayerJson.ts';
   import { TransitionDuration } from '@/client/enums.ts';
   import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
-  import { PlayRuntimeEventType, PlayRuntimePlayer } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
-  import type { PlayRuntimeEvent } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
+  import type { PlayEvent } from '@/client/domain/types.ts';
 
   const EVENTS_DISPLAYED_MAX = 3;
 
   const runtime = getPlayRuntimeContext();
 
-  await Promise.all([I18nLibrary.loadNamespace('com_play_main_log'), I18nLibrary.loadNamespace('map_player_name')]);
+  await I18nLibrary.loadNamespace('com_play_main_log');
 
   const entries = $derived.by(() => {
     const all = runtime.events.filter(isEventDisplayed);
@@ -19,36 +20,25 @@
     return all.slice(start).map((event, index) => ({ html: getEventText(event), key: start + index }));
   });
 
-  function getEventText(event: PlayRuntimeEvent): string {
+  function getEventText(event: PlayEvent): string {
     switch (event.type) {
-      case PlayRuntimeEventType.MatchFinished:
-      case PlayRuntimeEventType.MatchStarted:
-      case PlayRuntimeEventType.TurnValidationSet:
+      case PlayEventType.MatchFinished:
+      case PlayEventType.MatchStarted:
+      case PlayEventType.TurnValidationSet:
         return '';
-      case PlayRuntimeEventType.TurnPassed:
-        return I18nLibrary.t('com_play_main_log.pass', { player: mapPlayerName(event.player) });
-      case PlayRuntimeEventType.TurnSaved:
+      case PlayEventType.TurnPassed:
+        return I18nLibrary.t('com_play_main_log.pass', { player: mapPlayPlayerJson(event.player) });
+      case PlayEventType.TurnSaved:
         return I18nLibrary.t('com_play_main_log.save', {
-          player: mapPlayerName(event.player),
+          player: mapPlayPlayerJson(event.player),
           score: event.score,
           words: event.words.join(', '),
         });
     }
   }
 
-  function isEventDisplayed(event: PlayRuntimeEvent): boolean {
-    return event.type === PlayRuntimeEventType.TurnPassed || event.type === PlayRuntimeEventType.TurnSaved;
-  }
-
-  function mapPlayerName(player: PlayRuntimePlayer): string {
-    return I18nLibrary.t(
-      (
-        {
-          [PlayRuntimePlayer.Opponent]: 'map_player_name.opponent',
-          [PlayRuntimePlayer.User]: 'map_player_name.user',
-        } as const
-      )[player],
-    );
+  function isEventDisplayed(event: PlayEvent): boolean {
+    return event.type === PlayEventType.TurnPassed || event.type === PlayEventType.TurnSaved;
   }
 </script>
 

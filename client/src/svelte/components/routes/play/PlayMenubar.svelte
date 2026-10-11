@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { PlayResult } from '@/client/domain/enums.ts';
   import { Key } from '@/client/enums.ts';
   import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
   import AppButton, { AppButtonAccent } from '@/client/svelte/components/shared/AppButton.svelte';
   import dialog from '@/client/svelte/runes/Dialog.svelte.ts';
-  import { PlayRuntimeResult } from '@/client/svelte/runes/PlayRuntime.svelte.ts';
   import type { DialogResult } from '@/client/svelte/runes/Dialog.svelte.ts';
 
   const runtime = getPlayRuntimeContext();
@@ -71,17 +71,16 @@
   async function triggerFinishDialog(): Promise<DialogResult> {
     const result = runtime.result;
     const scoreDiff = runtime.userScore - runtime.opponentScore;
-    if (result === PlayRuntimeResult.Undecided) {
-      throw new Error(`cannot render result text: result is ${PlayRuntimeResult.Undecided}`);
+    if (result === PlayResult.Undecided) {
+      throw new Error(`cannot render result text: result is ${PlayResult.Undecided}`);
     }
     return await dialog.trigger({
       body: I18nLibrary.t(
         (
           {
-            [PlayRuntimeResult.Lose]:
-              scoreDiff < 0 ? 'com_play_menubar.body_finish_lose_1' : 'com_play_menubar.body_finish_lose_2',
-            [PlayRuntimeResult.Tie]: 'com_play_menubar.body_finish_tie',
-            [PlayRuntimeResult.Win]: scoreDiff > 0 ? 'com_play_menubar.body_finish_win_1' : 'com_play_menubar.body_finish_win_2',
+            [PlayResult.Lose]: scoreDiff < 0 ? 'com_play_menubar.body_finish_lose_1' : 'com_play_menubar.body_finish_lose_2',
+            [PlayResult.Tie]: 'com_play_menubar.body_finish_tie',
+            [PlayResult.Win]: scoreDiff > 0 ? 'com_play_menubar.body_finish_win_1' : 'com_play_menubar.body_finish_win_2',
           } as const
         )[result],
         { points: Math.abs(scoreDiff) },

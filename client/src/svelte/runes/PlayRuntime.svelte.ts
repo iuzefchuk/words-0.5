@@ -1,5 +1,7 @@
 import { updated } from '$app/state';
-import AudioService, { Sting } from '@/client/services/AudioService.ts';
+import { PlayHostType } from '@/client/domain/enums.ts';
+import mapPlayEventSting from '@/client/domain/maps/mapPlayEventSting.ts';
+import AudioService from '@/client/services/AudioService.ts';
 import CryptoService from '@/client/services/CryptoService.ts';
 import DatabaseService, { DatabaseName } from '@/client/services/DatabaseService.ts';
 import FetchService from '@/client/services/FetchService.ts';
@@ -8,114 +10,18 @@ import { DomainMatchDifficulty, DomainMatchType } from '@/engine/app/enums/index
 import dictionaryUrl from '@/engine/assets/dictionary.bin?url';
 import { eventsSchemaVersion } from '@/engine/domain/events/constants.ts';
 import main from '@/engine/main.ts';
+import type { PlayResult, PlaySlotBonus } from '@/client/domain/enums.ts';
+import type {
+  PlayBlock,
+  PlayBlockId,
+  PlayEvent,
+  PlayGeometry,
+  PlaySettings,
+  PlaySlotId,
+  PlayState,
+} from '@/client/domain/types.ts';
+import type { Sting } from '@/client/services/AudioService.ts';
 import type { DomainTimelineEvent } from '@/engine/app/types/index.ts';
-
-export enum PlayRuntimeEventType {
-  MatchFinished = 'MatchFinished',
-  MatchStarted = 'MatchStarted',
-  TurnPassed = 'TurnPassed',
-  TurnSaved = 'TurnSaved',
-  TurnValidationSet = 'TurnValidationSet',
-}
-
-export enum PlayRuntimeHostType {
-  Client = 'Client',
-  Server = 'Server',
-}
-
-export enum PlayRuntimePlayer {
-  Opponent = 'Opponent',
-  User = 'User',
-}
-
-export enum PlayRuntimeResult {
-  Lose = 'Lose',
-  Tie = 'Tie',
-  Undecided = 'Undecided',
-  Win = 'Win',
-}
-
-export enum PlayRuntimeSettingsDifficulty {
-  High = 'High',
-  Low = 'Low',
-  Medium = 'Medium',
-}
-
-export enum PlayRuntimeSettingsType {
-  Classic = 'Classic',
-  Random = 'Random',
-}
-
-export enum PlayRuntimeSlotBonus {
-  DoubleLetter = 'DoubleLetter',
-  DoubleWord = 'DoubleWord',
-  TripleLetter = 'TripleLetter',
-  TripleWord = 'TripleWord',
-}
-
-export type PlayRuntimeBlock = {
-  readonly id: PlayRuntimeBlockId;
-  readonly letter: PlayRuntimeBlockLetter;
-  readonly points: number;
-  readonly wasUsedInPreviousTurn: boolean;
-};
-
-export type PlayRuntimeBlockId = string;
-
-export type PlayRuntimeBlockLetter = string;
-
-export type PlayRuntimeEvent =
-  | {
-      readonly player: PlayRuntimePlayer;
-      readonly score: number;
-      readonly type: PlayRuntimeEventType.TurnSaved;
-      readonly words: ReadonlyArray<string>;
-    }
-  | { readonly player: PlayRuntimePlayer; readonly type: PlayRuntimeEventType.TurnPassed }
-  | { readonly type: PlayRuntimeEventType.MatchFinished; readonly winner: null | PlayRuntimePlayer }
-  | { readonly type: PlayRuntimeEventType.MatchStarted }
-  | { readonly type: PlayRuntimeEventType.TurnValidationSet };
-
-export type PlayRuntimeSettings = {
-  readonly difficulty: PlayRuntimeSettingsDifficulty;
-  readonly type: PlayRuntimeSettingsType;
-};
-
-export type PlayRuntimeSlotId = number;
-
-type PlayRuntimeGeometry = {
-  readonly adjacentsByCell: ReadonlyArray<ReadonlyArray<PlayRuntimeSlotId>>;
-  readonly centerCell: PlayRuntimeSlotId;
-  readonly columnByCell: ReadonlyArray<number>;
-  readonly rowByCell: ReadonlyArray<number>;
-};
-
-type PlayRuntimeSlot = {
-  readonly bonus: null | PlayRuntimeSlotBonus;
-  readonly id: PlayRuntimeSlotId;
-  readonly tile: null | PlayRuntimeBlock;
-};
-
-type PlayRuntimeState = {
-  readonly cells: ReadonlyArray<PlayRuntimeSlot>;
-  readonly cellsPerAxis: number;
-  readonly currentPlayerIsUser: boolean;
-  readonly currentTurnIsValid: boolean;
-  readonly currentTurnScore: null | number;
-  readonly events: ReadonlyArray<PlayRuntimeEvent>;
-  readonly hasPriorTurns: boolean;
-  readonly isFinished: boolean;
-  readonly opponentScore: number;
-  readonly opponentTurnIsDue: boolean;
-  readonly result: PlayRuntimeResult;
-  readonly settings: PlayRuntimeSettings;
-  readonly settingsAreChangeable: boolean;
-  readonly tilesPerPlayer: number;
-  readonly tilesRemaining: number;
-  readonly userPassWillBeResign: boolean;
-  readonly userScore: number;
-  readonly userTiles: ReadonlyArray<PlayRuntimeBlock>;
-};
 
 class ClientHost {
   private constructor(private readonly app: App) {}
@@ -132,7 +38,7 @@ class ClientHost {
     return host;
   }
 
-  async changeSettings(settings: Partial<PlayRuntimeSettings>): Promise<PlayRuntimeState> {
+  async changeSettings(settings: Partial<PlaySettings>): Promise<PlayState> {
     if (settings.difficulty !== undefined) {
       this.app.commands.changeMatchDifficulty(DomainMatchDifficulty[settings.difficulty]);
     }
@@ -142,52 +48,52 @@ class ClientHost {
     return this.persist();
   }
 
-  loadGeometry(): Promise<PlayRuntimeGeometry> {
+  loadGeometry(): Promise<PlayGeometry> {
     return Promise.resolve(this.app.queries.playfieldGeometry);
   }
 
-  loadState(): Promise<PlayRuntimeState> {
-    return Promise.resolve(this.app.queries.matchState as unknown as PlayRuntimeState);
+  loadState(): Promise<PlayState> {
+    return Promise.resolve(this.app.queries.matchState as unknown as PlayState);
   }
 
-  async passTurn(): Promise<PlayRuntimeState> {
+  async passTurn(): Promise<PlayState> {
     this.app.commands.passTurn();
     return this.persist();
   }
 
-  async placeTile(link: { cell: PlayRuntimeSlotId; tile: PlayRuntimeBlockId }): Promise<PlayRuntimeState> {
+  async placeTile(link: { cell: PlaySlotId; tile: PlayBlockId }): Promise<PlayState> {
     this.app.commands.placeTile(link);
     this.app.commands.validateTurn();
     return this.persist();
   }
 
-  async playOpponentTurn(): Promise<PlayRuntimeState> {
+  async playOpponentTurn(): Promise<PlayState> {
     this.app.commands.playOpponentTurn();
     return this.persist();
   }
 
-  async resignMatch(): Promise<PlayRuntimeState> {
+  async resignMatch(): Promise<PlayState> {
     this.app.commands.resignMatch();
     return this.persist();
   }
 
-  async restartGame(): Promise<PlayRuntimeState> {
+  async restartGame(): Promise<PlayState> {
     this.app.commands.restartGame();
     return this.persist();
   }
 
-  async saveTurn(): Promise<PlayRuntimeState> {
+  async saveTurn(): Promise<PlayState> {
     this.app.commands.saveTurn();
     return this.persist();
   }
 
-  async undoPlaceTile(tile: PlayRuntimeBlockId): Promise<PlayRuntimeState> {
+  async undoPlaceTile(tile: PlayBlockId): Promise<PlayState> {
     this.app.commands.undoPlaceTile(tile);
     this.app.commands.validateTurn();
     return this.persist();
   }
 
-  private async persist(): Promise<PlayRuntimeState> {
+  private async persist(): Promise<PlayState> {
     await DatabaseService.save(DatabaseName.PlayRuntimeEvents, eventsSchemaVersion, this.app.queries.eventLog);
     return this.loadState();
   }
@@ -199,46 +105,46 @@ class ServerHost {
     return new ServerHost();
   }
 
-  async changeSettings(settings: Partial<PlayRuntimeSettings>): Promise<PlayRuntimeState> {
-    return FetchService.patch<PlayRuntimeState>('/api/match/settings', settings);
+  async changeSettings(settings: Partial<PlaySettings>): Promise<PlayState> {
+    return FetchService.patch<PlayState>('/api/match/settings', settings);
   }
 
-  async loadGeometry(): Promise<PlayRuntimeGeometry> {
-    return FetchService.getJson<PlayRuntimeGeometry>('/api/playfield/geometry');
+  async loadGeometry(): Promise<PlayGeometry> {
+    return FetchService.getJson<PlayGeometry>('/api/playfield/geometry');
   }
 
-  async loadState(): Promise<PlayRuntimeState> {
-    return FetchService.getJson<PlayRuntimeState>('/api/match');
+  async loadState(): Promise<PlayState> {
+    return FetchService.getJson<PlayState>('/api/match');
   }
 
-  async passTurn(): Promise<PlayRuntimeState> {
-    return FetchService.post<PlayRuntimeState>('/api/match/pass');
+  async passTurn(): Promise<PlayState> {
+    return FetchService.post<PlayState>('/api/match/pass');
   }
 
-  async placeTile(link: { cell: PlayRuntimeSlotId; tile: PlayRuntimeBlockId }): Promise<PlayRuntimeState> {
-    await FetchService.put<PlayRuntimeState>('/api/playfield/tile', link);
-    return FetchService.post<PlayRuntimeState>('/api/match/validation');
+  async placeTile(link: { cell: PlaySlotId; tile: PlayBlockId }): Promise<PlayState> {
+    await FetchService.put<PlayState>('/api/playfield/tile', link);
+    return FetchService.post<PlayState>('/api/match/validation');
   }
 
-  async playOpponentTurn(): Promise<PlayRuntimeState> {
-    return FetchService.post<PlayRuntimeState>('/api/match/opponent-turn');
+  async playOpponentTurn(): Promise<PlayState> {
+    return FetchService.post<PlayState>('/api/match/opponent-turn');
   }
 
-  async resignMatch(): Promise<PlayRuntimeState> {
-    return FetchService.post<PlayRuntimeState>('/api/match/resign');
+  async resignMatch(): Promise<PlayState> {
+    return FetchService.post<PlayState>('/api/match/resign');
   }
 
-  async restartGame(): Promise<PlayRuntimeState> {
-    return FetchService.post<PlayRuntimeState>('/api/game/restart');
+  async restartGame(): Promise<PlayState> {
+    return FetchService.post<PlayState>('/api/game/restart');
   }
 
-  async saveTurn(): Promise<PlayRuntimeState> {
-    return FetchService.post<PlayRuntimeState>('/api/match/turn');
+  async saveTurn(): Promise<PlayState> {
+    return FetchService.post<PlayState>('/api/match/turn');
   }
 
-  async undoPlaceTile(tile: PlayRuntimeBlockId): Promise<PlayRuntimeState> {
-    await FetchService.delete<PlayRuntimeState>(`/api/playfield/tile/${encodeURIComponent(tile)}`);
-    return FetchService.post<PlayRuntimeState>('/api/match/validation');
+  async undoPlaceTile(tile: PlayBlockId): Promise<PlayState> {
+    await FetchService.delete<PlayState>(`/api/playfield/tile/${encodeURIComponent(tile)}`);
+    return FetchService.post<PlayState>('/api/match/validation');
   }
 }
 
@@ -261,16 +167,16 @@ export default class PlayRuntime {
     return this.state.currentTurnScore;
   }
 
-  get events(): ReadonlyArray<PlayRuntimeEvent> {
+  get events(): ReadonlyArray<PlayEvent> {
     return this.state.events;
   }
 
-  get hostType(): PlayRuntimeHostType {
+  get hostType(): PlayHostType {
     switch (this.host.constructor) {
       case ClientHost:
-        return PlayRuntimeHostType.Client;
+        return PlayHostType.Client;
       case ServerHost:
-        return PlayRuntimeHostType.Server;
+        return PlayHostType.Server;
       default:
         throw new TypeError('expected host to be a ClientHost or a ServerHost');
     }
@@ -288,11 +194,11 @@ export default class PlayRuntime {
     return this.state.opponentScore;
   }
 
-  get result(): PlayRuntimeResult {
+  get result(): PlayResult {
     return this.state.result;
   }
 
-  get selectedBlockId(): null | PlayRuntimeBlockId {
+  get selectedBlockId(): null | PlayBlockId {
     return this.selectedToolbarBlockId;
   }
 
@@ -300,7 +206,7 @@ export default class PlayRuntime {
     return this.selectedToolbarBlockId !== null && this.isBlockSlotted(this.selectedToolbarBlockId);
   }
 
-  get settings(): PlayRuntimeSettings {
+  get settings(): PlaySettings {
     return this.state.settings;
   }
 
@@ -308,7 +214,7 @@ export default class PlayRuntime {
     return this.state.settingsAreChangeable;
   }
 
-  get slotIds(): ReadonlyArray<PlayRuntimeSlotId> {
+  get slotIds(): ReadonlyArray<PlaySlotId> {
     return this.state.cells.map(cell => cell.id);
   }
 
@@ -316,7 +222,7 @@ export default class PlayRuntime {
     return this.state.cellsPerAxis;
   }
 
-  get userBlocks(): ReadonlyArray<PlayRuntimeBlock> {
+  get userBlocks(): ReadonlyArray<PlayBlock> {
     return this.toolbarBlocks;
   }
 
@@ -328,25 +234,25 @@ export default class PlayRuntime {
     return this.state.userScore;
   }
 
-  private geometry!: PlayRuntimeGeometry;
+  private geometry!: PlayGeometry;
 
   private lastDrainedEventCount!: number;
 
-  private selectedToolbarBlockId = $state<null | PlayRuntimeBlockId>(null);
+  private selectedToolbarBlockId = $state<null | PlayBlockId>(null);
 
-  private state = $state<unknown>() as PlayRuntimeState;
+  private state = $state<unknown>() as PlayState;
 
-  private toolbarBlocks = $state<Array<PlayRuntimeBlock>>([]);
+  private toolbarBlocks = $state<Array<PlayBlock>>([]);
 
   private constructor(private readonly host: ClientHost | ServerHost) {}
 
-  static async create(hostType: PlayRuntimeHostType): Promise<PlayRuntime> {
+  static async create(hostType: PlayHostType): Promise<PlayRuntime> {
     let host: ClientHost | ServerHost;
     switch (hostType) {
-      case PlayRuntimeHostType.Client:
+      case PlayHostType.Client:
         host = await ClientHost.open();
         break;
-      case PlayRuntimeHostType.Server:
+      case PlayHostType.Server:
         host = await ServerHost.open();
         break;
     }
@@ -355,25 +261,7 @@ export default class PlayRuntime {
     return runtime;
   }
 
-  private static mapEventSting(event: PlayRuntimeEvent): null | Sting {
-    switch (event.type) {
-      case PlayRuntimeEventType.MatchFinished:
-        return event.winner === null
-          ? Sting.Arch
-          : event.winner === PlayRuntimePlayer.User
-            ? Sting.RisingArpeggio
-            : Sting.FallingArpeggio;
-      case PlayRuntimeEventType.MatchStarted:
-      case PlayRuntimeEventType.TurnValidationSet:
-        return null;
-      case PlayRuntimeEventType.TurnPassed:
-        return event.player === PlayRuntimePlayer.User ? Sting.FallingThird : Sting.FallingFifth;
-      case PlayRuntimeEventType.TurnSaved:
-        return event.player === PlayRuntimePlayer.User ? Sting.RisingThird : Sting.RisingFifth;
-    }
-  }
-
-  async changeSettings(settings: Partial<PlayRuntimeSettings>): Promise<void> {
+  async changeSettings(settings: Partial<PlaySettings>): Promise<void> {
     this.applyState(await this.host.changeSettings(settings));
   }
 
@@ -381,51 +269,51 @@ export default class PlayRuntime {
     this.selectedToolbarBlockId = null;
   }
 
-  findBlockInSlot(slotId: PlayRuntimeSlotId): null | PlayRuntimeBlock {
+  findBlockInSlot(slotId: PlaySlotId): null | PlayBlock {
     return this.state.cells[slotId]?.tile ?? null;
   }
 
-  findSlotWithBlock(blockId: PlayRuntimeBlockId): PlayRuntimeSlotId | undefined {
+  findSlotWithBlock(blockId: PlayBlockId): PlaySlotId | undefined {
     return this.state.cells.find(cell => cell.tile?.id === blockId)?.id;
   }
 
-  getSlotAdjacents(slotId: PlayRuntimeSlotId): ReadonlyArray<PlayRuntimeSlotId> {
+  getSlotAdjacents(slotId: PlaySlotId): ReadonlyArray<PlaySlotId> {
     const adjacents = this.geometry.adjacentsByCell[slotId];
     if (adjacents === undefined) throw new ReferenceError(`expected adjacent slots for slot ${String(slotId)}, got undefined`);
     return adjacents;
   }
 
-  getSlotBonus(slotId: PlayRuntimeSlotId): null | PlayRuntimeSlotBonus {
+  getSlotBonus(slotId: PlaySlotId): null | PlaySlotBonus {
     const cell = this.state.cells[slotId];
     if (cell === undefined) throw new ReferenceError(`expected slot ${String(slotId)}, got undefined`);
     return cell.bonus;
   }
 
-  getSlotColumn(slotId: PlayRuntimeSlotId): number {
+  getSlotColumn(slotId: PlaySlotId): number {
     const column = this.geometry.columnByCell[slotId];
     if (column === undefined) throw new ReferenceError(`expected column for slot ${String(slotId)}, got undefined`);
     return column;
   }
 
-  getSlotRow(slotId: PlayRuntimeSlotId): number {
+  getSlotRow(slotId: PlaySlotId): number {
     const row = this.geometry.rowByCell[slotId];
     if (row === undefined) throw new ReferenceError(`expected row for slot ${String(slotId)}, got undefined`);
     return row;
   }
 
-  isBlockInToolbar(blockId: PlayRuntimeBlockId): boolean {
+  isBlockInToolbar(blockId: PlayBlockId): boolean {
     return this.findBlockIdx(blockId) !== -1;
   }
 
-  isBlockSelected(blockId: PlayRuntimeBlockId): boolean {
+  isBlockSelected(blockId: PlayBlockId): boolean {
     return this.selectedToolbarBlockId === blockId;
   }
 
-  isBlockSlotted(blockId: PlayRuntimeBlockId): boolean {
+  isBlockSlotted(blockId: PlayBlockId): boolean {
     return this.findSlotWithBlock(blockId) !== undefined;
   }
 
-  isSlotCenter(slotId: PlayRuntimeSlotId): boolean {
+  isSlotCenter(slotId: PlaySlotId): boolean {
     return slotId === this.geometry.centerCell;
   }
 
@@ -452,16 +340,16 @@ export default class PlayRuntime {
     await this.settleOpponentTurn();
   }
 
-  selectBlock(blockId: PlayRuntimeBlockId): void {
+  selectBlock(blockId: PlayBlockId): void {
     if (this.findBlockIdx(blockId) === -1) return;
     this.selectedToolbarBlockId = blockId;
   }
 
-  async slotBlock({ blockId, slotId }: { blockId: PlayRuntimeBlockId; slotId: PlayRuntimeSlotId }): Promise<void> {
+  async slotBlock({ blockId, slotId }: { blockId: PlayBlockId; slotId: PlaySlotId }): Promise<void> {
     this.applyState(await this.host.placeTile({ cell: slotId, tile: blockId }));
   }
 
-  swapBlocks(firstBlockId: PlayRuntimeBlockId, secondBlockId: PlayRuntimeBlockId): void {
+  swapBlocks(firstBlockId: PlayBlockId, secondBlockId: PlayBlockId): void {
     const firstIdx = this.findBlockIdx(firstBlockId);
     const secondIdx = this.findBlockIdx(secondBlockId);
     if (firstIdx < 0 || secondIdx < 0) {
@@ -476,11 +364,11 @@ export default class PlayRuntime {
     this.toolbarBlocks[secondIdx] = first;
   }
 
-  async undoSlotBlock(blockId: PlayRuntimeBlockId): Promise<void> {
+  async undoSlotBlock(blockId: PlayBlockId): Promise<void> {
     this.applyState(await this.host.undoPlaceTile(blockId));
   }
 
-  private applyState(state: PlayRuntimeState): void {
+  private applyState(state: PlayState): void {
     this.state = state;
     const { userTiles } = state;
     if (userTiles.length !== this.toolbarBlocks.length || userTiles.some(block => !this.isBlockInToolbar(block.id)))
@@ -488,7 +376,7 @@ export default class PlayRuntime {
     this.playPendingStings();
   }
 
-  private findBlockIdx(blockId: PlayRuntimeBlockId): number {
+  private findBlockIdx(blockId: PlayBlockId): number {
     return this.toolbarBlocks.findIndex(entry => entry.id === blockId);
   }
 
@@ -499,7 +387,7 @@ export default class PlayRuntime {
     for (let idx = this.lastDrainedEventCount; idx < events.length; idx++) {
       const event = events[idx];
       if (event === undefined) continue;
-      const sting = PlayRuntime.mapEventSting(event);
+      const sting = mapPlayEventSting(event);
       if (sting !== null) lastSting = sting;
     }
     this.lastDrainedEventCount = events.length;
