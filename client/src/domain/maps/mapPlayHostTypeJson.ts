@@ -1,4 +1,4 @@
-import { PlayHostType } from '@/client/domain/enums.ts';
+import { PlayHostType } from '@/client/domain/enums/PlayHostType.ts';
 import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
 
 await I18nLibrary.loadNamespace('map_play_host_type');

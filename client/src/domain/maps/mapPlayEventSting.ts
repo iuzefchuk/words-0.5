@@ -1,6 +1,7 @@
-import { PlayEventType, PlayPlayer } from '@/client/domain/enums.ts';
+import { PlayEventType } from '@/client/domain/enums/PlayEventType.ts';
+import { PlayPlayer } from '@/client/domain/enums/PlayPlayer.ts';
 import { Sting } from '@/client/services/AudioService.ts';
-import type { PlayEvent } from '@/client/domain/types.ts';
+import type { PlayEvent } from '@/client/domain/types/PlayEvent.ts';
 
 export default function mapPlayEventSting(event: PlayEvent): null | Sting {
   switch (event.type) {

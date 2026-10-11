@@ -4,7 +4,8 @@
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
   import PlayMainToolbarStats from '@/client/svelte/components/routes/play/PlayMain/PlayMainToolbar/PlayMainToolbarStats.svelte';
   import AppGridItem, { AppGridItemElevation, AppGridItemTone } from '@/client/svelte/components/shared/AppGridItem.svelte';
-  import type { PlayBlock, PlayBlockId } from '@/client/domain/types.ts';
+  import type { PlayBlock } from '@/client/domain/types/PlayBlock.ts';
+  import type { PlayBlockId } from '@/client/domain/types/PlayBlockId.ts';
 
   const runtime = getPlayRuntimeContext();
 

@@ -8,7 +8,6 @@ Finish endscreen + bug with tooltip
 Loading states
 Error states
 Tests
-Server & engine rewrite to Rust
 Multiple matches
 Auth / save progress on server
 Multiplayer

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PlayResult } from '@/client/domain/enums.ts';
+  import { PlayResult } from '@/client/domain/enums/PlayResult.ts';
   import { Key } from '@/client/enums.ts';
   import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';

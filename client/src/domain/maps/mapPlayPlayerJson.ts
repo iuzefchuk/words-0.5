@@ -1,4 +1,4 @@
-import { PlayPlayer } from '@/client/domain/enums.ts';
+import { PlayPlayer } from '@/client/domain/enums/PlayPlayer.ts';
 import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
 
 await I18nLibrary.loadNamespace('map_play_player');

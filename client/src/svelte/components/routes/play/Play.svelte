@@ -13,7 +13,7 @@
   import PlayMain from '@/client/svelte/components/routes/play/PlayMain/PlayMain.svelte';
   import PlayMenubar from '@/client/svelte/components/routes/play/PlayMenubar.svelte';
   import dialog from '@/client/svelte/runes/Dialog.svelte.ts';
-  import type { PlayHostType } from '@/client/domain/enums.ts';
+  import type { PlayHostType } from '@/client/domain/enums/PlayHostType.ts';
 
   type Props = {
     onsethosttype: (hostType: PlayHostType) => void;

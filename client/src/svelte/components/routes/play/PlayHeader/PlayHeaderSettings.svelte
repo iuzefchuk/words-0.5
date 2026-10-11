@@ -1,5 +1,7 @@
 <script lang="ts">
-  import { PlayHostType, PlaySettingsDifficulty, PlaySettingsType } from '@/client/domain/enums.ts';
+  import { PlayHostType } from '@/client/domain/enums/PlayHostType.ts';
+  import { PlaySettingsDifficulty } from '@/client/domain/enums/PlaySettingsDifficulty.ts';
+  import { PlaySettingsType } from '@/client/domain/enums/PlaySettingsType.ts';
   import mapPlayHostTypeJson from '@/client/domain/maps/mapPlayHostTypeJson.ts';
   import mapPlaySettingsDifficultyJson from '@/client/domain/maps/mapPlaySettingsDifficultyJson.ts';
   import mapPlaySettingsTypeJson from '@/client/domain/maps/mapPlaySettingsTypeJson.ts';

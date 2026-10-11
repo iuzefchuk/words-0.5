@@ -3,7 +3,8 @@
   import mapPlaySlotBonusJson from '@/client/domain/maps/mapPlaySlotBonusJson.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
   import AppGridItem, { AppGridItemElevation, AppGridItemTone } from '@/client/svelte/components/shared/AppGridItem.svelte';
-  import type { PlayBlockId, PlaySlotId } from '@/client/domain/types.ts';
+  import type { PlayBlockId } from '@/client/domain/types/PlayBlockId.ts';
+  import type { PlaySlotId } from '@/client/domain/types/PlaySlotId.ts';
 
   type Props = { slotId: PlaySlotId };
   const { slotId }: Props = $props();

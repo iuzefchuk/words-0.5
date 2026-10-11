@@ -1,4 +1,4 @@
-import { PlaySettingsDifficulty } from '@/client/domain/enums.ts';
+import { PlaySettingsDifficulty } from '@/client/domain/enums/PlaySettingsDifficulty.ts';
 import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
 
 await I18nLibrary.loadNamespace('map_play_settings_difficulty');

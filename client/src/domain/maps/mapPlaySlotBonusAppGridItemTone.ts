@@ -1,4 +1,4 @@
-import { PlaySlotBonus } from '@/client/domain/enums.ts';
+import { PlaySlotBonus } from '@/client/domain/enums/PlaySlotBonus.ts';
 import { AppGridItemTone } from '@/client/svelte/components/shared/AppGridItem.svelte';
 
 export default function mapPlaySlotBonusAppGridItemTone(bonus: PlaySlotBonus): AppGridItemTone {

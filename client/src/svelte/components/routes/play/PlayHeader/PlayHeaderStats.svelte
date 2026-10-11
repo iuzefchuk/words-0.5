@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PlayPlayer } from '@/client/domain/enums.ts';
+  import { PlayPlayer } from '@/client/domain/enums/PlayPlayer.ts';
   import mapPlayPlayerJson from '@/client/domain/maps/mapPlayPlayerJson.ts';
   import animateNumber from '@/client/svelte/actions/animateNumber.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';

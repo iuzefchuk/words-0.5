@@ -1,4 +1,4 @@
-import { PlaySlotBonus } from '@/client/domain/enums.ts';
+import { PlaySlotBonus } from '@/client/domain/enums/PlaySlotBonus.ts';
 import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
 
 await I18nLibrary.loadNamespace('map_play_slot_bonus');

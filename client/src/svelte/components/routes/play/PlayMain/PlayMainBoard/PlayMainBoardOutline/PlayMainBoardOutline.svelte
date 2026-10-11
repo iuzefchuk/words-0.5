@@ -3,7 +3,8 @@
   import { TransitionDuration } from '@/client/enums.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
   import PlayMainBoardOutlineTooltip from '@/client/svelte/components/routes/play/PlayMain/PlayMainBoard/PlayMainBoardOutline/PlayMainBoardOutlineTooltip.svelte';
-  import type { PlayBlock, PlaySlotId } from '@/client/domain/types.ts';
+  import type { PlayBlock } from '@/client/domain/types/PlayBlock.ts';
+  import type { PlaySlotId } from '@/client/domain/types/PlaySlotId.ts';
 
   const runtime = getPlayRuntimeContext();
 

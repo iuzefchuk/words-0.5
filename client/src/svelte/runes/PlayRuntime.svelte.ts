@@ -1,5 +1,5 @@
 import { updated } from '$app/state';
-import { PlayHostType } from '@/client/domain/enums.ts';
+import { PlayHostType } from '@/client/domain/enums/PlayHostType.ts';
 import mapPlayEventSting from '@/client/domain/maps/mapPlayEventSting.ts';
 import AudioService from '@/client/services/AudioService.ts';
 import CryptoService from '@/client/services/CryptoService.ts';
@@ -10,16 +10,15 @@ import { DomainMatchDifficulty, DomainMatchType } from '@/engine/app/enums/index
 import dictionaryUrl from '@/engine/assets/dictionary.bin?url';
 import { eventsSchemaVersion } from '@/engine/domain/events/constants.ts';
 import main from '@/engine/main.ts';
-import type { PlayResult, PlaySlotBonus } from '@/client/domain/enums.ts';
-import type {
-  PlayBlock,
-  PlayBlockId,
-  PlayEvent,
-  PlayGeometry,
-  PlaySettings,
-  PlaySlotId,
-  PlayState,
-} from '@/client/domain/types.ts';
+import type { PlayResult } from '@/client/domain/enums/PlayResult.ts';
+import type { PlaySlotBonus } from '@/client/domain/enums/PlaySlotBonus.ts';
+import type { PlayBlock } from '@/client/domain/types/PlayBlock.ts';
+import type { PlayBlockId } from '@/client/domain/types/PlayBlockId.ts';
+import type { PlayEvent } from '@/client/domain/types/PlayEvent.ts';
+import type { PlayGeometry } from '@/client/domain/types/PlayGeometry.ts';
+import type { PlaySettings } from '@/client/domain/types/PlaySettings.ts';
+import type { PlaySlotId } from '@/client/domain/types/PlaySlotId.ts';
+import type { PlayState } from '@/client/domain/types/PlayState.ts';
 import type { Sting } from '@/client/services/AudioService.ts';
 import type { DomainTimelineEvent } from '@/engine/app/types/index.ts';
 

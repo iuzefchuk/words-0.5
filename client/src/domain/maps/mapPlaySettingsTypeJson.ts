@@ -1,4 +1,4 @@
-import { PlaySettingsType } from '@/client/domain/enums.ts';
+import { PlaySettingsType } from '@/client/domain/enums/PlaySettingsType.ts';
 import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
 
 await I18nLibrary.loadNamespace('map_play_settings_type');

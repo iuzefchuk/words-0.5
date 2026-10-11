@@ -1,12 +1,12 @@
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { fly } from 'svelte/transition';
-  import { PlayEventType } from '@/client/domain/enums.ts';
+  import { PlayEventType } from '@/client/domain/enums/PlayEventType.ts';
   import mapPlayPlayerJson from '@/client/domain/maps/mapPlayPlayerJson.ts';
   import { TransitionDuration } from '@/client/enums.ts';
   import I18nLibrary from '@/client/libraries/I18nLibrary.ts';
   import { getPlayRuntimeContext } from '@/client/svelte/components/routes/play/Play.svelte';
-  import type { PlayEvent } from '@/client/domain/types.ts';
+  import type { PlayEvent } from '@/client/domain/types/PlayEvent.ts';
 
   const EVENTS_DISPLAYED_MAX = 3;
 

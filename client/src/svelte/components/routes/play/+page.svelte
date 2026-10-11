@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { PlayHostType } from '@/client/domain/enums.ts';
+  import { PlayHostType } from '@/client/domain/enums/PlayHostType.ts';
   import Play from '@/client/svelte/components/routes/play/Play.svelte';
   import PlayLoader from '@/client/svelte/components/routes/play/PlayLoader.svelte';
   import PlayRuntime from '@/client/svelte/runes/PlayRuntime.svelte.ts';
