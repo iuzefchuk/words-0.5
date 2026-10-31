@@ -5,11 +5,8 @@ import AudioService from '@/client/services/AudioService.ts';
 import CryptoService from '@/client/services/CryptoService.ts';
 import DatabaseService, { DatabaseName } from '@/client/services/DatabaseService.ts';
 import FetchService from '@/client/services/FetchService.ts';
-import App from '@/engine/app/App.ts';
-import { DomainMatchDifficulty, DomainMatchType } from '@/engine/app/enums/index.ts';
-import dictionaryUrl from '@/engine/assets/dictionary.bin?url';
-import { eventsSchemaVersion } from '@/engine/domain/events/constants.ts';
-import main from '@/engine/main.ts';
+import dictionaryUrl from '@/engine/src/assets/dictionary.bin?url';
+import engineUrl from '@/engine/target/wasm32-unknown-unknown/release/engine.wasm?url';
 import type { PlayResult } from '@/client/domain/enums/PlayResult.ts';
 import type { PlaySlotBonus } from '@/client/domain/enums/PlaySlotBonus.ts';
 import type { PlayBlock } from '@/client/domain/types/PlayBlock.ts';
@@ -20,81 +17,211 @@ import type { PlaySettings } from '@/client/domain/types/PlaySettings.ts';
 import type { PlaySlotId } from '@/client/domain/types/PlaySlotId.ts';
 import type { PlayState } from '@/client/domain/types/PlayState.ts';
 import type { Sting } from '@/client/services/AudioService.ts';
-import type { DomainTimelineEvent } from '@/engine/app/types/index.ts';
+
+type EngineCall = (exports: EngineExports) => number;
+
+type EngineCallWithInput = (exports: EngineExports, pointer: number, length: number) => number;
+
+type EngineExports = {
+  alloc(length: number): number;
+  app_change_match_difficulty(handle: number, pointer: number, length: number): number;
+  app_change_match_type(handle: number, pointer: number, length: number): number;
+  app_clear_user_tiles(handle: number): number;
+  app_close(handle: number): number;
+  app_event_log(handle: number): number;
+  app_match_state(handle: number): number;
+  app_open(eventsPointer: number, eventsLength: number, settingsPointer: number, settingsLength: number, seed: number): number;
+  app_opponent_turn_is_due(handle: number): number;
+  app_pass_turn(handle: number): number;
+  app_place_tile(handle: number, cell: number, pointer: number, length: number): number;
+  app_play_opponent_turn(handle: number): number;
+  app_playfield_geometry(handle: number): number;
+  app_resign_match(handle: number): number;
+  app_restart_game(handle: number): number;
+  app_save_turn(handle: number): number;
+  app_shuffle_user_tiles(handle: number): number;
+  app_undo_place_tile(handle: number, pointer: number, length: number): number;
+  app_validate_turn(handle: number): number;
+  dealloc(pointer: number, length: number): void;
+  engine_open(pointer: number, length: number): number;
+  events_schema_version(): number;
+  memory: WebAssembly.Memory;
+  panic_message(): number;
+};
 
 class ClientHost {
-  private constructor(private readonly app: App) {}
+  private constructor(
+    private readonly engine: EngineInstance,
+    private readonly handle: number,
+  ) {}
 
   static async open(): Promise<ClientHost> {
-    const [dictionary, events] = await Promise.all([
+    const [dictionary, wasm] = await Promise.all([
       FetchService.getArrayBuffer(dictionaryUrl),
-      DatabaseService.load(DatabaseName.PlayRuntimeEvents, eventsSchemaVersion),
+      FetchService.getArrayBuffer(engineUrl),
     ]);
-    const app = App.open(main(dictionary), events as null | ReadonlyArray<DomainTimelineEvent>, null, CryptoService.createSeed());
-    if (app.queries.opponentTurnIsDue) app.commands.playOpponentTurn();
-    const host = new ClientHost(app);
+    const engine = await EngineInstance.instantiate(wasm);
+    engine.callWithBytes(new Uint8Array(dictionary), (exports, pointer, length) => exports.engine_open(pointer, length));
+    const events = await DatabaseService.load(DatabaseName.PlayRuntimeEvents, engine.version);
+    const seed = CryptoService.createSeed();
+    const handle = Number(
+      engine.callWithText(events === null ? '' : JSON.stringify(events), (exports, pointer, length) =>
+        exports.app_open(pointer, length, 0, 0, seed),
+      ),
+    );
+    const host = new ClientHost(engine, handle);
+    if (host.opponentTurnIsDue()) host.engine.call(exports => exports.app_play_opponent_turn(handle));
     await host.persist();
     return host;
   }
 
   async changeSettings(settings: Partial<PlaySettings>): Promise<PlayState> {
     if (settings.difficulty !== undefined) {
-      this.app.commands.changeMatchDifficulty(DomainMatchDifficulty[settings.difficulty]);
+      this.engine.callWithText(settings.difficulty, (exports, pointer, length) =>
+        exports.app_change_match_difficulty(this.handle, pointer, length),
+      );
     }
     if (settings.type !== undefined) {
-      this.app.commands.changeMatchType(DomainMatchType[settings.type]);
+      this.engine.callWithText(settings.type, (exports, pointer, length) =>
+        exports.app_change_match_type(this.handle, pointer, length),
+      );
     }
     return this.persist();
   }
 
   loadGeometry(): Promise<PlayGeometry> {
-    return Promise.resolve(this.app.queries.playfieldGeometry);
+    return Promise.resolve(this.engine.json(exports => exports.app_playfield_geometry(this.handle)) as PlayGeometry);
   }
 
   loadState(): Promise<PlayState> {
-    return Promise.resolve(this.app.queries.matchState as unknown as PlayState);
+    return Promise.resolve(this.engine.json(exports => exports.app_match_state(this.handle)) as PlayState);
   }
 
   async passTurn(): Promise<PlayState> {
-    this.app.commands.passTurn();
+    this.engine.call(exports => exports.app_pass_turn(this.handle));
     return this.persist();
   }
 
   async placeTile(link: { cell: PlaySlotId; tile: PlayBlockId }): Promise<PlayState> {
-    this.app.commands.placeTile(link);
-    this.app.commands.validateTurn();
+    this.engine.callWithText(link.tile, (exports, pointer, length) =>
+      exports.app_place_tile(this.handle, link.cell, pointer, length),
+    );
+    this.engine.call(exports => exports.app_validate_turn(this.handle));
     return this.persist();
   }
 
   async playOpponentTurn(): Promise<PlayState> {
-    this.app.commands.playOpponentTurn();
+    this.engine.call(exports => exports.app_play_opponent_turn(this.handle));
     return this.persist();
   }
 
   async resignMatch(): Promise<PlayState> {
-    this.app.commands.resignMatch();
+    this.engine.call(exports => exports.app_resign_match(this.handle));
     return this.persist();
   }
 
   async restartGame(): Promise<PlayState> {
-    this.app.commands.restartGame();
+    this.engine.call(exports => exports.app_restart_game(this.handle));
     return this.persist();
   }
 
   async saveTurn(): Promise<PlayState> {
-    this.app.commands.saveTurn();
+    this.engine.call(exports => exports.app_save_turn(this.handle));
     return this.persist();
   }
 
   async undoPlaceTile(tile: PlayBlockId): Promise<PlayState> {
-    this.app.commands.undoPlaceTile(tile);
-    this.app.commands.validateTurn();
+    this.engine.callWithText(tile, (exports, pointer, length) => exports.app_undo_place_tile(this.handle, pointer, length));
+    this.engine.call(exports => exports.app_validate_turn(this.handle));
     return this.persist();
   }
 
+  private opponentTurnIsDue(): boolean {
+    return this.engine.json(exports => exports.app_opponent_turn_is_due(this.handle)) === true;
+  }
+
   private async persist(): Promise<PlayState> {
-    await DatabaseService.save(DatabaseName.PlayRuntimeEvents, eventsSchemaVersion, this.app.queries.eventLog);
+    const log = this.engine.json(exports => exports.app_event_log(this.handle));
+    await DatabaseService.save(DatabaseName.PlayRuntimeEvents, this.engine.version, log);
     return this.loadState();
+  }
+}
+
+class EngineInstance {
+  private static readonly DECODER = new TextDecoder();
+
+  private static readonly ENCODER = new TextEncoder();
+
+  private static readonly HEADER_LENGTH = 5;
+
+  private static readonly STATUS_OK = 0;
+
+  get version(): number {
+    return this.exports.events_schema_version();
+  }
+
+  private constructor(private readonly exports: EngineExports) {}
+
+  static async instantiate(wasm: ArrayBuffer): Promise<EngineInstance> {
+    const { instance } = await WebAssembly.instantiate(wasm, {});
+    return new EngineInstance(instance.exports as EngineExports);
+  }
+
+  call(invoke: EngineCall): string {
+    let pointer: number;
+    try {
+      pointer = invoke(this.exports);
+    } catch (error) {
+      throw new Error(this.readPanicMessage(), { cause: error });
+    }
+    return this.read(pointer);
+  }
+
+  callWithBytes(bytes: Uint8Array, invoke: EngineCallWithInput): string {
+    if (bytes.length === 0) return this.call(exports => invoke(exports, 0, 0));
+    const pointer = this.exports.alloc(bytes.length);
+    this.memory().set(bytes, pointer);
+    try {
+      return this.call(exports => invoke(exports, pointer, bytes.length));
+    } finally {
+      this.exports.dealloc(pointer, bytes.length);
+    }
+  }
+
+  callWithText(text: string, invoke: EngineCallWithInput): string {
+    return this.callWithBytes(EngineInstance.ENCODER.encode(text), invoke);
+  }
+
+  json(invoke: EngineCall): unknown {
+    return JSON.parse(this.call(invoke));
+  }
+
+  private memory(): Uint8Array {
+    return new Uint8Array(this.exports.memory.buffer);
+  }
+
+  private read(pointer: number): string {
+    const view = this.memory();
+    const status = view[pointer];
+    const length =
+      ((view[pointer + 1] ?? 0) |
+        ((view[pointer + 2] ?? 0) << 8) |
+        ((view[pointer + 3] ?? 0) << 16) |
+        ((view[pointer + 4] ?? 0) << 24)) >>>
+      0;
+    const start = pointer + EngineInstance.HEADER_LENGTH;
+    const text = EngineInstance.DECODER.decode(view.subarray(start, start + length));
+    this.exports.dealloc(pointer, EngineInstance.HEADER_LENGTH + length);
+    if (status !== EngineInstance.STATUS_OK) throw new Error(text);
+    return text;
+  }
+
+  private readPanicMessage(): string {
+    try {
+      return this.read(this.exports.panic_message());
+    } catch {
+      return 'engine panicked';
+    }
   }
 }
 

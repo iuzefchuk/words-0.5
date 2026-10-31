@@ -1,1 +1,9 @@
 .env
+.git
+client/.svelte-kit
+client/dist
+client/node_modules
+engine/node_modules
+engine/target
+server/dist
+server/node_modules

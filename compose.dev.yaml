@@ -7,17 +7,34 @@ services:
         - action: sync
           path: ./client/src
           target: /app/client/src
-        - action: sync
-          path: ./engine/src
-          target: /app/engine/src
         - action: rebuild
           path: ./client
           ignore:
             - .svelte-kit/
             - src/
+        - action: rebuild
+          path: ./engine/src
+        - action: rebuild
+          path: ./engine/Cargo.toml
+        - action: rebuild
+          path: ./engine/Cargo.lock
     environment:
       CLIENT_PORT: ${CLIENT_PORT:-1234}
       SERVER_HOST: server
     image: words-client-dev
     ports: !override
       - '${CLIENT_PORT:-1234}:${CLIENT_PORT:-1234}'
+
+  server:
+    develop:
+      watch:
+        - action: rebuild
+          path: ./server
+          ignore:
+            - dist/
+        - action: rebuild
+          path: ./engine/src
+        - action: rebuild
+          path: ./engine/Cargo.toml
+        - action: rebuild
+          path: ./engine/Cargo.lock

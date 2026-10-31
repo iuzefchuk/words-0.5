@@ -15,7 +15,7 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       sveltekit({
         adapter: adapter({ fallback: 'index.html', pages: `${ROOT}/dist` }),
-        alias: { '@/client': `${ROOT}/src`, '@/engine': `${REPO}/engine/src` },
+        alias: { '@/client': `${ROOT}/src`, '@/engine': `${REPO}/engine` },
         compilerOptions: { experimental: { async: true } },
         experimental: { handleRenderingErrors: true },
         files: {
