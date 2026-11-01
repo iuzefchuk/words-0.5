@@ -1,11 +1,11 @@
-#![allow(unsafe_code)]
-#![allow(clippy::cast_possible_truncation)]
+#![expect(unsafe_code)]
 
 use std::collections::HashMap;
 use std::panic::{self, AssertUnwindSafe};
-use std::sync::{Arc, LazyLock, Mutex, OnceLock};
+use std::sync::{Arc, LazyLock, Mutex, Once, OnceLock};
 
 use serde::Serialize;
+use serde::de::value::{self, StrDeserializer};
 
 use crate::Engine;
 use crate::app::App;
@@ -50,7 +50,7 @@ pub unsafe extern "C" fn dealloc(ptr: *mut u8, len: u32) {
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn engine_open(dictionary_ptr: *const u8, dictionary_len: u32) -> *mut u8 {
-    let dictionary = unsafe { bytes(dictionary_ptr, dictionary_len) }.to_vec();
+    let dictionary = Box::from(unsafe { bytes(dictionary_ptr, dictionary_len) });
     respond(|| {
         install_panic_hook();
         ENGINE
@@ -111,9 +111,9 @@ pub unsafe extern "C" fn app_change_match_difficulty(handle: u32, ptr: *const u8
 
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn app_change_match_type(handle: u32, ptr: *const u8, len: u32) -> *mut u8 {
-    let r#type = unsafe { bytes(ptr, len) };
+    let match_type = unsafe { bytes(ptr, len) };
     with_app(handle, |app| {
-        app.commands().change_match_type(parse_enum::<MatchType>(r#type)?);
+        app.commands().change_match_type(parse_enum::<MatchType>(match_type)?);
         Ok(Vec::new())
     })
 }
@@ -233,9 +233,10 @@ fn respond(call: impl FnOnce() -> Output) -> *mut u8 {
         Ok(payload) => (STATUS_OK, payload),
         Err(message) => (STATUS_ERROR, message.into_bytes()),
     };
+    let length = u32::try_from(payload.len()).expect("a response length fits in u32");
     let mut buffer = Vec::with_capacity(HEADER_LEN + payload.len());
     buffer.push(status);
-    buffer.extend_from_slice(&(payload.len() as u32).to_le_bytes());
+    buffer.extend_from_slice(&length.to_le_bytes());
     buffer.extend_from_slice(&payload);
     Box::into_raw(buffer.into_boxed_slice()).cast()
 }
@@ -272,13 +273,12 @@ fn parse_optional<T: serde::de::DeserializeOwned>(input: &[u8]) -> Result<Option
 
 fn parse_enum<T: serde::de::DeserializeOwned>(input: &[u8]) -> Result<T, String> {
     let text = std::str::from_utf8(input).map_err(|error| error.to_string())?;
-    serde_json::from_value(serde_json::Value::String(text.to_owned())).map_err(|error| error.to_string())
+    T::deserialize(StrDeserializer::<value::Error>::new(text)).map_err(|error| error.to_string())
 }
 
 fn parse_tile(input: &[u8]) -> Result<InventoryTile, String> {
     let text = std::str::from_utf8(input).map_err(|error| error.to_string())?;
-    text.parse()
-        .map_err(|error: crate::domain::published::ParseInventoryTileError| error.to_string())
+    text.parse::<InventoryTile>().map_err(|error| error.to_string())
 }
 
 fn panic_text(payload: &(dyn std::any::Any + Send)) -> String {
@@ -290,8 +290,8 @@ fn panic_text(payload: &(dyn std::any::Any + Send)) -> String {
 }
 
 fn install_panic_hook() {
-    static HOOK: OnceLock<()> = OnceLock::new();
-    HOOK.get_or_init(|| {
+    static HOOK: Once = Once::new();
+    HOOK.call_once(|| {
         panic::set_hook(Box::new(|info| {
             if let Ok(mut message) = PANIC_MESSAGE.lock() {
                 *message = info.to_string();

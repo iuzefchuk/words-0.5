@@ -1,6 +1,6 @@
 use crate::domain::value_objects::Randomizer;
 
-#[allow(clippy::cast_possible_truncation, clippy::cast_precision_loss, clippy::cast_sign_loss)]
+#[expect(clippy::cast_possible_truncation, clippy::cast_precision_loss, clippy::cast_sign_loss)]
 pub fn shuffle<T>(items: &mut [T], group_size: usize, randomizer: &mut Randomizer) {
     assert!(group_size > 0, "group size must be positive");
     let length = items.len() - items.len() % group_size;

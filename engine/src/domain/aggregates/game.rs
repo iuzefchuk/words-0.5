@@ -8,8 +8,9 @@ use crate::domain::value_objects::{
     TurnLink,
 };
 
+#[derive(Debug)]
 pub struct Game {
-    r#match: Match,
+    current_match: Match,
     seed: u32,
     timeline: Timeline,
 }
@@ -31,14 +32,14 @@ pub enum GameError {
 }
 
 impl Game {
-    pub fn create(seed: u32, settings: Option<MatchSettings>) -> Self {
+    pub fn new(seed: u32, settings: Option<MatchSettings>) -> Self {
         let settings = settings.unwrap_or_default();
-        let mut timeline = Timeline::create();
+        let mut timeline = Timeline::default();
         timeline
             .record(TimelineEvent::MatchStarted { seed, settings })
             .expect("an empty timeline accepts MatchStarted");
         let mut game = Self {
-            r#match: Self::create_match(seed, settings),
+            current_match: Self::create_match(seed, settings),
             seed,
             timeline,
         };
@@ -46,9 +47,9 @@ impl Game {
         game
     }
 
-    pub fn create_from_events(events: &[TimelineEvent]) -> Result<Self, GameError> {
+    pub fn from_events(events: &[TimelineEvent]) -> Result<Self, GameError> {
         let (first, rest) = events.split_first().ok_or(GameError::EmptyEvents)?;
-        let mut timeline = Timeline::create();
+        let mut timeline = Timeline::default();
         for event in events {
             timeline.record(event.clone())?;
         }
@@ -56,7 +57,7 @@ impl Game {
             return Err(GameError::FirstEventNotMatchStarted(first.name()));
         };
         let mut game = Self {
-            r#match: Self::create_match(*seed, *settings),
+            current_match: Self::create_match(*seed, *settings),
             seed: *seed,
             timeline,
         };
@@ -68,7 +69,7 @@ impl Game {
     }
 
     pub const fn match_projection(&self) -> &Match {
-        &self.r#match
+        &self.current_match
     }
 
     pub const fn timeline_projection(&self) -> &Timeline {
@@ -76,12 +77,12 @@ impl Game {
     }
 
     pub fn generation_attempts_limit(&self) -> usize {
-        generation_difficulty::attempts_for(self.r#match.settings().difficulty)
+        generation_difficulty::attempts_for(self.current_match.settings().difficulty)
     }
 
     pub fn apply_generated_turn(&mut self, result: TurnGenerationResult) -> Result<(u32, Vec<String>), GameError> {
         for link in &result.placement {
-            self.r#match.place_tile(link.cell, link.tile)?;
+            self.current_match.place_tile(link.cell, link.tile)?;
         }
         let score = result.computation.score;
         self.record_turn_validation(TurnEvaluation::Valid {
@@ -92,12 +93,12 @@ impl Game {
     }
 
     pub fn clear_user_tiles(&mut self) -> Result<(), GameError> {
-        self.r#match.reset_current_turn()?;
+        self.current_match.reset_current_turn()?;
         self.record_turn_validation(TurnEvaluation::Unknown)
     }
 
     pub fn create_turn_generation_context<'d>(&mut self, dictionary: &'d Dictionary) -> TurnGenerationContext<'d> {
-        TurnGenerationContext::create(&mut self.r#match, dictionary)
+        TurnGenerationContext::new(&mut self.current_match, dictionary)
     }
 
     pub fn invalidate_turn_for_current_player(&mut self) -> Result<(), GameError> {
@@ -105,8 +106,8 @@ impl Game {
     }
 
     pub fn pass_turn_for_current_player(&mut self) -> Result<(), GameError> {
-        let player = self.r#match.current_player();
-        if self.r#match.will_player_pass_be_resign(player) {
+        let player = self.current_match.current_player();
+        if self.current_match.will_player_pass_be_resign(player) {
             return self.record_event(&TimelineEvent::MatchFinished {
                 winner: Some(player.opposite()),
             });
@@ -115,35 +116,35 @@ impl Game {
     }
 
     pub fn place_tile(&mut self, cell: PlayfieldCell, tile: InventoryTile) -> Result<(), GameError> {
-        self.r#match.place_tile(cell, tile)?;
+        self.current_match.place_tile(cell, tile)?;
         Ok(())
     }
 
     pub fn resign_match_for_current_player(&mut self) -> Result<(), GameError> {
-        let winner = self.r#match.current_player().opposite();
+        let winner = self.current_match.current_player().opposite();
         self.record_event(&TimelineEvent::MatchFinished { winner: Some(winner) })
     }
 
     pub fn restart(&mut self) {
-        self.restart_with_settings(self.r#match.settings());
+        self.restart_with_settings(self.current_match.settings());
     }
 
     pub fn save_turn_for_current_player(&mut self) -> Result<Vec<String>, GameError> {
-        let r#match = &self.r#match;
-        if !r#match.current_turn_is_valid() {
+        let current_match = &self.current_match;
+        if !current_match.current_turn_is_valid() {
             return Err(GameError::InvalidTurn);
         }
-        let player = r#match.current_player();
-        let score = r#match.current_turn_score().expect("a valid turn has a score");
-        let words = r#match.current_turn_words().expect("a valid turn has words").to_vec();
-        let placement = r#match.resolve_placement(&r#match.current_turn_tiles());
+        let player = current_match.current_player();
+        let score = current_match.current_turn_score().expect("a valid turn has a score");
+        let words = current_match.current_turn_words().expect("a valid turn has words").to_vec();
+        let placement = current_match.resolve_placement(&current_match.current_turn_tiles());
         self.record_event(&TimelineEvent::TurnSaved {
             placement,
             player,
             score,
             words: words.clone(),
         })?;
-        if let MatchTerminationDecision::Terminate { winner } = match_termination::after_turn_saved(player, &self.r#match) {
+        if let MatchTerminationDecision::Terminate { winner } = match_termination::after_turn_saved(player, &self.current_match) {
             self.record_event(&TimelineEvent::MatchFinished { winner })?;
         }
         Ok(words)
@@ -152,38 +153,38 @@ impl Game {
     pub fn set_match_difficulty(&mut self, difficulty: MatchDifficulty) {
         self.restart_with_settings(MatchSettings {
             difficulty,
-            ..self.r#match.settings()
+            ..self.current_match.settings()
         });
     }
 
-    pub fn set_match_type(&mut self, r#type: MatchType) {
+    pub fn set_match_type(&mut self, match_type: MatchType) {
         self.restart_with_settings(MatchSettings {
-            r#type,
-            ..self.r#match.settings()
+            match_type,
+            ..self.current_match.settings()
         });
     }
 
     pub fn shuffle_tiles_for(&mut self, player: MatchPlayer) {
-        self.r#match.shuffle_tiles_for(player);
+        self.current_match.shuffle_tiles_for(player);
     }
 
     pub fn undo_place_tile(&mut self, tile: InventoryTile) -> Result<(), GameError> {
-        self.r#match.undo_place_tile(tile)?;
+        self.current_match.undo_place_tile(tile)?;
         Ok(())
     }
 
     pub fn validate_turn(&mut self, dictionary: &Dictionary) -> Result<(), GameError> {
-        let evaluation = self.r#match.evaluate_turn(dictionary);
+        let evaluation = self.current_match.evaluate_turn(dictionary);
         self.record_turn_validation(evaluation)
     }
 
     fn create_match(seed: u32, settings: MatchSettings) -> Match {
-        Match::create(settings, Randomizer::from_seed(seed))
+        Match::new(settings, Randomizer::from_seed(seed))
     }
 
     fn start_turn(&mut self) {
-        let next = self.r#match.next_player();
-        self.r#match
+        let next = self.current_match.next_player();
+        self.current_match
             .start_turn_for(next)
             .expect("the next player can always start a turn");
     }
@@ -193,13 +194,13 @@ impl Game {
             TimelineEvent::MatchFinished { winner } => self.apply_match_finished(*winner),
             TimelineEvent::MatchStarted { .. } => Err(GameError::NotReplayable),
             TimelineEvent::TurnPassed { player } => {
-                self.r#match.pass_current_turn(*player)?;
+                self.current_match.pass_current_turn(*player)?;
                 self.start_turn();
                 Ok(())
             }
             TimelineEvent::TurnSaved { placement, player, .. } => self.apply_turn_saved(*player, placement),
             TimelineEvent::TurnValidationSet { value } => {
-                self.r#match.record_validation_result(value.clone())?;
+                self.current_match.record_validation_result(value.clone())?;
                 Ok(())
             }
         }
@@ -208,25 +209,25 @@ impl Game {
     fn apply_match_finished(&mut self, winner: Option<MatchPlayer>) -> Result<(), GameError> {
         match winner {
             None => {
-                let (current, next) = (self.r#match.current_player(), self.r#match.next_player());
-                self.r#match.record_tie(current, next)?;
+                let (current, next) = (self.current_match.current_player(), self.current_match.next_player());
+                self.current_match.record_tie(current, next)?;
             }
-            Some(winner) => self.r#match.record_completion(winner, winner.opposite())?,
+            Some(winner) => self.current_match.record_completion(winner, winner.opposite())?,
         }
         Ok(())
     }
 
     fn apply_turn_saved(&mut self, player: MatchPlayer, placement: &[TurnLink]) -> Result<(), GameError> {
         for link in placement {
-            if !self.r#match.is_tile_placed(link.tile) {
-                self.r#match.place_tile(link.cell, link.tile)?;
+            if !self.current_match.is_tile_placed(link.tile) {
+                self.current_match.place_tile(link.cell, link.tile)?;
             }
         }
         for link in placement {
-            self.r#match.discard_tile(player, link.tile)?;
+            self.current_match.discard_tile(player, link.tile)?;
         }
-        self.r#match.replenish_tiles_for(player);
-        self.r#match.save_current_turn(player)?;
+        self.current_match.replenish_tiles_for(player);
+        self.current_match.save_current_turn(player)?;
         self.start_turn();
         Ok(())
     }
@@ -242,14 +243,14 @@ impl Game {
 
     fn restart_with_settings(&mut self, settings: MatchSettings) {
         self.seed = Randomizer::derive_seed(self.seed);
-        self.timeline = Timeline::create();
+        self.timeline = Timeline::default();
         self.timeline
             .record(TimelineEvent::MatchStarted {
                 seed: self.seed,
                 settings,
             })
             .expect("an empty timeline accepts MatchStarted");
-        self.r#match = Self::create_match(self.seed, settings);
+        self.current_match = Self::create_match(self.seed, settings);
         self.start_turn();
     }
 }

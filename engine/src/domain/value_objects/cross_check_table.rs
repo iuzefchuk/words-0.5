@@ -1,4 +1,6 @@
-use crate::domain::value_objects::{Dictionary, InventoryLetter, PlayfieldAnchorCoordinates, PlayfieldAxis, PlayfieldCell};
+use crate::domain::value_objects::{
+    Dictionary, DictionaryNode, InventoryLetter, PlayfieldAnchorCoordinates, PlayfieldAxis, PlayfieldCell,
+};
 
 #[derive(Clone, Debug)]
 pub struct CrossCheckTable {
@@ -40,27 +42,30 @@ impl CrossCheckTable {
     ) -> u32 {
         let line = coordinates.line();
         let position = coordinates.position();
-        let prefix: String = line[..position]
+        let prefix_start = line[..position]
             .iter()
-            .rev()
-            .map_while(|&cell| letter_at(cell))
-            .map(InventoryLetter::char)
-            .collect();
-        let prefix: String = prefix.chars().rev().collect();
-        let suffix: String = line[position + 1..]
+            .rposition(|&cell| letter_at(cell).is_none())
+            .map_or(0, |index| index + 1);
+        let prefix = &line[prefix_start..position];
+        let suffix_length = line[position + 1..]
             .iter()
-            .map_while(|&cell| letter_at(cell))
-            .map(InventoryLetter::char)
-            .collect();
+            .take_while(|&&cell| letter_at(cell).is_some())
+            .count();
+        let suffix = &line[position + 1..position + 1 + suffix_length];
         if prefix.is_empty() && suffix.is_empty() {
             return Self::ALL_LETTERS_MASK;
         }
-        let Some(prefix_node) = dictionary.node(&prefix, dictionary.root()) else {
+        let walk = |start: DictionaryNode, cells: &[PlayfieldCell]| {
+            cells
+                .iter()
+                .try_fold(start, |node, &cell| dictionary.step(node, letter_at(cell)?))
+        };
+        let Some(prefix_node) = walk(dictionary.root(), prefix) else {
             return 0;
         };
         let mut mask = 0;
         for (letter, child) in dictionary.children(prefix_node) {
-            let allowed = suffix.is_empty() || dictionary.node(&suffix, child).is_some_and(|node| dictionary.is_final(node));
+            let allowed = suffix.is_empty() || walk(child, suffix).is_some_and(|node| dictionary.is_final(node));
             if allowed {
                 mask |= 1 << letter.index();
             }

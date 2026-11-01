@@ -72,7 +72,7 @@ impl InventoryLetter {
         if index < Self::COUNT { Some(Self::ALL[index]) } else { None }
     }
 
-    pub const fn char(self) -> char {
+    pub const fn to_char(self) -> char {
         (b'A' + self as u8) as char
     }
 
@@ -84,7 +84,7 @@ impl InventoryLetter {
         }
     }
 
-    pub const fn count(self) -> u8 {
+    pub const fn tile_count(self) -> u8 {
         match self {
             Self::A | Self::I => 9,
             Self::B | Self::C | Self::F | Self::H | Self::M | Self::P | Self::V | Self::W | Self::Y => 2,
@@ -112,6 +112,6 @@ impl InventoryLetter {
 
 impl fmt::Display for InventoryLetter {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
-        formatter.write_str(self.char().encode_utf8(&mut [0; 4]))
+        formatter.write_str(self.to_char().encode_utf8(&mut [0; 4]))
     }
 }

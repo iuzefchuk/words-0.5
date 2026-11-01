@@ -1,10 +1,12 @@
+use std::fmt;
+
 use crate::domain::value_objects::InventoryLetter;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub struct DictionaryNode(u32);
 
 pub struct Dictionary {
-    bytes: Vec<u8>,
+    bytes: Box<[u8]>,
 }
 
 impl Dictionary {
@@ -16,7 +18,7 @@ impl Dictionary {
 
     const POINTER_BYTES: usize = 3;
 
-    pub const fn new(bytes: Vec<u8>) -> Self {
+    pub const fn new(bytes: Box<[u8]>) -> Self {
         Self { bytes }
     }
 
@@ -43,7 +45,7 @@ impl Dictionary {
         Some(self.child(node, child_index))
     }
 
-    pub fn children(&self, node: DictionaryNode) -> impl Iterator<Item = (InventoryLetter, DictionaryNode)> + '_ {
+    pub fn children(&self, node: DictionaryNode) -> impl Iterator<Item = (InventoryLetter, DictionaryNode)> {
         let bitmap = self.header(node) & Self::BITMAP_MASK;
         let mut child_index = 0;
         InventoryLetter::ALL.into_iter().filter_map(move |letter| {
@@ -64,22 +66,25 @@ impl Dictionary {
     }
 
     fn header(&self, node: DictionaryNode) -> u32 {
-        let offset = node.0 as usize;
-        u32::from_le_bytes([
-            self.bytes[offset],
-            self.bytes[offset + 1],
-            self.bytes[offset + 2],
-            self.bytes[offset + 3],
-        ])
+        u32::from_le_bytes(
+            *self.bytes[node.0 as usize..]
+                .first_chunk()
+                .expect("a node header is in bounds"),
+        )
     }
 
     fn child(&self, node: DictionaryNode, child_index: usize) -> DictionaryNode {
         let offset = node.0 as usize + Self::HEADER_BYTES + child_index * Self::POINTER_BYTES;
-        DictionaryNode(u32::from_le_bytes([
-            self.bytes[offset],
-            self.bytes[offset + 1],
-            self.bytes[offset + 2],
-            0,
-        ]))
+        let [low, middle, high] = *self.bytes[offset..].first_chunk().expect("a child pointer is in bounds");
+        DictionaryNode(u32::from_le_bytes([low, middle, high, 0]))
+    }
+}
+
+impl fmt::Debug for Dictionary {
+    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+        formatter
+            .debug_struct("Dictionary")
+            .field("len", &self.bytes.len())
+            .finish_non_exhaustive()
     }
 }

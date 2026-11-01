@@ -6,10 +6,11 @@ use crate::domain::value_objects::{
     PlayfieldAxis, PlayfieldCell, TurnComputation, TurnEvaluation, TurnLink, TurnPlacement,
 };
 
+#[derive(Debug)]
 pub struct TurnGenerationContext<'d> {
     cross_check_table: CrossCheckTable,
     dictionary: &'d Dictionary,
-    r#match: Match,
+    current_match: Match,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -19,14 +20,14 @@ pub struct TurnGenerationResult {
 }
 
 impl<'d> TurnGenerationContext<'d> {
-    pub fn create(r#match: &mut Match, dictionary: &'d Dictionary) -> Self {
-        let fork = r#match.fork();
+    pub fn new(current_match: &mut Match, dictionary: &'d Dictionary) -> Self {
+        let fork = current_match.fork();
         let cross_check_table =
             CrossCheckTable::precompute(dictionary, |cell| fork.find_tile_by_cell(cell).map(InventoryTile::letter));
         Self {
             cross_check_table,
             dictionary,
-            r#match: fork,
+            current_match: fork,
         }
     }
 }
@@ -118,14 +119,14 @@ struct TurnGenerator<'c, 'd> {
 impl<'c, 'd> TurnGenerator<'c, 'd> {
     fn new(context: &'c mut TurnGenerationContext<'d>, player: MatchPlayer) -> Self {
         let mut pristine_tiles: TilesByLetter = std::array::from_fn(|_| Vec::new());
-        for &tile in context.r#match.get_tiles_for(player) {
+        for &tile in context.current_match.tiles_for(player) {
             pristine_tiles[tile.letter().index()].push(tile);
         }
         let traversals = if pristine_tiles.iter().all(Vec::is_empty) {
             Vec::new()
         } else {
             context
-                .r#match
+                .current_match
                 .anchor_cells()
                 .into_iter()
                 .flat_map(|cell| PlayfieldAxis::ALL.map(|axis| PlayfieldAnchorCoordinates { axis, cell }))
@@ -150,18 +151,18 @@ impl<'c, 'd> TurnGenerator<'c, 'd> {
             stack: Vec::new(),
             tiles: self.pristine_tiles.clone(),
         };
-        let r#match = &self.context.r#match;
+        let current_match = &self.context.current_match;
         let dictionary = self.context.dictionary;
-        let left_occupied = anchor_position > 0 && r#match.is_cell_occupied(line[anchor_position - 1]);
+        let left_occupied = anchor_position > 0 && current_match.is_cell_occupied(line[anchor_position - 1]);
         if left_occupied {
             let mut start = anchor_position - 1;
-            while start > 0 && r#match.is_cell_occupied(line[start - 1]) {
+            while start > 0 && current_match.is_cell_occupied(line[start - 1]) {
                 start -= 1;
             }
             let node = line[start..anchor_position]
                 .iter()
                 .try_fold(dictionary.root(), |node, &cell| {
-                    let tile = r#match.find_tile_by_cell(cell)?;
+                    let tile = current_match.find_tile_by_cell(cell)?;
                     dictionary.step(node, tile.letter())
                 });
             if let Some(node) = node {
@@ -173,7 +174,7 @@ impl<'c, 'd> TurnGenerator<'c, 'd> {
         } else {
             let left_limit = (0..anchor_position)
                 .rev()
-                .take_while(|&position| !r#match.is_cell_occupied(line[position]))
+                .take_while(|&position| !current_match.is_cell_occupied(line[position]))
                 .count();
             for length in (0..=left_limit).rev() {
                 state.stack.push(Task::ExtendLeft {
@@ -217,7 +218,7 @@ fn execute(context: &mut TurnGenerationContext<'_>, state: &mut TraversalState, 
             debug_assert_eq!(popped, Some(tile));
             state.placement.push(TurnLink { cell, tile });
             context
-                .r#match
+                .current_match
                 .place_tile(cell, tile)
                 .expect("the generator places rack tiles on empty cells");
         }
@@ -227,14 +228,14 @@ fn execute(context: &mut TurnGenerationContext<'_>, state: &mut TraversalState, 
             let candidate = Candidate {
                 cell,
                 position,
-                resolution: context.r#match.find_tile_by_cell(cell),
+                resolution: context.current_match.find_tile_by_cell(cell),
             };
             state.stack.push(Task::ResolveCandidate { candidate, traversal });
         }
         Task::EvaluateTraversal(traversal) => {
             if !state.placement.is_empty()
                 && dictionary.is_final(traversal.node)
-                && let TurnEvaluation::Valid { computation } = turn_evaluation::evaluate(&context.r#match, dictionary)
+                && let TurnEvaluation::Valid { computation } = turn_evaluation::evaluate(&context.current_match, dictionary)
             {
                 return Some(TurnGenerationResult {
                     computation,
@@ -254,7 +255,7 @@ fn execute(context: &mut TurnGenerationContext<'_>, state: &mut TraversalState, 
             let tile = state.tiles[letter.index()].pop()?;
             state.placement.push(TurnLink { cell, tile });
             context
-                .r#match
+                .current_match
                 .place_tile(cell, tile)
                 .expect("the generator places rack tiles on empty cells");
             state.stack.push(Task::UndoLeft { letter, tile });
@@ -280,13 +281,13 @@ fn execute(context: &mut TurnGenerationContext<'_>, state: &mut TraversalState, 
             state.tiles[letter.index()].push(tile);
             state.placement.pop();
             context
-                .r#match
+                .current_match
                 .undo_place_tile(tile)
                 .expect("the generator undoes its own placements");
         }
         Task::UndoLeft { letter, tile } => {
             context
-                .r#match
+                .current_match
                 .undo_place_tile(tile)
                 .expect("the generator undoes its own placements");
             state.placement.pop();
@@ -317,21 +318,23 @@ fn extend_left(
     }
     let cell = state.line[state.anchor_position - length + depth];
     let mask = context.cross_check_table.mask(state.opposite_axis, cell);
-    let mut children: Vec<(InventoryLetter, DictionaryNode)> = context
-        .dictionary
-        .children(node)
-        .filter(|&(letter, _)| CrossCheckTable::allows(mask, letter))
-        .collect();
-    shuffle(&mut children, 1, context.r#match.randomizer_mut());
-    for (letter, child) in children.into_iter().rev() {
-        state.stack.push(Task::PlaceLeft {
-            cell,
-            depth,
-            length,
-            letter,
-            node: child,
-        });
-    }
+    let start = state.stack.len();
+    state.stack.extend(
+        context
+            .dictionary
+            .children(node)
+            .filter(|&(letter, _)| CrossCheckTable::allows(mask, letter))
+            .map(|(letter, child)| Task::PlaceLeft {
+                cell,
+                depth,
+                length,
+                letter,
+                node: child,
+            }),
+    );
+    let pushed = &mut state.stack[start..];
+    shuffle(pushed, 1, context.current_match.randomizer_mut());
+    pushed.reverse();
 }
 
 fn explore_resolutions(
@@ -341,7 +344,7 @@ fn explore_resolutions(
     candidate: Candidate,
 ) {
     let mask = context.cross_check_table.mask(state.opposite_axis, candidate.cell);
-    let mut tasks = Vec::new();
+    let start = state.stack.len();
     for (letter, child) in context.dictionary.children(traversal.node) {
         if !CrossCheckTable::allows(mask, letter) {
             continue;
@@ -349,30 +352,26 @@ fn explore_resolutions(
         let Some(&tile) = state.tiles[letter.index()].last() else {
             continue;
         };
-        tasks.push(Task::ApplyResolution {
+        state.stack.push(Task::ApplyResolution {
             cell: candidate.cell,
             letter,
             tile,
         });
-        tasks.push(Task::EvaluateTraversal(Traversal {
+        state.stack.push(Task::EvaluateTraversal(Traversal {
             node: child,
             position: candidate.position,
         }));
-        tasks.push(Task::ReverseResolution { letter, tile });
+        state.stack.push(Task::ReverseResolution { letter, tile });
     }
-    if tasks.is_empty() {
-        return;
-    }
-    shuffle(&mut tasks, 3, context.r#match.randomizer_mut());
-    for task in tasks.into_iter().rev() {
-        state.stack.push(task);
-    }
+    let pushed = &mut state.stack[start..];
+    shuffle(pushed, 3, context.current_match.randomizer_mut());
+    pushed.reverse();
 }
 
 fn restore_placements(context: &mut TurnGenerationContext<'_>, state: &mut TraversalState) {
     while let Some(link) = state.placement.pop() {
         context
-            .r#match
+            .current_match
             .undo_place_tile(link.tile)
             .expect("the generator undoes its own placements");
         state.tiles[link.tile.letter().index()].push(link.tile);

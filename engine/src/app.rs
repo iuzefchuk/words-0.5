@@ -12,6 +12,7 @@ pub use error::AppError;
 pub use queries::AppQueries;
 pub use turn_response::AppTurnResponse;
 
+#[derive(Debug)]
 pub struct App<'e> {
     engine: &'e Engine,
     game: Game,
@@ -25,9 +26,9 @@ impl<'e> App<'e> {
         seed: u32,
     ) -> Result<Self, AppError> {
         let game = match events {
-            None | Some([]) => Game::create(seed, settings),
+            None | Some([]) => Game::new(seed, settings),
             Some(events) => {
-                let mut game = Game::create_from_events(events)?;
+                let mut game = Game::from_events(events)?;
                 if game.match_projection().is_finished() {
                     game.restart();
                 }

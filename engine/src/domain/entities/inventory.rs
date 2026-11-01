@@ -17,13 +17,13 @@ pub enum InventoryError {
 impl Inventory {
     pub const TILES_PER_PLAYER: usize = 7;
 
-    pub fn create(randomizer: &mut Randomizer) -> Self {
+    pub fn new(randomizer: &mut Randomizer) -> Self {
         let mut bag: Vec<InventoryTile> = InventoryTile::all().collect();
         shuffle(&mut bag, 1, randomizer);
         let mut inventory = Self {
             bag,
             discarded: Vec::new(),
-            racks: [Vec::new(), Vec::new()],
+            racks: Default::default(),
         };
         for player in MatchPlayer::ALL {
             inventory.replenish_tiles_for(player);
@@ -66,11 +66,8 @@ impl Inventory {
     pub fn replenish_tiles_for(&mut self, player: MatchPlayer) {
         let rack = &mut self.racks[player.index()];
         let draw_count = Self::TILES_PER_PLAYER.saturating_sub(rack.len()).min(self.bag.len());
-        for _ in 0..draw_count {
-            if let Some(tile) = self.bag.pop() {
-                rack.push(tile);
-            }
-        }
+        let draw_start = self.bag.len() - draw_count;
+        rack.extend(self.bag.drain(draw_start..).rev());
     }
 
     pub fn shuffle_tiles_for(&mut self, player: MatchPlayer, randomizer: &mut Randomizer) {

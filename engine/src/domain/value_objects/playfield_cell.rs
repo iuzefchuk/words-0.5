@@ -21,12 +21,12 @@ impl PlayfieldCell {
         (0u8..).take(Self::COUNT).map(Self)
     }
 
-    #[allow(clippy::cast_possible_truncation)]
+    #[expect(clippy::cast_possible_truncation)]
     pub const fn new(index: usize) -> Option<Self> {
         if index < Self::COUNT { Some(Self(index as u8)) } else { None }
     }
 
-    #[allow(clippy::cast_possible_truncation)]
+    #[expect(clippy::cast_possible_truncation)]
     pub const fn at(row: usize, column: usize) -> Self {
         Self((row * Self::PER_AXIS + column) as u8)
     }

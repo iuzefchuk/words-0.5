@@ -36,9 +36,9 @@ pub enum MatchError {
 impl Match {
     pub const FIRST_PLAYER: MatchPlayer = MatchPlayer::User;
 
-    pub fn create(settings: MatchSettings, mut randomizer: Randomizer) -> Self {
-        let inventory = Inventory::create(&mut randomizer);
-        let playfield = Playfield::create(PlayfieldType::from(settings.r#type), &mut randomizer);
+    pub fn new(settings: MatchSettings, mut randomizer: Randomizer) -> Self {
+        let inventory = Inventory::new(&mut randomizer);
+        let playfield = Playfield::new(PlayfieldType::from(settings.match_type), &mut randomizer);
         Self {
             history: Vec::new(),
             inventory,
@@ -54,7 +54,7 @@ impl Match {
         let seed = self.randomizer.next_seed();
         let current = self.current_turn();
         let mut history = self.history[..self.history.len() - 1].to_vec();
-        history.push(Turn::create(current.player()));
+        history.push(Turn::new(current.player()));
         Self {
             history,
             inventory: self.inventory.clone(),
@@ -150,15 +150,15 @@ impl Match {
         self.playfield.find_tile_by_cell(cell)
     }
 
-    pub const fn get_cell_bonus(&self, cell: PlayfieldCell) -> Option<PlayfieldBonus> {
+    pub const fn cell_bonus(&self, cell: PlayfieldCell) -> Option<PlayfieldBonus> {
         self.playfield.bonus(cell)
     }
 
-    pub const fn get_result_for(&self, player: MatchPlayer) -> MatchResult {
+    pub const fn result_for(&self, player: MatchPlayer) -> MatchResult {
         self.results[player.index()]
     }
 
-    pub fn get_score_for(&self, player: MatchPlayer) -> u32 {
+    pub fn score_for(&self, player: MatchPlayer) -> u32 {
         self.history
             .iter()
             .filter(|turn| turn.player() == player)
@@ -166,7 +166,7 @@ impl Match {
             .sum()
     }
 
-    pub fn get_tiles_for(&self, player: MatchPlayer) -> &[InventoryTile] {
+    pub fn tiles_for(&self, player: MatchPlayer) -> &[InventoryTile] {
         self.inventory.tiles_for(player)
     }
 
@@ -255,7 +255,7 @@ impl Match {
         }
         let player = self.current_player();
         self.history.pop();
-        self.history.push(Turn::create(player));
+        self.history.push(Turn::new(player));
         Ok(())
     }
 
@@ -278,7 +278,7 @@ impl Match {
         if player != expected {
             return Err(MatchError::WrongNextPlayer { expected, got: player });
         }
-        self.history.push(Turn::create(player));
+        self.history.push(Turn::new(player));
         Ok(())
     }
 

@@ -5,7 +5,7 @@ use crate::domain::published::{MatchResult, MatchSettings};
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize)]
 #[serde(rename_all = "camelCase")]
-#[allow(clippy::struct_excessive_bools)]
+#[expect(clippy::struct_excessive_bools)]
 pub struct AppMatchState {
     pub cells: Vec<AppPlayfieldCellState>,
     pub cells_per_axis: usize,

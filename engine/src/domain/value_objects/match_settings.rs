@@ -6,5 +6,6 @@ use crate::domain::value_objects::{MatchDifficulty, MatchType};
 #[serde(default)]
 pub struct MatchSettings {
     pub difficulty: MatchDifficulty,
-    pub r#type: MatchType,
+    #[serde(rename = "type")]
+    pub match_type: MatchType,
 }

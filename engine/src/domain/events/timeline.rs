@@ -23,10 +23,6 @@ pub enum TimelineError {
 }
 
 impl Timeline {
-    pub fn create() -> Self {
-        Self::default()
-    }
-
     pub fn events(&self) -> &[TimelineEvent] {
         &self.events
     }

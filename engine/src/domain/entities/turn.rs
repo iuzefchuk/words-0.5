@@ -28,7 +28,7 @@ pub enum TurnError {
 }
 
 impl Turn {
-    pub fn create(player: MatchPlayer) -> Self {
+    pub fn new(player: MatchPlayer) -> Self {
         Self {
             evaluation: TurnEvaluation::Unknown,
             link_ids: Vec::new(),

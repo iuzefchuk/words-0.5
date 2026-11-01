@@ -11,15 +11,14 @@ impl Randomizer {
     }
 
     pub fn next_f64(&mut self) -> f64 {
+        f64::from(self.next_seed()) / Self::SEED_RANGE
+    }
+
+    pub fn next_seed(&mut self) -> u32 {
         self.state = self.state.wrapping_add(0x6D2B_79F5);
         let mut hash = (self.state ^ (self.state >> 15)).wrapping_mul(1 | self.state);
         hash = hash.wrapping_add((hash ^ (hash >> 7)).wrapping_mul(0x3D | hash)) ^ hash;
-        f64::from(hash ^ (hash >> 14)) / Self::SEED_RANGE
-    }
-
-    #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
-    pub fn next_seed(&mut self) -> u32 {
-        (self.next_f64() * Self::SEED_RANGE) as u32
+        hash ^ (hash >> 14)
     }
 
     pub fn derive_seed(seed: u32) -> u32 {

@@ -17,7 +17,7 @@ const fn count_tiles() -> usize {
     let mut total = 0;
     let mut index = 0;
     while index < InventoryLetter::COUNT {
-        total += InventoryLetter::ALL[index].count() as usize;
+        total += InventoryLetter::ALL[index].tile_count() as usize;
         index += 1;
     }
     total
@@ -27,7 +27,7 @@ const fn first_by_letter() -> [u8; InventoryLetter::COUNT] {
     let mut table = [0; InventoryLetter::COUNT];
     let mut index = 1;
     while index < InventoryLetter::COUNT {
-        table[index] = table[index - 1] + InventoryLetter::ALL[index - 1].count();
+        table[index] = table[index - 1] + InventoryLetter::ALL[index - 1].tile_count();
         index += 1;
     }
     table
@@ -40,7 +40,7 @@ const fn letter_by_tile() -> [InventoryLetter; InventoryTile::COUNT] {
     while index < InventoryLetter::COUNT {
         let letter = InventoryLetter::ALL[index];
         let mut ordinal = 0;
-        while ordinal < letter.count() {
+        while ordinal < letter.tile_count() {
             table[tile] = letter;
             tile += 1;
             ordinal += 1;
@@ -62,7 +62,7 @@ impl InventoryTile {
     }
 
     pub const fn new(letter: InventoryLetter, ordinal: u8) -> Option<Self> {
-        if ordinal < letter.count() {
+        if ordinal < letter.tile_count() {
             Some(Self(Self::FIRST_BY_LETTER[letter.index()] + ordinal))
         } else {
             None

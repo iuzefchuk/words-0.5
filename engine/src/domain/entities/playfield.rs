@@ -39,8 +39,8 @@ impl From<MatchType> for PlayfieldType {
 }
 
 impl Playfield {
-    pub fn create(r#type: PlayfieldType, randomizer: &mut Randomizer) -> Self {
-        let bonus_by_cell = match r#type {
+    pub fn new(playfield_type: PlayfieldType, randomizer: &mut Randomizer) -> Self {
+        let bonus_by_cell = match playfield_type {
             PlayfieldType::Preset => PlayfieldBonusDistribution::preset(),
             PlayfieldType::Random => PlayfieldBonusDistribution::random(randomizer),
         };
@@ -100,7 +100,11 @@ impl Playfield {
     }
 
     pub fn link_tile(&self, link_id: PlayfieldLinkId) -> Option<InventoryTile> {
-        self.links.iter().find(|(id, _)| *id == link_id).map(|(_, link)| link.tile)
+        self.links
+            .iter()
+            .rev()
+            .find(|(id, _)| *id == link_id)
+            .map(|(_, link)| link.tile)
     }
 
     pub fn place_tile(&mut self, cell: PlayfieldCell, tile: InventoryTile) -> Result<PlayfieldLinkId, PlayfieldError> {
@@ -124,12 +128,14 @@ impl Playfield {
         let index = self
             .links
             .iter()
-            .position(|(_, link)| link.tile == tile)
+            .rposition(|(_, link)| link.tile == tile)
             .ok_or(PlayfieldError::TileNotPlaced(tile))?;
         let (link_id, _) = self.links.remove(index);
         self.tile_by_cell[cell.index()] = None;
         self.cell_by_tile[tile.index()] = None;
-        self.occupied.retain(|&occupied| occupied != cell);
+        if let Some(position) = self.occupied.iter().rposition(|&occupied| occupied == cell) {
+            self.occupied.remove(position);
+        }
         Ok(link_id)
     }
 

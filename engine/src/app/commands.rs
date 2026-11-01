@@ -3,6 +3,7 @@ use crate::domain::published::{
     Dictionary, Game, InventoryTile, MatchDifficulty, MatchPlayer, MatchType, PlayfieldCell, turn_generation,
 };
 
+#[derive(Debug)]
 pub struct AppCommands<'a> {
     dictionary: &'a Dictionary,
     game: &'a mut Game,
@@ -17,8 +18,8 @@ impl<'a> AppCommands<'a> {
         self.game.set_match_difficulty(difficulty);
     }
 
-    pub fn change_match_type(&mut self, r#type: MatchType) {
-        self.game.set_match_type(r#type);
+    pub fn change_match_type(&mut self, match_type: MatchType) {
+        self.game.set_match_type(match_type);
     }
 
     pub fn clear_user_tiles(&mut self) -> Result<(), AppError> {
@@ -36,8 +37,8 @@ impl<'a> AppCommands<'a> {
     }
 
     pub fn play_opponent_turn(&mut self) -> Result<AppTurnResponse, AppError> {
-        let r#match = self.game.match_projection();
-        if r#match.is_finished() || r#match.current_player() != MatchPlayer::Opponent {
+        let current_match = self.game.match_projection();
+        if current_match.is_finished() || current_match.current_player() != MatchPlayer::Opponent {
             return Err(AppError::NoOpponentTurnDue);
         }
         let attempts_limit = self.game.generation_attempts_limit();
