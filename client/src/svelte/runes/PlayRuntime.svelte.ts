@@ -20,30 +20,30 @@ import type { Sting } from '@/client/services/AudioService.ts';
 
 type EngineCall = (exports: EngineExports) => number;
 
-type EngineCallWithInput = (exports: EngineExports, pointer: number, length: number) => number;
+type EngineCallWithInput = (exports: EngineExports, pointer: number) => number;
 
 type EngineExports = {
   alloc(length: number): number;
-  app_change_match_difficulty(handle: number, pointer: number, length: number): number;
-  app_change_match_type(handle: number, pointer: number, length: number): number;
+  app_change_match_difficulty(handle: number, pointer: number): number;
+  app_change_match_type(handle: number, pointer: number): number;
   app_clear_user_tiles(handle: number): number;
   app_close(handle: number): number;
   app_event_log(handle: number): number;
   app_match_state(handle: number): number;
-  app_open(eventsPointer: number, eventsLength: number, settingsPointer: number, settingsLength: number, seed: number): number;
+  app_open(eventsPointer: number, settingsPointer: number, seed: number): number;
   app_opponent_turn_is_due(handle: number): number;
   app_pass_turn(handle: number): number;
-  app_place_tile(handle: number, cell: number, pointer: number, length: number): number;
+  app_place_tile(handle: number, cell: number, pointer: number): number;
   app_play_opponent_turn(handle: number): number;
   app_playfield_geometry(handle: number): number;
   app_resign_match(handle: number): number;
   app_restart_game(handle: number): number;
   app_save_turn(handle: number): number;
   app_shuffle_user_tiles(handle: number): number;
-  app_undo_place_tile(handle: number, pointer: number, length: number): number;
+  app_undo_place_tile(handle: number, pointer: number): number;
   app_validate_turn(handle: number): number;
-  dealloc(pointer: number, length: number): void;
-  engine_open(pointer: number, length: number): number;
+  dealloc(pointer: number): void;
+  engine_open(pointer: number): number;
   events_schema_version(): number;
   memory: WebAssembly.Memory;
   panic_message(): number;
@@ -61,12 +61,12 @@ class ClientHost {
       FetchService.getArrayBuffer(engineUrl),
     ]);
     const engine = await EngineInstance.instantiate(wasm);
-    engine.callWithBytes(new Uint8Array(dictionary), (exports, pointer, length) => exports.engine_open(pointer, length));
+    engine.callWithBytes(new Uint8Array(dictionary), (exports, pointer) => exports.engine_open(pointer));
     const events = await DatabaseService.load(DatabaseName.PlayRuntimeEvents, engine.version);
     const seed = CryptoService.createSeed();
     const handle = Number(
-      engine.callWithText(events === null ? '' : JSON.stringify(events), (exports, pointer, length) =>
-        exports.app_open(pointer, length, 0, 0, seed),
+      engine.callWithText(events === null ? '' : JSON.stringify(events), (exports, pointer) =>
+        exports.app_open(pointer, 0, seed),
       ),
     );
     const host = new ClientHost(engine, handle);
@@ -77,14 +77,12 @@ class ClientHost {
 
   async changeSettings(settings: Partial<PlaySettings>): Promise<PlayState> {
     if (settings.difficulty !== undefined) {
-      this.engine.callWithText(settings.difficulty, (exports, pointer, length) =>
-        exports.app_change_match_difficulty(this.handle, pointer, length),
+      this.engine.callWithText(settings.difficulty, (exports, pointer) =>
+        exports.app_change_match_difficulty(this.handle, pointer),
       );
     }
     if (settings.type !== undefined) {
-      this.engine.callWithText(settings.type, (exports, pointer, length) =>
-        exports.app_change_match_type(this.handle, pointer, length),
-      );
+      this.engine.callWithText(settings.type, (exports, pointer) => exports.app_change_match_type(this.handle, pointer));
     }
     return this.persist();
   }
@@ -103,9 +101,7 @@ class ClientHost {
   }
 
   async placeTile(link: { cell: PlaySlotId; tile: PlayBlockId }): Promise<PlayState> {
-    this.engine.callWithText(link.tile, (exports, pointer, length) =>
-      exports.app_place_tile(this.handle, link.cell, pointer, length),
-    );
+    this.engine.callWithText(link.tile, (exports, pointer) => exports.app_place_tile(this.handle, link.cell, pointer));
     this.engine.call(exports => exports.app_validate_turn(this.handle));
     return this.persist();
   }
@@ -131,7 +127,7 @@ class ClientHost {
   }
 
   async undoPlaceTile(tile: PlayBlockId): Promise<PlayState> {
-    this.engine.callWithText(tile, (exports, pointer, length) => exports.app_undo_place_tile(this.handle, pointer, length));
+    this.engine.callWithText(tile, (exports, pointer) => exports.app_undo_place_tile(this.handle, pointer));
     this.engine.call(exports => exports.app_validate_turn(this.handle));
     return this.persist();
   }
@@ -178,14 +174,10 @@ class EngineInstance {
   }
 
   callWithBytes(bytes: Uint8Array, invoke: EngineCallWithInput): string {
-    if (bytes.length === 0) return this.call(exports => invoke(exports, 0, 0));
+    if (bytes.length === 0) return this.call(exports => invoke(exports, 0));
     const pointer = this.exports.alloc(bytes.length);
     this.memory().set(bytes, pointer);
-    try {
-      return this.call(exports => invoke(exports, pointer, bytes.length));
-    } finally {
-      this.exports.dealloc(pointer, bytes.length);
-    }
+    return this.call(exports => invoke(exports, pointer));
   }
 
   callWithText(text: string, invoke: EngineCallWithInput): string {
@@ -211,7 +203,7 @@ class EngineInstance {
       0;
     const start = pointer + EngineInstance.HEADER_LENGTH;
     const text = EngineInstance.DECODER.decode(view.subarray(start, start + length));
-    this.exports.dealloc(pointer, EngineInstance.HEADER_LENGTH + length);
+    this.exports.dealloc(pointer);
     if (status !== EngineInstance.STATUS_OK) throw new Error(text);
     return text;
   }

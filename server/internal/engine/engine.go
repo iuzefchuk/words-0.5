@@ -12,26 +12,27 @@ import (
 )
 
 type Engine struct {
-	appChangeMatchDifficulty func(uint32, unsafe.Pointer, uint32) unsafe.Pointer
-	appChangeMatchType       func(uint32, unsafe.Pointer, uint32) unsafe.Pointer
+	alloc                    func(uint32) unsafe.Pointer
+	appChangeMatchDifficulty func(uint32, unsafe.Pointer) unsafe.Pointer
+	appChangeMatchType       func(uint32, unsafe.Pointer) unsafe.Pointer
 	appClearUserTiles        func(uint32) unsafe.Pointer
 	appClose                 func(uint32) unsafe.Pointer
 	appEventLog              func(uint32) unsafe.Pointer
 	appMatchState            func(uint32) unsafe.Pointer
-	appOpen                  func(unsafe.Pointer, uint32, unsafe.Pointer, uint32, uint32) unsafe.Pointer
+	appOpen                  func(unsafe.Pointer, unsafe.Pointer, uint32) unsafe.Pointer
 	appOpponentTurnIsDue     func(uint32) unsafe.Pointer
 	appPassTurn              func(uint32) unsafe.Pointer
-	appPlaceTile             func(uint32, uint32, unsafe.Pointer, uint32) unsafe.Pointer
+	appPlaceTile             func(uint32, uint32, unsafe.Pointer) unsafe.Pointer
 	appPlayOpponentTurn      func(uint32) unsafe.Pointer
 	appPlayfieldGeometry     func(uint32) unsafe.Pointer
 	appResignMatch           func(uint32) unsafe.Pointer
 	appRestartGame           func(uint32) unsafe.Pointer
 	appSaveTurn              func(uint32) unsafe.Pointer
 	appShuffleUserTiles      func(uint32) unsafe.Pointer
-	appUndoPlaceTile         func(uint32, unsafe.Pointer, uint32) unsafe.Pointer
+	appUndoPlaceTile         func(uint32, unsafe.Pointer) unsafe.Pointer
 	appValidateTurn          func(uint32) unsafe.Pointer
-	dealloc                  func(unsafe.Pointer, uint32)
-	engineOpen               func(unsafe.Pointer, uint32) unsafe.Pointer
+	dealloc                  func(unsafe.Pointer)
+	engineOpen               func(unsafe.Pointer) unsafe.Pointer
 	eventsSchemaVersion      func() uint32
 }
 
@@ -43,6 +44,7 @@ func Open(dir string) (*Engine, error) {
 	}
 	e := &Engine{}
 	symbols := map[string]any{
+		"alloc":                       &e.alloc,
 		"app_change_match_difficulty": &e.appChangeMatchDifficulty,
 		"app_change_match_type":       &e.appChangeMatchType,
 		"app_clear_user_tiles":        &e.appClearUserTiles,
@@ -77,9 +79,7 @@ func Open(dir string) (*Engine, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read dictionary: %w", err)
 	}
-	if _, err := e.callWithBytes(dictionary, func(pointer unsafe.Pointer, length uint32) unsafe.Pointer {
-		return e.engineOpen(pointer, length)
-	}); err != nil {
+	if _, err := e.callWithBytes(dictionary, e.engineOpen); err != nil {
 		return nil, fmt.Errorf("open engine: %w", err)
 	}
 	return e, nil
@@ -90,7 +90,7 @@ func (e *Engine) EventsSchemaVersion() uint32 {
 }
 
 func (e *Engine) NewApp(seed uint32) (*App, error) {
-	payload, err := e.read(e.appOpen(nil, 0, nil, 0, seed))
+	payload, err := e.read(e.appOpen(nil, nil, seed))
 	if err != nil {
 		return nil, err
 	}

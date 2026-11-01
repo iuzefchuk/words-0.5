@@ -2,7 +2,7 @@
 
 use std::collections::HashMap;
 use std::panic::{self, AssertUnwindSafe};
-use std::sync::{Arc, LazyLock, Mutex, Once, OnceLock};
+use std::sync::{Arc, LazyLock, Mutex, Once, OnceLock, PoisonError};
 
 use serde::Serialize;
 use serde::de::value::{self, StrDeserializer};
@@ -27,6 +27,8 @@ static APPS: LazyLock<Mutex<Apps>> = LazyLock::new(|| {
     })
 });
 
+static BUFFERS: LazyLock<Mutex<HashMap<usize, Vec<u8>>>> = LazyLock::new(|| Mutex::new(HashMap::new()));
+
 static PANIC_MESSAGE: Mutex<String> = Mutex::new(String::new());
 
 const STATUS_OK: u8 = 0;
@@ -37,24 +39,24 @@ const HEADER_LEN: usize = 5;
 
 #[unsafe(no_mangle)]
 pub extern "C" fn alloc(len: u32) -> *mut u8 {
-    Box::into_raw(vec![0u8; len as usize].into_boxed_slice()).cast()
-}
-
-#[unsafe(no_mangle)]
-pub unsafe extern "C" fn dealloc(ptr: *mut u8, len: u32) {
-    if ptr.is_null() {
-        return;
+    if len == 0 {
+        return std::ptr::null_mut();
     }
-    drop(unsafe { Box::from_raw(std::ptr::slice_from_raw_parts_mut(ptr, len as usize)) });
+    keep(vec![0; len as usize])
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn engine_open(dictionary_ptr: *const u8, dictionary_len: u32) -> *mut u8 {
-    let dictionary = Box::from(unsafe { bytes(dictionary_ptr, dictionary_len) });
+pub extern "C" fn dealloc(ptr: *mut u8) {
+    take(ptr);
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn engine_open(dictionary_ptr: *const u8) -> *mut u8 {
+    let dictionary = input(dictionary_ptr);
     respond(|| {
         install_panic_hook();
         ENGINE
-            .set(Engine::new(dictionary))
+            .set(Engine::new(dictionary?.into_boxed_slice()))
             .map_err(|_| "engine is already open".to_owned())?;
         Ok(Vec::new())
     })
@@ -66,19 +68,13 @@ pub extern "C" fn events_schema_version() -> u32 {
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn app_open(
-    events_ptr: *const u8,
-    events_len: u32,
-    settings_ptr: *const u8,
-    settings_len: u32,
-    seed: u32,
-) -> *mut u8 {
-    let events_json = unsafe { bytes(events_ptr, events_len) };
-    let settings_json = unsafe { bytes(settings_ptr, settings_len) };
+pub extern "C" fn app_open(events_ptr: *const u8, settings_ptr: *const u8, seed: u32) -> *mut u8 {
+    let events_json = input(events_ptr);
+    let settings_json = input(settings_ptr);
     respond(|| {
         let engine = ENGINE.get().ok_or("engine is not open")?;
-        let events: Option<Vec<TimelineEvent>> = parse_optional(events_json)?;
-        let settings: Option<MatchSettings> = parse_optional(settings_json)?;
+        let events: Option<Vec<TimelineEvent>> = parse_optional(&events_json?)?;
+        let settings: Option<MatchSettings> = parse_optional(&settings_json?)?;
         let app = App::open(engine, events.as_deref(), settings, seed).map_err(|error| error.to_string())?;
         let mut apps = APPS.lock().map_err(|_| "app registry is poisoned")?;
         let handle = apps.next_handle;
@@ -100,20 +96,20 @@ pub extern "C" fn app_close(handle: u32) -> *mut u8 {
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn app_change_match_difficulty(handle: u32, ptr: *const u8, len: u32) -> *mut u8 {
-    let difficulty = unsafe { bytes(ptr, len) };
+pub extern "C" fn app_change_match_difficulty(handle: u32, ptr: *const u8) -> *mut u8 {
+    let difficulty = input(ptr);
     with_app(handle, |app| {
         app.commands()
-            .change_match_difficulty(parse_enum::<MatchDifficulty>(difficulty)?);
+            .change_match_difficulty(parse_enum::<MatchDifficulty>(&difficulty?)?);
         Ok(Vec::new())
     })
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn app_change_match_type(handle: u32, ptr: *const u8, len: u32) -> *mut u8 {
-    let match_type = unsafe { bytes(ptr, len) };
+pub extern "C" fn app_change_match_type(handle: u32, ptr: *const u8) -> *mut u8 {
+    let match_type = input(ptr);
     with_app(handle, |app| {
-        app.commands().change_match_type(parse_enum::<MatchType>(match_type)?);
+        app.commands().change_match_type(parse_enum::<MatchType>(&match_type?)?);
         Ok(Vec::new())
     })
 }
@@ -129,11 +125,11 @@ pub extern "C" fn app_pass_turn(handle: u32) -> *mut u8 {
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn app_place_tile(handle: u32, cell: u32, tile_ptr: *const u8, tile_len: u32) -> *mut u8 {
-    let tile = unsafe { bytes(tile_ptr, tile_len) };
+pub extern "C" fn app_place_tile(handle: u32, cell: u32, tile_ptr: *const u8) -> *mut u8 {
+    let tile = input(tile_ptr);
     with_app(handle, |app| {
         let cell = PlayfieldCell::new(cell as usize).ok_or_else(|| format!("cell {cell} is not on the playfield"))?;
-        empty(app.commands().place_tile(cell, parse_tile(tile)?))
+        empty(app.commands().place_tile(cell, parse_tile(&tile?)?))
     })
 }
 
@@ -179,9 +175,9 @@ pub extern "C" fn app_shuffle_user_tiles(handle: u32) -> *mut u8 {
 }
 
 #[unsafe(no_mangle)]
-pub unsafe extern "C" fn app_undo_place_tile(handle: u32, tile_ptr: *const u8, tile_len: u32) -> *mut u8 {
-    let tile = unsafe { bytes(tile_ptr, tile_len) };
-    with_app(handle, |app| empty(app.commands().undo_place_tile(parse_tile(tile)?)))
+pub extern "C" fn app_undo_place_tile(handle: u32, tile_ptr: *const u8) -> *mut u8 {
+    let tile = input(tile_ptr);
+    with_app(handle, |app| empty(app.commands().undo_place_tile(parse_tile(&tile?)?)))
 }
 
 #[unsafe(no_mangle)]
@@ -219,12 +215,24 @@ pub extern "C" fn panic_message() -> *mut u8 {
     })
 }
 
-unsafe fn bytes<'a>(ptr: *const u8, len: u32) -> &'a [u8] {
-    if len == 0 || ptr.is_null() {
-        &[]
-    } else {
-        unsafe { std::slice::from_raw_parts(ptr, len as usize) }
+fn keep(mut buffer: Vec<u8>) -> *mut u8 {
+    let ptr = buffer.as_mut_ptr();
+    BUFFERS
+        .lock()
+        .unwrap_or_else(PoisonError::into_inner)
+        .insert(ptr.addr(), buffer);
+    ptr
+}
+
+fn take(ptr: *const u8) -> Option<Vec<u8>> {
+    BUFFERS.lock().unwrap_or_else(PoisonError::into_inner).remove(&ptr.addr())
+}
+
+fn input(ptr: *const u8) -> Result<Vec<u8>, String> {
+    if ptr.is_null() {
+        return Ok(Vec::new());
     }
+    take(ptr).ok_or_else(|| format!("unknown engine buffer {:#x}", ptr.addr()))
 }
 
 fn respond(call: impl FnOnce() -> Output) -> *mut u8 {
@@ -238,7 +246,7 @@ fn respond(call: impl FnOnce() -> Output) -> *mut u8 {
     buffer.push(status);
     buffer.extend_from_slice(&length.to_le_bytes());
     buffer.extend_from_slice(&payload);
-    Box::into_raw(buffer.into_boxed_slice()).cast()
+    keep(buffer)
 }
 
 fn with_app(handle: u32, call: impl FnOnce(&mut App<'static>) -> Output) -> *mut u8 {
