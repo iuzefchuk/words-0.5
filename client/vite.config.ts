@@ -15,13 +15,13 @@ export default defineConfig(({ command, mode }) => {
     plugins: [
       sveltekit({
         adapter: adapter({ fallback: 'index.html', pages: `${ROOT}/dist` }),
-        alias: { '@/client': `${ROOT}/src`, '@/engine': `${REPO}/engine` },
+        alias: { '@/client': ROOT, '@/engine': `${REPO}/engine` },
         compilerOptions: { experimental: { async: true } },
         experimental: { handleRenderingErrors: true },
         files: {
-          appTemplate: `${ROOT}/src/svelte/app.html`,
-          hooks: { client: `${ROOT}/src/svelte/hooks.client` },
-          routes: `${ROOT}/src/svelte/components/routes`,
+          appTemplate: `${ROOT}/src/fw/app.html`,
+          hooks: { client: `${ROOT}/src/fw/headless/hooks/client` },
+          routes: `${ROOT}/src/fw/ui/by-hierarchy/per-route`,
         },
         preprocess: vitePreprocess({ script: true }),
         version: { pollInterval: 60_000 },

@@ -5,12 +5,16 @@ services:
     develop:
       watch:
         - action: sync
+          path: ./client/assets
+          target: /app/client/assets
+        - action: sync
           path: ./client/src
           target: /app/client/src
         - action: rebuild
           path: ./client
           ignore:
             - .svelte-kit/
+            - assets/
             - src/
         - action: rebuild
           path: ./engine/src
