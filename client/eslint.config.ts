@@ -90,7 +90,7 @@ export default defineConfig(
     },
   },
   {
-    files: ['src/**/*.d.ts', 'src/platform/infra/*/port.ts'],
+    files: ['src/**/*.d.ts', 'src/platform/by-port/io/*/port.ts'],
     rules: { '@typescript-eslint/consistent-type-definitions': 'off' },
   },
   restrictImports(['src/**'], {
@@ -102,16 +102,16 @@ export default defineConfig(
     'domain must not import from fw': ['@/client/src/fw/**'],
     'domain must not import from platform': ['@/client/src/platform/**'],
   }),
-  restrictImports(['src/platform/infra/**'], {
+  restrictImports(['src/platform/*/io/**'], {
     'client must not import from server': ['@/server/**'],
-    'infra must not import from domain': ['@/client/src/domain/**'],
-    'infra must not import from fw': ['@/client/src/fw/**'],
-    'infra must not import from usecases': ['@/client/src/platform/usecases/**'],
+    'io must not import from domain': ['@/client/src/domain/**'],
+    'io must not import from fw': ['@/client/src/fw/**'],
+    'io must not import from usecases': ['@/client/src/platform/*/usecases/**'],
   }),
-  restrictImports(['src/platform/usecases/**'], {
+  restrictImports(['src/platform/*/usecases/**'], {
     'client must not import from server': ['@/server/**'],
     'usecases must not import from fw': ['@/client/src/fw/**'],
-    'usecases must not import from usecases': ['@/client/src/platform/usecases/**'],
+    'usecases must not import from usecases': ['@/client/src/platform/*/usecases/**'],
   }),
   restrictImports(['src/fw/definitions/**'], {
     'client must not import from server': ['@/server/**'],

@@ -1,19 +1,17 @@
 <script lang="ts">
-  import { PlayHostType, PlaySettingsDifficulty, PlaySettingsType } from '@/client/src/domain/play.ts';
+  import { PlayEngineType, PlaySettingsDifficulty, PlaySettingsType } from '@/client/src/domain/play.ts';
   import AppRadioGroup from '@/client/src/fw/ui/by-design/AppRadioGroup.svelte';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
-  import I18nJsonAdapter from '@/client/src/platform/infra/i18n/adapters/json.ts';
-  import mapPlayHostTypeJson from '@/client/src/platform/usecases/maps/mapPlayHostTypeJson.ts';
-  import mapPlaySettingsDifficultyJson from '@/client/src/platform/usecases/maps/mapPlaySettingsDifficultyJson.ts';
-  import mapPlaySettingsTypeJson from '@/client/src/platform/usecases/maps/mapPlaySettingsTypeJson.ts';
+  import comPlayHeaderSettingsJson from '@/client/src/platform/by-port/usecases/l10n/bundle/comPlayHeaderSettingsJson.ts';
+  import mapPlayEngineTypeJson from '@/client/src/platform/by-port/usecases/l10n/bundle/mapPlayEngineTypeJson.ts';
+  import mapPlaySettingsDifficultyJson from '@/client/src/platform/by-port/usecases/l10n/bundle/mapPlaySettingsDifficultyJson.ts';
+  import mapPlaySettingsTypeJson from '@/client/src/platform/by-port/usecases/l10n/bundle/mapPlaySettingsTypeJson.ts';
 
-  type Props = { onsethosttype: (hostType: PlayHostType) => void };
+  type Props = { onsetenginetype: (engineType: PlayEngineType) => void };
 
-  const { onsethosttype }: Props = $props();
+  const { onsetenginetype }: Props = $props();
 
   const runtime = getPlayRuntimeContext();
-
-  await I18nJsonAdapter.loadNamespace('com_play_header_settings');
 </script>
 
 <form
@@ -23,16 +21,16 @@
   }}
 >
   <AppRadioGroup
-    legend={I18nJsonAdapter.t('com_play_header_settings.label_host_type')}
-    modelValue={runtime.hostType}
+    legend={comPlayHeaderSettingsJson('label_engine_type')}
+    modelValue={runtime.engineType}
     options={[
-      { text: mapPlayHostTypeJson(PlayHostType.Client), value: PlayHostType.Client },
-      { text: mapPlayHostTypeJson(PlayHostType.Server), value: PlayHostType.Server },
+      { text: mapPlayEngineTypeJson(PlayEngineType.Client), value: PlayEngineType.Client },
+      { text: mapPlayEngineTypeJson(PlayEngineType.Server), value: PlayEngineType.Server },
     ]}
-    onchange={onsethosttype}
+    onchange={onsetenginetype}
   />
   <AppRadioGroup
-    legend={I18nJsonAdapter.t('com_play_header_settings.label_difficulty')}
+    legend={comPlayHeaderSettingsJson('label_difficulty')}
     modelValue={runtime.settings.difficulty}
     options={[
       { text: mapPlaySettingsDifficultyJson(PlaySettingsDifficulty.Low), value: PlaySettingsDifficulty.Low },
@@ -42,7 +40,7 @@
     onchange={difficulty => void runtime.changeSettings({ difficulty })}
   />
   <AppRadioGroup
-    legend={I18nJsonAdapter.t('com_play_header_settings.label_bonuses')}
+    legend={comPlayHeaderSettingsJson('label_bonuses')}
     modelValue={runtime.settings.type}
     options={[
       { text: mapPlaySettingsTypeJson(PlaySettingsType.Classic), value: PlaySettingsType.Classic },

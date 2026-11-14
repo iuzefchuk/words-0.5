@@ -14,14 +14,14 @@
   import PlayHeader from '@/client/src/fw/ui/by-hierarchy/per-route/play/PlayHeader/PlayHeader.svelte';
   import PlayMain from '@/client/src/fw/ui/by-hierarchy/per-route/play/PlayMain/PlayMain.svelte';
   import PlayMenubar from '@/client/src/fw/ui/by-hierarchy/per-route/play/PlayMenubar.svelte';
-  import type { PlayHostType } from '@/client/src/domain/play.ts';
+  import type { PlayEngineType } from '@/client/src/domain/play.ts';
 
   type Props = {
-    onsethosttype: (hostType: PlayHostType) => void;
+    onsetenginetype: (engineType: PlayEngineType) => void;
     runtime: PlayRuntime;
   };
 
-  const { onsethosttype, runtime }: Props = $props();
+  const { onsetenginetype, runtime }: Props = $props();
 
   setPlayRuntimeContext(untrack(() => runtime));
 
@@ -51,7 +51,7 @@
   onclick={onClick}
 >
   <div class="play__header" transition:fly|global={{ duration: TransitionDuration.Normal, y: '-1rem' }}>
-    <PlayHeader {onsethosttype} />
+    <PlayHeader {onsetenginetype} />
   </div>
   <PlayMain />
   <div class="play__menubar" transition:fly|global={{ duration: TransitionDuration.Normal, x: '1rem' }}>

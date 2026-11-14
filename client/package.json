@@ -53,8 +53,11 @@
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "dev": "vite",
     "format": "prettier --write .",
+    "layers": "tsc -p tsconfig.domain.json && tsc -p tsconfig.io.json && tsc -p tsconfig.usecases.json",
     "lint": "svelte-kit sync && eslint . --fix && stylelint \"{assets,src}/**/*.{css,svelte}\" --fix",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test \"tests/**/*.test.ts\"",
+    "verify": "npm run check && npm run layers && eslint . && stylelint \"{assets,src}/**/*.{css,svelte}\" && prettier --check ."
   },
   "stylelint": {
     "extends": [

@@ -1,26 +1,26 @@
 <script lang="ts">
-  import { PlayHostType } from '@/client/src/domain/play.ts';
+  import { PlayEngineType } from '@/client/src/domain/play.ts';
   import PlayRuntime from '@/client/src/fw/headless/runes/per-instance/PlayRuntime.svelte.ts';
   import Play from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
   import PlayLoader from '@/client/src/fw/ui/by-hierarchy/per-route/play/PlayLoader.svelte';
 
-  let hostType = $state(PlayHostType.Client);
+  let engineType = $state(PlayEngineType.Client);
 
-  function setHostType(newValue: PlayHostType): void {
-    if (newValue === hostType) return;
-    hostType = newValue;
+  function setEngineType(newValue: PlayEngineType): void {
+    if (newValue === engineType) return;
+    engineType = newValue;
   }
 </script>
 
-{#key hostType}
+{#key engineType}
   <svelte:boundary>
     {#snippet pending()}
       <div class="play" aria-busy="true">
         <PlayLoader />
       </div>
     {/snippet}
-    {@const runtime = await PlayRuntime.create(hostType)}
-    <Play {runtime} onsethosttype={setHostType} />
+    {@const runtime = await PlayRuntime.create(engineType)}
+    <Play {runtime} onsetenginetype={setEngineType} />
   </svelte:boundary>
 {/key}
 

@@ -2,7 +2,7 @@
   import { PlaySlotBonus } from '@/client/src/domain/play.ts';
   import AppGridItem, { AppGridItemElevation, AppGridItemTone } from '@/client/src/fw/ui/by-design/AppGridItem.svelte';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
-  import mapPlaySlotBonusJson from '@/client/src/platform/usecases/maps/mapPlaySlotBonusJson.ts';
+  import mapPlaySlotBonusJson from '@/client/src/platform/by-port/usecases/l10n/bundle/mapPlaySlotBonusJson.ts';
   import type { PlayBlockId, PlaySlotId } from '@/client/src/domain/play.ts';
 
   type Props = { slotId: PlaySlotId };

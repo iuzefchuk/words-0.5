@@ -42,24 +42,17 @@
       --color-level-9: var(--palette-gray-800);
       --color-level-10: var(--palette-gray-900);
       --color-level-11: var(--palette-gray-950);
-
       --color-primary: light-dark(var(--color-level-11), var(--color-level-2));
       --color-secondary: light-dark(var(--color-level-6), var(--color-level-5));
-
       --bg-primary: light-dark(var(--color-level-3), var(--color-level-9));
       --bg-secondary: transparent;
-
       --font-size-primary: var(--font-size);
       --font-size-secondary: var(--font-size-small);
       --font-weight-primary: light-dark(var(--font-weight), var(--font-weight-small));
       --font-weight-secondary: var(--font-weight-primary);
-
       --padding-primary: var(--space-m);
-
       --gap-grid: var(--space-2xs);
-
       --radius-grid: var(--space-2xs);
-
       --outline: 2px solid light-dark(var(--color-level-10), var(--color-level-1));
 
       :focus-visible {

@@ -2,7 +2,7 @@
   import { PlayPlayer } from '@/client/src/domain/play.ts';
   import animateNumber from '@/client/src/fw/headless/actions/animateNumber.ts';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
-  import mapPlayPlayerJson from '@/client/src/platform/usecases/maps/mapPlayPlayerJson.ts';
+  import mapPlayPlayerJson from '@/client/src/platform/by-port/usecases/l10n/bundle/mapPlayPlayerJson.ts';
 
   const runtime = getPlayRuntimeContext();
 

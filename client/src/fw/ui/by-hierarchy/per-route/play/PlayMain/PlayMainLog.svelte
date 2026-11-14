@@ -4,15 +4,13 @@
   import { PlayEventType } from '@/client/src/domain/play.ts';
   import { TransitionDuration } from '@/client/src/fw/definitions/TransitionDuration.ts';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
-  import I18nJsonAdapter from '@/client/src/platform/infra/i18n/adapters/json.ts';
-  import mapPlayPlayerJson from '@/client/src/platform/usecases/maps/mapPlayPlayerJson.ts';
+  import comPlayMainLogJson from '@/client/src/platform/by-port/usecases/l10n/bundle/comPlayMainLogJson.ts';
+  import mapPlayPlayerJson from '@/client/src/platform/by-port/usecases/l10n/bundle/mapPlayPlayerJson.ts';
   import type { PlayEvent } from '@/client/src/domain/play.ts';
 
   const EVENTS_DISPLAYED_MAX = 3;
 
   const runtime = getPlayRuntimeContext();
-
-  await I18nJsonAdapter.loadNamespace('com_play_main_log');
 
   const entries = $derived.by(() => {
     const all = runtime.events.filter(isEventDisplayed);
@@ -27,9 +25,9 @@
       case PlayEventType.TurnValidationSet:
         return '';
       case PlayEventType.TurnPassed:
-        return I18nJsonAdapter.t('com_play_main_log.pass', { player: mapPlayPlayerJson(event.player) });
+        return comPlayMainLogJson('pass', { player: mapPlayPlayerJson(event.player) });
       case PlayEventType.TurnSaved:
-        return I18nJsonAdapter.t('com_play_main_log.save', {
+        return comPlayMainLogJson('save', {
           player: mapPlayPlayerJson(event.player),
           score: event.score,
           words: event.words.join(', '),

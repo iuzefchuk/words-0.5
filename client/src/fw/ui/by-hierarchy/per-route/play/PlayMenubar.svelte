@@ -4,12 +4,10 @@
   import dialog from '@/client/src/fw/headless/runes/per-app/for-component/TheDialog.svelte.ts';
   import AppButton, { AppButtonAccent } from '@/client/src/fw/ui/by-design/AppButton.svelte';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
-  import I18nJsonAdapter from '@/client/src/platform/infra/i18n/adapters/json.ts';
+  import comPlayMenubarJson from '@/client/src/platform/by-port/usecases/l10n/bundle/comPlayMenubarJson.ts';
   import type { TheDialogResult } from '@/client/src/fw/headless/runes/per-app/for-component/TheDialog.svelte.ts';
 
   const runtime = getPlayRuntimeContext();
-
-  await I18nJsonAdapter.loadNamespace('com_play_menubar');
 
   const buttons = $derived([
     {
@@ -19,7 +17,7 @@
       },
       isDisabled: !runtime.isActionableForUser || !runtime.currentTurnIsValid,
       keys: [Key.Enter],
-      name: I18nJsonAdapter.t('com_play_menubar.action_play'),
+      name: comPlayMenubarJson('action_play'),
     },
     {
       accent: AppButtonAccent.Secondary,
@@ -28,7 +26,7 @@
       },
       isDisabled: !runtime.isActionableForUser,
       keys: [Key.P],
-      name: I18nJsonAdapter.t('com_play_menubar.action_pass'),
+      name: comPlayMenubarJson('action_pass'),
     },
     {
       accent: AppButtonAccent.Secondary,
@@ -37,7 +35,7 @@
       },
       isDisabled: !runtime.isActionableForUser,
       keys: [Key.R],
-      name: I18nJsonAdapter.t('com_play_menubar.action_resign'),
+      name: comPlayMenubarJson('action_resign'),
     },
   ]);
 
@@ -75,32 +73,32 @@
       throw new Error(`cannot render result text: result is ${PlayResult.Undecided}`);
     }
     return await dialog.trigger({
-      body: I18nJsonAdapter.t(
+      body: comPlayMenubarJson(
         (
           {
-            [PlayResult.Lose]: scoreDiff < 0 ? 'com_play_menubar.body_finish_lose_1' : 'com_play_menubar.body_finish_lose_2',
-            [PlayResult.Tie]: 'com_play_menubar.body_finish_tie',
-            [PlayResult.Win]: scoreDiff > 0 ? 'com_play_menubar.body_finish_win_1' : 'com_play_menubar.body_finish_win_2',
+            [PlayResult.Lose]: scoreDiff < 0 ? 'body_finish_lose_1' : 'body_finish_lose_2',
+            [PlayResult.Tie]: 'body_finish_tie',
+            [PlayResult.Win]: scoreDiff > 0 ? 'body_finish_win_1' : 'body_finish_win_2',
           } as const
         )[result],
         { points: Math.abs(scoreDiff) },
       ),
-      title: I18nJsonAdapter.t('com_play_menubar.title_finish'),
+      title: comPlayMenubarJson('title_finish'),
     });
   }
 
   async function triggerPassDialog(): Promise<TheDialogResult> {
     return await dialog.trigger({
-      body: I18nJsonAdapter.t('com_play_menubar.body_pass'),
-      title: I18nJsonAdapter.t('com_play_menubar.title_pass'),
+      body: comPlayMenubarJson('body_pass'),
+      title: comPlayMenubarJson('title_pass'),
     });
   }
 
   async function triggerResignDialog(): Promise<TheDialogResult> {
     return await dialog.trigger({
-      body: I18nJsonAdapter.t('com_play_menubar.body_resign'),
+      body: comPlayMenubarJson('body_resign'),
       isDestructive: true,
-      title: I18nJsonAdapter.t('com_play_menubar.title_resign'),
+      title: comPlayMenubarJson('title_resign'),
     });
   }
 </script>

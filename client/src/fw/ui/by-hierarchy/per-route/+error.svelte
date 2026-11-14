@@ -2,24 +2,22 @@
   import { resolve } from '$app/paths';
   import { RouteError } from '@/client/src/fw/definitions/RouteError.ts';
   import { ROUTES } from '@/client/src/fw/definitions/ROUTES.ts';
-  import I18nJsonAdapter from '@/client/src/platform/infra/i18n/adapters/json.ts';
+  import comIndexErrorJson from '@/client/src/platform/by-port/usecases/l10n/bundle/comIndexErrorJson.ts';
 
   type Props = { error: App.Error };
 
   const { error }: Props = $props();
-
-  await I18nJsonAdapter.loadNamespace('com_index_error');
 
   const message = $derived(getRouteErrorJson(error));
 
   function getRouteErrorJson({ code, message }: App.Error): string {
     switch (code) {
       case RouteError.NotFound:
-        return I18nJsonAdapter.t('com_index_error.not_found');
+        return comIndexErrorJson('not_found');
       case RouteError.ServerUnavailable:
-        return I18nJsonAdapter.t('com_index_error.server_unavailable');
+        return comIndexErrorJson('server_unavailable');
       case RouteError.Unexpected:
-        return I18nJsonAdapter.t('com_index_error.unexpected', { error: message });
+        return comIndexErrorJson('unexpected', { error: message });
     }
   }
 </script>
@@ -28,7 +26,7 @@
   {#if error.code === RouteError.NotFound}
     <p class="error__message">
       {@html message}
-      <a class="error__link" href={resolve(ROUTES.Play)}>{I18nJsonAdapter.t('com_index_error.link_play')}</a>
+      <a class="error__link" href={resolve(ROUTES.Play)}>{comIndexErrorJson('link_play')}</a>
     </p>
   {:else}
     <p class="error__message" role="alert">{@html message}</p>

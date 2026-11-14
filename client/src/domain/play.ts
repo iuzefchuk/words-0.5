@@ -1,14 +1,14 @@
+export enum PlayEngineType {
+  Client = 'Client',
+  Server = 'Server',
+}
+
 export enum PlayEventType {
   MatchFinished = 'MatchFinished',
   MatchStarted = 'MatchStarted',
   TurnPassed = 'TurnPassed',
   TurnSaved = 'TurnSaved',
   TurnValidationSet = 'TurnValidationSet',
-}
-
-export enum PlayHostType {
-  Client = 'Client',
-  Server = 'Server',
 }
 
 export enum PlayPlayer {
@@ -48,9 +48,23 @@ export type PlayBlock = {
   readonly wasUsedInPreviousTurn: boolean;
 };
 
-export type PlayBlockId = string;
+export type PlayBlockId = { readonly brand: 'PlayBlockId' } & string;
 
 export type PlayBlockLetter = string;
+
+export type PlayEngine = {
+  changeSettings(settings: Partial<PlaySettings>): Promise<PlayState>;
+  loadGeometry(): Promise<PlayGeometry>;
+  loadState(): Promise<PlayState>;
+  open(): Promise<void>;
+  passTurn(): Promise<PlayState>;
+  placeTile(link: { cell: PlaySlotId; tile: PlayBlockId }): Promise<PlayState>;
+  playOpponentTurn(): Promise<PlayState>;
+  resignMatch(): Promise<PlayState>;
+  restartGame(): Promise<PlayState>;
+  saveTurn(): Promise<PlayState>;
+  undoPlaceTile(tile: PlayBlockId): Promise<PlayState>;
+};
 
 export type PlayEvent =
   | {
@@ -82,7 +96,7 @@ export type PlaySlot = {
   readonly tile: null | PlayBlock;
 };
 
-export type PlaySlotId = number;
+export type PlaySlotId = { readonly brand: 'PlaySlotId' } & number;
 
 export type PlayState = {
   readonly cells: ReadonlyArray<PlaySlot>;

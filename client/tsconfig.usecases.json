@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "composite": true, "tsBuildInfoFile": "./.svelte-kit/tsconfig.usecases.tsbuildinfo" },
+  "include": ["src/domain", "src/platform"]
+}

@@ -45,7 +45,9 @@
   {#if text !== undefined}
     <text class="grid-item__text" x={textPosition} y={textPosition} text-anchor="middle" dominant-baseline="central">{text}</text>
     {#if textSecondary !== undefined}
-      <text class="grid-item__text-secondary" x="78%" y="78%" text-anchor="middle" dominant-baseline="central">{textSecondary}</text>
+      <text class="grid-item__text-secondary" x="78%" y="78%" text-anchor="middle" dominant-baseline="central"
+        >{textSecondary}</text
+      >
     {/if}
   {/if}
 </svg>

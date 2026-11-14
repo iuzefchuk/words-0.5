@@ -22,5 +22,5 @@
     "lib": ["ESNext", "DOM", "DOM.Iterable"],
     "types": ["node", "vite/client", "svelte"]
   },
-  "include": [".svelte-kit/ambient.d.ts", ".svelte-kit/non-ambient.d.ts", "src", "*.config.ts"]
+  "include": [".svelte-kit/ambient.d.ts", ".svelte-kit/non-ambient.d.ts", "src", "tests", "*.config.ts"]
 }

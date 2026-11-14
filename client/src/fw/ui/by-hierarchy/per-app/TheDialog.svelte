@@ -2,9 +2,7 @@
   import { tick } from 'svelte';
   import dialog, { TheDialogStatus } from '@/client/src/fw/headless/runes/per-app/for-component/TheDialog.svelte.ts';
   import AppButton, { AppButtonAccent } from '@/client/src/fw/ui/by-design/AppButton.svelte';
-  import I18nJsonAdapter from '@/client/src/platform/infra/i18n/adapters/json.ts';
-
-  await I18nJsonAdapter.loadNamespace('com_the_dialog');
+  import comTheDialogJson from '@/client/src/platform/by-port/usecases/l10n/bundle/comTheDialogJson.ts';
 
   const ID_TITLE = 'title';
   const ID_BODY = 'body';
@@ -68,7 +66,7 @@
     <AppButton
       bind:this={cancelButton}
       accent={dialog.isDestructive ? AppButtonAccent.Primary : AppButtonAccent.Secondary}
-      text={I18nJsonAdapter.t('com_the_dialog.btn_cancel')}
+      text={comTheDialogJson('btn_cancel')}
       ontrigger={() => {
         emitResponse(TheDialogStatus.Canceled);
       }}
@@ -76,7 +74,7 @@
     <AppButton
       bind:this={confirmButton}
       accent={dialog.isDestructive ? AppButtonAccent.Secondary : AppButtonAccent.Primary}
-      text={I18nJsonAdapter.t('com_the_dialog.btn_confirm')}
+      text={comTheDialogJson('btn_confirm')}
       ontrigger={() => {
         emitResponse(TheDialogStatus.Confirmed);
       }}
