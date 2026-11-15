@@ -3,6 +3,7 @@
 client/.svelte-kit
 client/dist
 client/node_modules
+client/storybook-static
 engine/node_modules
 engine/target
 server/dist

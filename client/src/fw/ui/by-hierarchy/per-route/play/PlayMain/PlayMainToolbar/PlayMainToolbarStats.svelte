@@ -1,14 +1,21 @@
+<script module lang="ts">
+  import L10nGlobAdapter from '@/client/src/platform/by-port/l10n/adapters/glob.ts';
+
+  function comPlayMainToolbarStats(key: string, props?: Record<string, number | string>): string {
+    return L10nGlobAdapter.t(`com_play_main_toolbar_stats.${key}`, props);
+  }
+</script>
+
 <script lang="ts">
   import animateNumber from '@/client/src/fw/headless/actions/animateNumber.ts';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
-  import comPlayMainToolbarStatsJson from '@/client/src/platform/by-port/usecases/l10n/bundle/comPlayMainToolbarStatsJson.ts';
 
   const runtime = getPlayRuntimeContext();
 </script>
 
 <p role="note" class="stats">
   <span use:animateNumber={{ number: runtime.blocksRemaining }} class="stats__number"></span>
-  <span>{comPlayMainToolbarStatsJson('unassigned_count')}</span>
+  <span>{comPlayMainToolbarStats('unassigned_count')}</span>
 </p>
 
 <style>

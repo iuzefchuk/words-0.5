@@ -1,10 +1,17 @@
+<script module lang="ts">
+  import L10nGlobAdapter from '@/client/src/platform/by-port/l10n/adapters/glob.ts';
+
+  function comPlayMenubar(key: string, props?: Record<string, number | string>): string {
+    return L10nGlobAdapter.t(`com_play_menubar.${key}`, props);
+  }
+</script>
+
 <script lang="ts">
   import { PlayResult } from '@/client/src/domain/play.ts';
   import { Key } from '@/client/src/fw/definitions/Key.ts';
   import dialog from '@/client/src/fw/headless/runes/per-app/for-component/TheDialog.svelte.ts';
   import AppButton, { AppButtonAccent } from '@/client/src/fw/ui/by-design/AppButton.svelte';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
-  import comPlayMenubarJson from '@/client/src/platform/by-port/usecases/l10n/bundle/comPlayMenubarJson.ts';
   import type { TheDialogResult } from '@/client/src/fw/headless/runes/per-app/for-component/TheDialog.svelte.ts';
 
   const runtime = getPlayRuntimeContext();
@@ -17,7 +24,7 @@
       },
       isDisabled: !runtime.isActionableForUser || !runtime.currentTurnIsValid,
       keys: [Key.Enter],
-      name: comPlayMenubarJson('action_play'),
+      name: comPlayMenubar('action_play'),
     },
     {
       accent: AppButtonAccent.Secondary,
@@ -26,7 +33,7 @@
       },
       isDisabled: !runtime.isActionableForUser,
       keys: [Key.P],
-      name: comPlayMenubarJson('action_pass'),
+      name: comPlayMenubar('action_pass'),
     },
     {
       accent: AppButtonAccent.Secondary,
@@ -35,7 +42,7 @@
       },
       isDisabled: !runtime.isActionableForUser,
       keys: [Key.R],
-      name: comPlayMenubarJson('action_resign'),
+      name: comPlayMenubar('action_resign'),
     },
   ]);
 
@@ -73,7 +80,7 @@
       throw new Error(`cannot render result text: result is ${PlayResult.Undecided}`);
     }
     return await dialog.trigger({
-      body: comPlayMenubarJson(
+      body: comPlayMenubar(
         (
           {
             [PlayResult.Lose]: scoreDiff < 0 ? 'body_finish_lose_1' : 'body_finish_lose_2',
@@ -83,22 +90,22 @@
         )[result],
         { points: Math.abs(scoreDiff) },
       ),
-      title: comPlayMenubarJson('title_finish'),
+      title: comPlayMenubar('title_finish'),
     });
   }
 
   async function triggerPassDialog(): Promise<TheDialogResult> {
     return await dialog.trigger({
-      body: comPlayMenubarJson('body_pass'),
-      title: comPlayMenubarJson('title_pass'),
+      body: comPlayMenubar('body_pass'),
+      title: comPlayMenubar('title_pass'),
     });
   }
 
   async function triggerResignDialog(): Promise<TheDialogResult> {
     return await dialog.trigger({
-      body: comPlayMenubarJson('body_resign'),
+      body: comPlayMenubar('body_resign'),
       isDestructive: true,
-      title: comPlayMenubarJson('title_resign'),
+      title: comPlayMenubar('title_resign'),
     });
   }
 </script>

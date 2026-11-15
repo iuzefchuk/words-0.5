@@ -1,11 +1,28 @@
+<script module lang="ts">
+  import { PlayEventType, PlayPlayer } from '@/client/src/domain/play.ts';
+  import L10nGlobAdapter from '@/client/src/platform/by-port/l10n/adapters/glob.ts';
+
+  function comPlayMainLog(key: string, props?: Record<string, number | string>): string {
+    return L10nGlobAdapter.t(`com_play_main_log.${key}`, props);
+  }
+
+  function mapPlayPlayer(player: PlayPlayer): string {
+    return L10nGlobAdapter.t(
+      (
+        {
+          [PlayPlayer.Opponent]: 'map_play_player.opponent',
+          [PlayPlayer.User]: 'map_play_player.user',
+        } as const
+      )[player],
+    );
+  }
+</script>
+
 <script lang="ts">
   import { flip } from 'svelte/animate';
   import { fly } from 'svelte/transition';
-  import { PlayEventType } from '@/client/src/domain/play.ts';
   import { TransitionDuration } from '@/client/src/fw/definitions/TransitionDuration.ts';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
-  import comPlayMainLogJson from '@/client/src/platform/by-port/usecases/l10n/bundle/comPlayMainLogJson.ts';
-  import mapPlayPlayerJson from '@/client/src/platform/by-port/usecases/l10n/bundle/mapPlayPlayerJson.ts';
   import type { PlayEvent } from '@/client/src/domain/play.ts';
 
   const EVENTS_DISPLAYED_MAX = 3;
@@ -25,10 +42,10 @@
       case PlayEventType.TurnValidationSet:
         return '';
       case PlayEventType.TurnPassed:
-        return comPlayMainLogJson('pass', { player: mapPlayPlayerJson(event.player) });
+        return comPlayMainLog('pass', { player: mapPlayPlayer(event.player) });
       case PlayEventType.TurnSaved:
-        return comPlayMainLogJson('save', {
-          player: mapPlayPlayerJson(event.player),
+        return comPlayMainLog('save', {
+          player: mapPlayPlayer(event.player),
           score: event.score,
           words: event.words.join(', '),
         });

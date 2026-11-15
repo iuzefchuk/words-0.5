@@ -1,8 +1,17 @@
+<script module lang="ts">
+  import L10nGlobAdapter from '@/client/src/platform/by-port/l10n/adapters/glob.ts';
+
+  await L10nGlobAdapter.loadNamespace('com_index_error');
+
+  function comIndexError(key: string, props?: Record<string, number | string>): string {
+    return L10nGlobAdapter.t(`com_index_error.${key}`, props);
+  }
+</script>
+
 <script lang="ts">
   import { resolve } from '$app/paths';
   import { RouteError } from '@/client/src/fw/definitions/RouteError.ts';
   import { ROUTES } from '@/client/src/fw/definitions/ROUTES.ts';
-  import comIndexErrorJson from '@/client/src/platform/by-port/usecases/l10n/bundle/comIndexErrorJson.ts';
 
   type Props = { error: App.Error };
 
@@ -13,11 +22,11 @@
   function getRouteErrorJson({ code, message }: App.Error): string {
     switch (code) {
       case RouteError.NotFound:
-        return comIndexErrorJson('not_found');
+        return comIndexError('not_found');
       case RouteError.ServerUnavailable:
-        return comIndexErrorJson('server_unavailable');
+        return comIndexError('server_unavailable');
       case RouteError.Unexpected:
-        return comIndexErrorJson('unexpected', { error: message });
+        return comIndexError('unexpected', { error: message });
     }
   }
 </script>
@@ -26,7 +35,7 @@
   {#if error.code === RouteError.NotFound}
     <p class="error__message">
       {@html message}
-      <a class="error__link" href={resolve(ROUTES.Play)}>{comIndexErrorJson('link_play')}</a>
+      <a class="error__link" href={resolve(ROUTES.Play)}>{comIndexError('link_play')}</a>
     </p>
   {:else}
     <p class="error__message" role="alert">{@html message}</p>

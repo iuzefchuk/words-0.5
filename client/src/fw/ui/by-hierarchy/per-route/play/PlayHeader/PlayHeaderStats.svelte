@@ -1,14 +1,28 @@
-<script lang="ts">
+<script module lang="ts">
   import { PlayPlayer } from '@/client/src/domain/play.ts';
+  import L10nGlobAdapter from '@/client/src/platform/by-port/l10n/adapters/glob.ts';
+
+  function mapPlayPlayer(player: PlayPlayer): string {
+    return L10nGlobAdapter.t(
+      (
+        {
+          [PlayPlayer.Opponent]: 'map_play_player.opponent',
+          [PlayPlayer.User]: 'map_play_player.user',
+        } as const
+      )[player],
+    );
+  }
+</script>
+
+<script lang="ts">
   import animateNumber from '@/client/src/fw/headless/actions/animateNumber.ts';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
-  import mapPlayPlayerJson from '@/client/src/platform/by-port/usecases/l10n/bundle/mapPlayPlayerJson.ts';
 
   const runtime = getPlayRuntimeContext();
 
   const players = $derived([
-    { name: mapPlayPlayerJson(PlayPlayer.User), score: runtime.userScore },
-    { name: mapPlayPlayerJson(PlayPlayer.Opponent), score: runtime.opponentScore },
+    { name: mapPlayPlayer(PlayPlayer.User), score: runtime.userScore },
+    { name: mapPlayPlayer(PlayPlayer.Opponent), score: runtime.opponentScore },
   ]);
 </script>
 

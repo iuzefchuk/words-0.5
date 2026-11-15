@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition';
   import { TransitionDuration } from '@/client/src/fw/definitions/TransitionDuration.ts';
-  import AppGridItem, { AppGridItemElevation, AppGridItemTone } from '@/client/src/fw/ui/by-design/AppGridItem.svelte';
+  import AppBlock, { AppBlockElevation, AppBlockTone } from '@/client/src/fw/ui/by-design/AppBlock.svelte';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
   import PlayMainToolbarStats from '@/client/src/fw/ui/by-hierarchy/per-route/play/PlayMain/PlayMainToolbar/PlayMainToolbarStats.svelte';
   import type { PlayBlock, PlayBlockId } from '@/client/src/domain/play.ts';
@@ -69,9 +69,9 @@
           }}
         >
           {#if block !== null && runtime.isBlockInToolbar(block.id) && !runtime.isBlockSlotted(block.id)}
-            <AppGridItem
-              elevation={AppGridItemElevation.High}
-              tone={runtime.isBlockSelected(block.id) ? AppGridItemTone.Bolder : AppGridItemTone.Mid}
+            <AppBlock
+              elevation={AppBlockElevation.High}
+              tone={runtime.isBlockSelected(block.id) ? AppBlockTone.Bolder : AppBlockTone.Mid}
               text={block.letter}
               textSecondary={String(block.points)}
               ariaLabel={`${block.letter} letter / ${block.points} pts`}

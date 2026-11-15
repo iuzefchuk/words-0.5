@@ -1,3 +1,19 @@
+<script module lang="ts">
+  import L10nGlobAdapter from '@/client/src/platform/by-port/l10n/adapters/glob.ts';
+
+  await Promise.all([
+    L10nGlobAdapter.loadNamespace('com_play_header_settings'),
+    L10nGlobAdapter.loadNamespace('com_play_main_log'),
+    L10nGlobAdapter.loadNamespace('com_play_main_toolbar_stats'),
+    L10nGlobAdapter.loadNamespace('com_play_menubar'),
+    L10nGlobAdapter.loadNamespace('map_play_engine_type'),
+    L10nGlobAdapter.loadNamespace('map_play_player'),
+    L10nGlobAdapter.loadNamespace('map_play_settings_difficulty'),
+    L10nGlobAdapter.loadNamespace('map_play_settings_type'),
+    L10nGlobAdapter.loadNamespace('map_play_slot_bonus'),
+  ]);
+</script>
+
 <script lang="ts">
   import { PlayEngineType } from '@/client/src/domain/play.ts';
   import PlayRuntime from '@/client/src/fw/headless/runes/per-instance/PlayRuntime.svelte.ts';

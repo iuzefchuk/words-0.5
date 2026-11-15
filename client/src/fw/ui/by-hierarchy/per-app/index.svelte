@@ -1,3 +1,9 @@
+<script module lang="ts">
+  import L10nGlobAdapter from '@/client/src/platform/by-port/l10n/adapters/glob.ts';
+
+  await L10nGlobAdapter.loadNamespace('com_the_dialog');
+</script>
+
 <script lang="ts">
   import '@/client/assets/css/font_size.css';
   import '@/client/assets/css/font_weight.css';
@@ -9,6 +15,7 @@
   import '@/client/assets/css/z_index.css';
   import { TransitionDuration } from '@/client/src/fw/definitions/TransitionDuration.ts';
   import TheDialog from '@/client/src/fw/ui/by-hierarchy/per-app/TheDialog.svelte';
+  import TheToast from '@/client/src/fw/ui/by-hierarchy/per-app/TheToast.svelte';
   import type { Snippet } from 'svelte';
 
   type Props = { children: Snippet };
@@ -23,6 +30,7 @@
 >
   {@render children()}
   <TheDialog />
+  <TheToast />
 </div>
 
 <style>

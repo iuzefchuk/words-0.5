@@ -1,9 +1,20 @@
 import { updated } from '$app/state';
-import { PlayEngineType, PlayEventType, PlayPlayer } from '@/client/src/domain/play.ts';
-import AudioSynthAdapter from '@/client/src/platform/by-port/io/audio/adapters/synth.ts';
-import { AudioSting } from '@/client/src/platform/by-port/io/audio/port.ts';
-import api from '@/client/src/platform/by-protocol/usecases/http/api.ts';
-import engineWasm from '@/client/src/platform/by-protocol/usecases/wasm/engine.wasm.ts';
+import { mapPlayEventSting, PHRASES_BY_STING } from '@/client/src/domain/audio.ts';
+import { PlayEngineType } from '@/client/src/domain/play.ts';
+import AudioSynthAdapter from '@/client/src/platform/by-port/audio/adapters/synth.ts';
+import apiGameRestart from '@/client/src/platform/by-protocol/usage/http/per-path/api/game/restart.ts';
+import apiMatch from '@/client/src/platform/by-protocol/usage/http/per-path/api/match.ts';
+import apiMatchOpponentTurn from '@/client/src/platform/by-protocol/usage/http/per-path/api/match/opponent-turn.ts';
+import apiMatchPass from '@/client/src/platform/by-protocol/usage/http/per-path/api/match/pass.ts';
+import apiMatchResign from '@/client/src/platform/by-protocol/usage/http/per-path/api/match/resign.ts';
+import apiMatchSettings from '@/client/src/platform/by-protocol/usage/http/per-path/api/match/settings.ts';
+import apiMatchTurn from '@/client/src/platform/by-protocol/usage/http/per-path/api/match/turn.ts';
+import apiMatchValidation from '@/client/src/platform/by-protocol/usage/http/per-path/api/match/validation.ts';
+import apiPlayfieldGeometry from '@/client/src/platform/by-protocol/usage/http/per-path/api/playfield/geometry.ts';
+import apiPlayfieldTile from '@/client/src/platform/by-protocol/usage/http/per-path/api/playfield/tile.ts';
+import apiPlayfieldTileTile from '@/client/src/platform/by-protocol/usage/http/per-path/api/playfield/tile/{tile}.ts';
+import engineWasm from '@/client/src/platform/by-protocol/usage/wasm/engine.ts';
+import type { Sting } from '@/client/src/domain/audio.ts';
 import type {
   PlayBlock,
   PlayBlockId,
@@ -16,6 +27,44 @@ import type {
   PlaySlotId,
   PlayState,
 } from '@/client/src/domain/play.ts';
+
+const api = {
+  changeSettings(settings: Partial<PlaySettings>): Promise<PlayState> {
+    return apiMatchSettings.patch(settings);
+  },
+  loadGeometry(): Promise<PlayGeometry> {
+    return apiPlayfieldGeometry.get();
+  },
+  loadState(): Promise<PlayState> {
+    return apiMatch.get();
+  },
+  async open(): Promise<void> {
+    await apiMatch.post();
+  },
+  passTurn(): Promise<PlayState> {
+    return apiMatchPass.post();
+  },
+  async placeTile(link: { cell: PlaySlotId; tile: PlayBlockId }): Promise<PlayState> {
+    await apiPlayfieldTile.put(link);
+    return apiMatchValidation.post();
+  },
+  playOpponentTurn(): Promise<PlayState> {
+    return apiMatchOpponentTurn.post();
+  },
+  resignMatch(): Promise<PlayState> {
+    return apiMatchResign.post();
+  },
+  restartGame(): Promise<PlayState> {
+    return apiGameRestart.post();
+  },
+  saveTurn(): Promise<PlayState> {
+    return apiMatchTurn.post();
+  },
+  async undoPlaceTile(tile: PlayBlockId): Promise<PlayState> {
+    await apiPlayfieldTileTile.delete(tile);
+    return apiMatchValidation.post();
+  },
+} satisfies PlayEngine;
 
 export default class PlayRuntime {
   private static readonly OPPONENT_RESPONSE_ARTIFICIAL_DELAY_MS = 2_000;
@@ -259,15 +308,15 @@ export default class PlayRuntime {
   private playPendingStings(): void {
     const { events } = this.state;
     if (this.lastDrainedEventCount > events.length) this.lastDrainedEventCount = 0;
-    let lastSting: AudioSting | null = null;
+    let lastSting: null | Sting = null;
     for (let idx = this.lastDrainedEventCount; idx < events.length; idx++) {
       const event = events[idx];
       if (event === undefined) continue;
-      const sting = mapPlayEventAudioSting(event);
+      const sting = mapPlayEventSting(event);
       if (sting !== null) lastSting = sting;
     }
     this.lastDrainedEventCount = events.length;
-    if (lastSting !== null) AudioSynthAdapter.play(lastSting);
+    if (lastSting !== null) AudioSynthAdapter.playPhrase(PHRASES_BY_STING[lastSting]);
   }
 
   private resetToolbar(): void {
@@ -283,23 +332,5 @@ export default class PlayRuntime {
       setTimeout(resolve, PlayRuntime.OPPONENT_RESPONSE_ARTIFICIAL_DELAY_MS - (Date.now() - startedAt)),
     );
     this.applyState(state);
-  }
-}
-
-function mapPlayEventAudioSting(event: PlayEvent): AudioSting | null {
-  switch (event.type) {
-    case PlayEventType.MatchFinished:
-      return event.winner === null
-        ? AudioSting.Arch
-        : event.winner === PlayPlayer.User
-          ? AudioSting.RisingArpeggio
-          : AudioSting.FallingArpeggio;
-    case PlayEventType.MatchStarted:
-    case PlayEventType.TurnValidationSet:
-      return null;
-    case PlayEventType.TurnPassed:
-      return event.player === PlayPlayer.User ? AudioSting.FallingThird : AudioSting.FallingFifth;
-    case PlayEventType.TurnSaved:
-      return event.player === PlayPlayer.User ? AudioSting.RisingThird : AudioSting.RisingFifth;
   }
 }

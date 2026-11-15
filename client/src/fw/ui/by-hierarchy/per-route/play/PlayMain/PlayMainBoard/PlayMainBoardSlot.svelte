@@ -1,8 +1,24 @@
-<script lang="ts">
+<script module lang="ts">
   import { PlaySlotBonus } from '@/client/src/domain/play.ts';
-  import AppGridItem, { AppGridItemElevation, AppGridItemTone } from '@/client/src/fw/ui/by-design/AppGridItem.svelte';
+  import L10nGlobAdapter from '@/client/src/platform/by-port/l10n/adapters/glob.ts';
+
+  function mapPlaySlotBonus(value: PlaySlotBonus): string {
+    return L10nGlobAdapter.t(
+      (
+        {
+          [PlaySlotBonus.DoubleLetter]: 'map_play_slot_bonus.dl',
+          [PlaySlotBonus.DoubleWord]: 'map_play_slot_bonus.dw',
+          [PlaySlotBonus.TripleLetter]: 'map_play_slot_bonus.tl',
+          [PlaySlotBonus.TripleWord]: 'map_play_slot_bonus.tw',
+        } as const
+      )[value],
+    );
+  }
+</script>
+
+<script lang="ts">
+  import AppBlock, { AppBlockElevation, AppBlockTone } from '@/client/src/fw/ui/by-design/AppBlock.svelte';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
-  import mapPlaySlotBonusJson from '@/client/src/platform/by-port/usecases/l10n/bundle/mapPlaySlotBonusJson.ts';
   import type { PlayBlockId, PlaySlotId } from '@/client/src/domain/play.ts';
 
   type Props = { slotId: PlaySlotId };
@@ -13,14 +29,14 @@
   const colIndex = $derived(runtime.getSlotColumn(slotId) + 1);
   const isCenter = $derived(runtime.isSlotCenter(slotId));
   const bonus = $derived(runtime.getSlotBonus(slotId));
-  const bonusTone = $derived(bonus === null ? undefined : mapPlaySlotBonusAppGridItemTone(bonus));
+  const bonusTone = $derived(bonus === null ? undefined : mapPlaySlotBonusAppBlockTone(bonus));
   const block = $derived(runtime.findBlockInSlot(slotId));
   const blockIsSelected = $derived(block !== null && runtime.isBlockSelected(block.id));
   const blockTone = $derived.by(() => {
     if (block === null) return null;
-    if (blockIsSelected) return AppGridItemTone.Bolder;
-    if (block.wasUsedInPreviousTurn) return AppGridItemTone.Bold;
-    return AppGridItemTone.Mid;
+    if (blockIsSelected) return AppBlockTone.Bolder;
+    if (block.wasUsedInPreviousTurn) return AppBlockTone.Bold;
+    return AppBlockTone.Mid;
   });
 
   function handleDoublePressBoardBlock(blockId: PlayBlockId): void {
@@ -75,12 +91,12 @@
     })();
   }
 
-  function mapPlaySlotBonusAppGridItemTone(bonus: PlaySlotBonus): AppGridItemTone {
+  function mapPlaySlotBonusAppBlockTone(bonus: PlaySlotBonus): AppBlockTone {
     return {
-      [PlaySlotBonus.DoubleLetter]: AppGridItemTone.Faint,
-      [PlaySlotBonus.DoubleWord]: AppGridItemTone.Bold,
-      [PlaySlotBonus.TripleLetter]: AppGridItemTone.Mid,
-      [PlaySlotBonus.TripleWord]: AppGridItemTone.Bolder,
+      [PlaySlotBonus.DoubleLetter]: AppBlockTone.Faint,
+      [PlaySlotBonus.DoubleWord]: AppBlockTone.Bold,
+      [PlaySlotBonus.TripleLetter]: AppBlockTone.Mid,
+      [PlaySlotBonus.TripleWord]: AppBlockTone.Bolder,
     }[bonus];
   }
 
@@ -112,14 +128,14 @@
   onkeydown={onKeydown}
   ondblclick={onDoubleClick}
 >
-  <AppGridItem
-    elevation={isCenter ? AppGridItemElevation.Low : AppGridItemElevation.Mid}
+  <AppBlock
+    elevation={isCenter ? AppBlockElevation.Low : AppBlockElevation.Mid}
     tone={bonusTone}
-    text={bonus === null ? undefined : mapPlaySlotBonusJson(bonus)}
+    text={bonus === null ? undefined : mapPlaySlotBonus(bonus)}
   />
   {#if block !== null && blockTone !== null}
-    <AppGridItem
-      elevation={AppGridItemElevation.High}
+    <AppBlock
+      elevation={AppBlockElevation.High}
       tone={blockTone}
       text={block.letter}
       textSecondary={String(block.points)}
