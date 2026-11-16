@@ -104,7 +104,7 @@
 <style>
   .outline {
     position: absolute;
-    z-index: var(--z-index-level-1);
+    z-index: var(--z-index-lvl-1);
     pointer-events: none;
     outline: var(--outline);
     border-radius: var(--radius-grid);

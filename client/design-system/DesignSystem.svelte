@@ -4,7 +4,9 @@
   import AppBlock, { AppBlockElevation, AppBlockTone } from '@/client/src/fw/ui/by-design/AppBlock.svelte';
   import AppButton, { AppButtonAccent } from '@/client/src/fw/ui/by-design/AppButton.svelte';
   import AppModal from '@/client/src/fw/ui/by-design/AppModal.svelte';
+  import AppPlay from '@/client/src/fw/ui/by-design/AppPlay.svelte';
   import AppRadioGroup from '@/client/src/fw/ui/by-design/AppRadioGroup.svelte';
+  import AppSidebar from '@/client/src/fw/ui/by-design/AppSidebar.svelte';
   import Index from '@/client/src/fw/ui/by-hierarchy/per-app/index.svelte';
   import type { ComponentProps, Snippet } from 'svelte';
 
@@ -94,6 +96,20 @@
         { name: 'isDestructive: true', props: { isDestructive: true } },
       ],
     ],
+    AppPlay: [
+      [
+        { name: 'userName: short, opponentName: short', props: { opponentName: 'Opponent', userName: 'You' } },
+        {
+          name: 'userName: long, opponentName: long',
+          props: { opponentName: 'Challenging server engine', userName: 'Player with a very long name' },
+        },
+      ],
+      [
+        { name: 'userScore: 0, opponentScore: 0', props: { opponentScore: 0, userScore: 0 } },
+        { name: 'userScore: 27, opponentScore: 134', props: { opponentScore: 134, userScore: 27 } },
+        { name: 'userScore: 1024, opponentScore: 987', props: { opponentScore: 987, userScore: 1024 } },
+      ],
+    ],
     AppRadioGroup: [
       [
         { name: 'legend: short, options: 1 short', props: { legend: 'Engine', options: toOptions(['Client']) } },
@@ -121,6 +137,13 @@
         { name: 'modelValue: 1st', props: { index: 0 } },
         { name: 'modelValue: 2nd', props: { index: 1 } },
         { name: 'modelValue: 3rd', props: { index: 2 } },
+      ],
+    ],
+    AppSidebar: [
+      [
+        { name: 'children: 1 AppPlay', props: { plays: toPlays(1) } },
+        { name: 'children: 3 AppPlay', props: { plays: toPlays(3) } },
+        { name: 'children: 16 AppPlay', props: { plays: toPlays(16) } },
       ],
     ],
     TheToast: [
@@ -153,6 +176,15 @@
   function toOptions(texts: Array<string>): Array<{ text: string; value: string }> {
     return texts.map(text => ({ text, value: text }));
   }
+
+  function toPlays(count: number): Array<ComponentProps<typeof AppPlay>> {
+    return Array.from({ length: count }, (_, index) => ({
+      opponentName: 'Opponent',
+      opponentScore: (index * 37) % 400,
+      userName: 'You',
+      userScore: (index * 53 + 12) % 400,
+    }));
+  }
 </script>
 
 <script lang="ts">
@@ -165,7 +197,9 @@
     AppBlock: appBlock,
     AppButton: appButton,
     AppModal: appModal,
+    AppPlay: appPlay,
     AppRadioGroup: appRadioGroup,
+    AppSidebar: appSidebar,
     TheToast: theToast,
   };
   const modals: Record<string, { open: () => void }> = {};
@@ -197,6 +231,10 @@
   <AppModal bind:this={modals[name]} {...props} />
 {/snippet}
 
+{#snippet appPlay(props: ComponentProps<typeof AppPlay>)}
+  <div class="item"><AppPlay {...props} /></div>
+{/snippet}
+
 {#snippet appRadioGroup(props: { index: number; legend: string; options: Array<{ text: string; value: string }> }, name: string)}
   <AppRadioGroup
     legend={props.legend}
@@ -206,6 +244,16 @@
       selectedValues[name] = value;
     }}
   />
+{/snippet}
+
+{#snippet appSidebar(props: { plays: Array<ComponentProps<typeof AppPlay>> })}
+  <div class="rail">
+    <AppSidebar ariaLabel="Plays">
+      {#each props.plays as play, index (index)}
+        <AppPlay {...play} />
+      {/each}
+    </AppSidebar>
+  </div>
 {/snippet}
 
 {#snippet theToast(props: { accent: TheToastAccent; body: string }, name: string)}
@@ -268,6 +316,14 @@
 
   dd {
     margin: var(--space-xs) 0 var(--space-l);
+  }
+
+  .item {
+    width: calc(var(--space-6xl) * 7);
+  }
+
+  .rail {
+    height: calc(var(--space-6xl) * 6);
   }
 
   .tile {

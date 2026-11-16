@@ -1,0 +1,16 @@
+:root {
+  --box-shadow-lvl-0:
+    inset 0 1px 2px color-mix(in oklch, var(--box-shadow-color) 10%, transparent),
+    inset 0 2px 6px color-mix(in oklch, var(--box-shadow-color) 6%, transparent);
+  --box-shadow-lvl-1:
+    0 1px 1px color-mix(in oklch, var(--box-shadow-color) 8%, transparent),
+    0 2px 4px color-mix(in oklch, var(--box-shadow-color) 6%, transparent);
+  --box-shadow-lvl-2:
+    0 1px 2px color-mix(in oklch, var(--box-shadow-color) 8%, transparent),
+    0 4px 8px color-mix(in oklch, var(--box-shadow-color) 8%, transparent),
+    0 8px 16px color-mix(in oklch, var(--box-shadow-color) 6%, transparent);
+  --box-shadow-lvl-3:
+    0 2px 4px color-mix(in oklch, var(--box-shadow-color) 8%, transparent),
+    0 12px 24px color-mix(in oklch, var(--box-shadow-color) 12%, transparent),
+    0 24px 48px color-mix(in oklch, var(--box-shadow-color) 12%, transparent);
+}

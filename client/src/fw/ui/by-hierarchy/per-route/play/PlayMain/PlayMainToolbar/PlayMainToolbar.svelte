@@ -115,9 +115,9 @@
   }
 
   .toolbar__slot {
-    background: light-dark(var(--color-level-4), var(--color-level-8));
+    background: light-dark(var(--color-lvl-4), var(--color-lvl-3));
     border-radius: calc(var(--radius-grid) * 2);
-    box-shadow: var(--shadow-level-0);
+    box-shadow: var(--box-shadow-lvl-0);
   }
 
   .toolbar__button {

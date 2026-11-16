@@ -89,9 +89,9 @@
     align-items: stretch;
     height: var(--space-5xl);
     padding: var(--space-3xs);
-    background: light-dark(var(--color-level-4), var(--color-level-8));
+    background: light-dark(var(--color-lvl-4), var(--color-lvl-3));
     border-radius: var(--space-s);
-    box-shadow: var(--shadow-level-0);
+    box-shadow: var(--box-shadow-lvl-0);
   }
 
   .radio-group__indicator {
@@ -100,7 +100,7 @@
     bottom: var(--space-3xs);
     left: 0;
     pointer-events: none;
-    background: light-dark(var(--color-level-1), var(--color-level-7));
+    background: light-dark(var(--color-lvl-1), var(--color-lvl-4));
     border-radius: calc(var(--space-xs) + 2px);
     transition-timing-function: var(--transition-timing-function);
     transition-duration: var(--transition-duration-short);
@@ -114,7 +114,7 @@
     padding: var(--space-xs) var(--space-l);
     font-size: var(--font-size-small);
     font-weight: var(--font-weight);
-    color: light-dark(var(--color-level-7), var(--color-level-5));
+    color: light-dark(var(--color-lvl-7), var(--color-lvl-6));
     cursor: pointer;
     user-select: none;
     transition-timing-function: var(--transition-timing-function);
@@ -122,7 +122,7 @@
     transition-property: color;
 
     &:hover {
-      color: light-dark(var(--color-level-10), var(--color-level-1));
+      color: var(--color-lvl-10);
     }
 
     &:has(:focus-visible) {
@@ -131,7 +131,7 @@
   }
 
   .radio-group__option--selected {
-    color: light-dark(var(--color-level-9), var(--color-level-3));
+    color: light-dark(var(--color-lvl-9), var(--color-lvl-8));
     cursor: default;
   }
 

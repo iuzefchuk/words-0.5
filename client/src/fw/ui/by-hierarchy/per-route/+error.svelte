@@ -49,8 +49,8 @@
     place-items: center;
     min-height: 100vh;
     padding: var(--padding-primary);
-    color: light-dark(var(--color-level-11), var(--color-level-1));
-    background: light-dark(var(--color-level-1), var(--color-level-11));
+    color: light-dark(var(--color-lvl-11), var(--color-lvl-10));
+    background: light-dark(var(--color-lvl-1), var(--color-lvl-0));
 
     :global(em) {
       font-style: italic;

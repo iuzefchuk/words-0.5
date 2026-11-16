@@ -5,11 +5,11 @@
 </script>
 
 <script lang="ts">
+  import '@/client/assets/css/box_shadow.css';
   import '@/client/assets/css/font_size.css';
   import '@/client/assets/css/font_weight.css';
   import '@/client/assets/css/keyframes.css';
   import '@/client/assets/css/palette.css';
-  import '@/client/assets/css/shadow.css';
   import '@/client/assets/css/space.css';
   import '@/client/assets/css/transition_timing_function.css';
   import '@/client/assets/css/z_index.css';
@@ -38,30 +38,54 @@
     :root {
       color-scheme: light dark;
 
-      --color-level-0: var(--palette-white);
-      --color-level-1: var(--palette-gray-50);
-      --color-level-2: var(--palette-gray-100);
-      --color-level-3: var(--palette-gray-200);
-      --color-level-4: var(--palette-gray-300);
-      --color-level-5: var(--palette-gray-400);
-      --color-level-6: var(--palette-gray-500);
-      --color-level-7: var(--palette-gray-600);
-      --color-level-8: var(--palette-gray-700);
-      --color-level-9: var(--palette-gray-800);
-      --color-level-10: var(--palette-gray-900);
-      --color-level-11: var(--palette-gray-950);
-      --color-primary: light-dark(var(--color-level-11), var(--color-level-2));
-      --color-secondary: light-dark(var(--color-level-6), var(--color-level-5));
-      --bg-primary: light-dark(var(--color-level-3), var(--color-level-9));
+      --color-lvl-0: var(--palette-white);
+      --color-lvl-1: var(--palette-slate-50);
+      --color-lvl-2: var(--palette-slate-100);
+      --color-lvl-3: var(--palette-slate-200);
+      --color-lvl-4: var(--palette-slate-300);
+      --color-lvl-5: var(--palette-slate-400);
+      --color-lvl-6: var(--palette-slate-500);
+      --color-lvl-7: var(--palette-slate-600);
+      --color-lvl-8: var(--palette-slate-700);
+      --color-lvl-9: var(--palette-slate-800);
+      --color-lvl-10: var(--palette-slate-900);
+      --color-lvl-11: var(--palette-slate-950);
+
+      @media (prefers-color-scheme: dark) {
+        --color-lvl-0: var(--palette-gray-950);
+        --color-lvl-1: var(--palette-gray-900);
+        --color-lvl-2: var(--palette-gray-800);
+        --color-lvl-3: var(--palette-gray-700);
+        --color-lvl-4: var(--palette-gray-600);
+        --color-lvl-5: var(--palette-gray-500);
+        --color-lvl-6: var(--palette-gray-400);
+        --color-lvl-7: var(--palette-gray-300);
+        --color-lvl-8: var(--palette-gray-200);
+        --color-lvl-9: var(--palette-gray-100);
+        --color-lvl-10: var(--palette-gray-50);
+        --color-lvl-11: var(--palette-white);
+      }
+
+      --color-primary: light-dark(var(--color-lvl-11), var(--color-lvl-9));
+      --color-secondary: var(--color-lvl-6);
+      --box-shadow-color: light-dark(var(--color-lvl-11), var(--color-lvl-7));
+
+      --bg-primary: light-dark(var(--color-lvl-3), var(--color-lvl-2));
       --bg-secondary: transparent;
+
       --font-size-primary: var(--font-size);
       --font-size-secondary: var(--font-size-small);
+
       --font-weight-primary: light-dark(var(--font-weight), var(--font-weight-small));
       --font-weight-secondary: var(--font-weight-primary);
+
       --padding-primary: var(--space-m);
+
       --gap-grid: var(--space-2xs);
+
       --radius-grid: var(--space-2xs);
-      --outline: 2px solid light-dark(var(--color-level-10), var(--color-level-1));
+
+      --outline: 2px solid var(--color-lvl-10);
 
       :focus-visible {
         outline: var(--outline);

@@ -72,7 +72,7 @@
     user-select: none;
     border: 1px solid transparent;
     border-radius: var(--space-xs);
-    box-shadow: var(--shadow-level-1);
+    box-shadow: var(--box-shadow-lvl-1);
     transition-timing-function: var(--transition-timing-function);
     transition-duration: var(--transition-duration-short);
     transition-property: box-shadow;
@@ -91,40 +91,40 @@
   }
 
   .btn--primary {
-    color: light-dark(var(--color-level-1), var(--color-level-9));
-    background: light-dark(var(--color-level-10), var(--color-level-2));
+    color: light-dark(var(--color-lvl-1), var(--color-lvl-2));
+    background: light-dark(var(--color-lvl-10), var(--color-lvl-9));
     border-color: transparent;
 
     &:hover:not(:active, :disabled) {
-      color: light-dark(var(--color-level-0), var(--color-level-11));
-      background: light-dark(var(--color-level-9), var(--color-level-0));
+      color: var(--color-lvl-0);
+      background: light-dark(var(--color-lvl-9), var(--color-lvl-11));
       border-color: transparent;
-      box-shadow: var(--shadow-level-2);
+      box-shadow: var(--box-shadow-lvl-2);
     }
 
     &:active:not(:disabled) {
-      color: light-dark(var(--color-level-3), var(--color-level-9));
-      background: light-dark(var(--color-level-11), var(--color-level-3));
+      color: light-dark(var(--color-lvl-3), var(--color-lvl-2));
+      background: light-dark(var(--color-lvl-11), var(--color-lvl-8));
       border-color: transparent;
     }
   }
 
   .btn--secondary {
-    color: light-dark(var(--color-level-9), var(--color-level-2));
-    background: light-dark(var(--color-level-1), var(--color-level-7));
-    border-color: light-dark(var(--color-level-5), var(--color-level-6));
+    color: var(--color-lvl-9);
+    background: light-dark(var(--color-lvl-1), var(--color-lvl-4));
+    border-color: var(--color-lvl-5);
 
     &:hover:not(:active, :disabled) {
-      color: light-dark(var(--color-level-11), var(--color-level-0));
-      background: light-dark(var(--color-level-0), var(--color-level-6));
-      border-color: light-dark(var(--color-level-11), var(--color-level-0));
-      box-shadow: var(--shadow-level-2);
+      color: var(--color-lvl-11);
+      background: light-dark(var(--color-lvl-0), var(--color-lvl-5));
+      border-color: var(--color-lvl-11);
+      box-shadow: var(--box-shadow-lvl-2);
     }
 
     &:active:not(:disabled) {
-      color: light-dark(var(--color-level-8), var(--color-level-3));
-      background: light-dark(var(--color-level-2), var(--color-level-8));
-      border-color: light-dark(var(--color-level-6), var(--color-level-5));
+      color: var(--color-lvl-8);
+      background: light-dark(var(--color-lvl-2), var(--color-lvl-3));
+      border-color: var(--color-lvl-6);
     }
   }
 </style>

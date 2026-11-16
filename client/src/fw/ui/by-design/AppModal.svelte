@@ -108,7 +108,7 @@
     background: var(--bg-primary);
     border: none;
     border-radius: var(--space-s);
-    box-shadow: var(--shadow-level-3);
+    box-shadow: var(--box-shadow-lvl-3);
     opacity: 0;
     transition:
       opacity var(--transition-duration-normal) var(--transition-timing-function),

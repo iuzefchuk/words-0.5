@@ -68,23 +68,19 @@
   }
 
   .block--elevation-low {
-    background: light-dark(var(--color-level-4), var(--color-level-8));
+    background: light-dark(var(--color-lvl-4), var(--color-lvl-3));
   }
 
   .block--elevation-mid {
-    background: light-dark(var(--color-level-1), var(--color-level-10));
-
-    @media (prefers-color-scheme: dark) {
-      box-shadow: var(--shadow-level-0);
-    }
+    background: var(--color-lvl-1);
   }
 
   .block--elevation-high {
     position: relative;
-    z-index: var(--z-index-level-1);
+    z-index: var(--z-index-lvl-1);
     font-family: monospace;
-    color: light-dark(var(--color-level-3), var(--color-level-9));
-    box-shadow: var(--shadow-level-1);
+    color: light-dark(var(--color-lvl-3), var(--color-lvl-2));
+    box-shadow: var(--box-shadow-lvl-1);
     transition-timing-function: var(--transition-timing-function);
     transition-duration: var(--transition-duration-short);
     transition-property: background, color, outline;
@@ -94,38 +90,38 @@
     }
 
     &.block--tone-faint {
-      background: light-dark(var(--color-level-5), var(--color-level-6));
+      background: var(--color-lvl-5);
     }
 
     &.block--tone-mid {
-      background: light-dark(var(--color-level-6), var(--color-level-5));
+      background: var(--color-lvl-6);
     }
 
     &.block--tone-bold {
-      background: light-dark(var(--color-level-7), var(--color-level-4));
+      background: var(--color-lvl-7);
     }
 
     &.block--tone-bolder {
-      background: light-dark(var(--color-level-9), var(--color-level-2));
+      background: var(--color-lvl-9);
     }
   }
 
   .block--elevation-low,
   .block--elevation-mid {
     &.block--tone-faint {
-      color: light-dark(var(--color-level-5), var(--color-level-8));
+      color: light-dark(var(--color-lvl-5), var(--color-lvl-3));
     }
 
     &.block--tone-mid {
-      color: light-dark(var(--color-level-6), var(--color-level-7));
+      color: light-dark(var(--color-lvl-6), var(--color-lvl-4));
     }
 
     &.block--tone-bold {
-      color: light-dark(var(--color-level-7), var(--color-level-6));
+      color: light-dark(var(--color-lvl-7), var(--color-lvl-5));
     }
 
     &.block--tone-bolder {
-      color: light-dark(var(--color-level-8), var(--color-level-5));
+      color: light-dark(var(--color-lvl-8), var(--color-lvl-6));
     }
   }
 </style>

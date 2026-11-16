@@ -28,7 +28,7 @@
     position: absolute;
     top: calc(-1 * var(--space-xl));
     right: calc(-1 * var(--space-xl));
-    z-index: var(--z-index-level-2);
+    z-index: var(--z-index-lvl-2);
     display: grid;
     place-items: center;
     width: var(--space-3xl);
@@ -46,7 +46,7 @@
     font-weight: var(--font-weight);
     background: oklch(100% 0 0deg / 20%);
     border-radius: var(--space-3xs);
-    box-shadow: var(--shadow-level-3);
+    box-shadow: var(--box-shadow-lvl-3);
     backdrop-filter: blur(var(--space-xs));
   }
 

@@ -34,7 +34,7 @@
         out:fade|global={{ duration: TransitionDuration.Normal }}
       >
         <AppBanner
-          --banner-shadow="var(--shadow-level-2)"
+          --banner-shadow="var(--box-shadow-lvl-2)"
           accent={mapTheToastAccentAppBannerAccent(toast.accent)}
           body={toast.body}
           ontrigger={() => {
@@ -52,7 +52,7 @@
     top: var(--padding-primary);
     right: 0;
     left: 0;
-    z-index: var(--z-index-level-2);
+    z-index: var(--z-index-lvl-2);
     display: grid;
     place-items: start stretch;
     padding: 0 var(--padding-primary);

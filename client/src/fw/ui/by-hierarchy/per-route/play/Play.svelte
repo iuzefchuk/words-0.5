@@ -81,7 +81,7 @@
   }
 
   .play__menubar {
-    z-index: var(--z-index-level-1);
+    z-index: var(--z-index-lvl-1);
     place-self: end end;
 
     @media screen and (width <= 34rem) {
