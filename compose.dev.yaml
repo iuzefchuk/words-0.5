@@ -8,6 +8,9 @@ services:
           path: ./client/assets
           target: /app/client/assets
         - action: sync
+          path: ./client/design-system
+          target: /app/client/design-system
+        - action: sync
           path: ./client/src
           target: /app/client/src
         - action: rebuild
@@ -15,6 +18,7 @@ services:
           ignore:
             - .svelte-kit/
             - assets/
+            - design-system/
             - src/
         - action: rebuild
           path: ./engine/src
@@ -42,27 +46,3 @@ services:
           path: ./engine/Cargo.toml
         - action: rebuild
           path: ./engine/Cargo.lock
-
-  storybook:
-    build:
-      context: .
-      dockerfile: client/Dockerfile
-      target: dev
-    command: ['npm', 'run', 'storybook', '--', '--ci', '--host', '0.0.0.0']
-    develop:
-      watch:
-        - action: sync
-          path: ./client/assets
-          target: /app/client/assets
-        - action: sync
-          path: ./client/src
-          target: /app/client/src
-        - action: rebuild
-          path: ./client
-          ignore:
-            - .svelte-kit/
-            - assets/
-            - src/
-    ports:
-      - '127.0.0.1:6006:6006'
-    restart: unless-stopped

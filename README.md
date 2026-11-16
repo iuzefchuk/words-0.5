@@ -1,16 +1,14 @@
 # In progress
 
-Server-engine-client split
+Client review
 Finish endscreen + bug with tooltip
 
 # Backlog
 
-Loading states
-Error states
-Tests
+Server review
+Engine review
+Tests (+ lighthouse perf)
 Multiple matches
 Auth / save progress on server
 Multiplayer
 Sentry
-New name
-Themes

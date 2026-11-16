@@ -1,8 +1,16 @@
+export enum TheToastAccent {
+  Bad = 'Bad',
+  Good = 'Good',
+}
+
 type TriggerParams = {
+  accent: TheToastAccent;
   body: string;
 };
 
 class TheToastStore {
+  accent = $state(TheToastAccent.Good);
+
   body = $state<null | string>(null);
 
   triggerCount = $state(0);
@@ -11,7 +19,8 @@ class TheToastStore {
     this.body = null;
   }
 
-  trigger({ body }: TriggerParams): void {
+  trigger({ accent, body }: TriggerParams): void {
+    this.accent = accent;
     this.body = body;
     this.triggerCount += 1;
   }

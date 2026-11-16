@@ -82,13 +82,14 @@ export default defineConfig(
   },
   { files: ['**/*.svelte', '**/*.svelte.ts'], languageOptions: { parserOptions: { parser: tseslint.parser } } },
   {
-    files: ['src/**/*.svelte'],
+    files: ['design-system/**/*.svelte', 'src/**/*.svelte'],
     rules: {
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-return': 'off',
     },
   },
+  { files: ['design-system/**/*.svelte'], rules: { 'svelte/no-navigation-without-resolve': 'off' } },
   {
     files: ['src/**/*.d.ts', 'src/platform/by-port/*/port.ts'],
     rules: { '@typescript-eslint/consistent-type-definitions': 'off' },

@@ -1,9 +1,10 @@
+import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import { defineConfig, loadEnv } from 'vite';
-import type { UserConfig } from 'vite';
+import type { Plugin, UserConfig } from 'vite';
 
 const ROOT = import.meta.dirname;
 
@@ -13,6 +14,7 @@ export default defineConfig(({ command, mode }) => {
   const config = {
     envDir: REPO,
     plugins: [
+      designSystem(),
       sveltekit({
         adapter: adapter({ fallback: 'index.html', pages: `${ROOT}/dist` }),
         alias: { '@/client': ROOT, '@/engine': `${REPO}/engine` },
@@ -37,6 +39,28 @@ export default defineConfig(({ command, mode }) => {
     server: { fs: { allow: [ROOT, `${REPO}/engine`] }, port: resolvePort(env, 'CLIENT_PORT', 1234), proxy, strictPort: true },
   } satisfies UserConfig;
 });
+
+function designSystem(): Plugin {
+  return {
+    apply: 'serve',
+    configureServer(server) {
+      server.middlewares.use('/design-system', (request, response, next) => {
+        if (new URL(request.url ?? '', 'http://localhost').pathname !== '/') {
+          next();
+          return;
+        }
+        void readFile(`${ROOT}/design-system/index.html`, 'utf8')
+          .then(html => server.transformIndexHtml(request.originalUrl ?? '', html))
+          .then(html => {
+            response.setHeader('Content-Type', 'text/html');
+            response.end(html);
+          })
+          .catch(next);
+      });
+    },
+    name: 'design-system',
+  };
+}
 
 function resolvePort(env: Record<string, string>, name: string, fallback: number): number {
   const value = env[name];

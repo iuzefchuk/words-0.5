@@ -1,10 +1,17 @@
 <script lang="ts">
   import { fade, fly } from 'svelte/transition';
   import { TransitionDuration } from '@/client/src/fw/definitions/TransitionDuration.ts';
-  import toast from '@/client/src/fw/headless/runes/per-app/for-component/TheToast.svelte.ts';
-  import AppBanner from '@/client/src/fw/ui/by-design/AppBanner.svelte';
+  import toast, { TheToastAccent } from '@/client/src/fw/headless/runes/per-app/for-component/TheToast.svelte.ts';
+  import AppBanner, { AppBannerAccent } from '@/client/src/fw/ui/by-design/AppBanner.svelte';
 
   const DURATION = 5000;
+
+  function mapTheToastAccentAppBannerAccent(accent: TheToastAccent): AppBannerAccent {
+    return {
+      [TheToastAccent.Bad]: AppBannerAccent.Bad,
+      [TheToastAccent.Good]: AppBannerAccent.Good,
+    }[accent];
+  }
 
   $effect(() => {
     void toast.triggerCount;
@@ -27,6 +34,8 @@
         out:fade|global={{ duration: TransitionDuration.Normal }}
       >
         <AppBanner
+          --banner-shadow="var(--shadow-level-2)"
+          accent={mapTheToastAccentAppBannerAccent(toast.accent)}
           body={toast.body}
           ontrigger={() => {
             toast.dismiss();
@@ -45,12 +54,13 @@
     left: 0;
     z-index: var(--z-index-level-2);
     display: grid;
-    place-items: center;
+    place-items: start stretch;
     padding: 0 var(--padding-primary);
     pointer-events: none;
   }
 
   .toast__item {
+    display: grid;
     grid-area: 1 / 1;
     pointer-events: auto;
   }
