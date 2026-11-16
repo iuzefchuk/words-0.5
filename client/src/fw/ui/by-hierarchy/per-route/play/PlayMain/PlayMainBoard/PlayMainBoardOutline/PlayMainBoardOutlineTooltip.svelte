@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { fade } from 'svelte/transition';
+  import { TransitionDuration } from '@/client/src/fw/definitions/TransitionDuration.ts';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
 
   const runtime = getPlayRuntimeContext();
@@ -13,7 +15,11 @@
 
 {#if score !== null}
   <output class="tooltip" class:tooltip--flipped={isFlipped}>
-    <span class="tooltip__value" class:tooltip__value--shimmer={score > SHIMMER_THRESHOLD}>{score}</span>
+    <span
+      class="tooltip__value"
+      class:tooltip__value--shimmer={score > SHIMMER_THRESHOLD}
+      transition:fade|global={{ duration: TransitionDuration.Normal }}>{score}</span
+    >
   </output>
 {/if}
 

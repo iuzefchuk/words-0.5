@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { fade } from 'svelte/transition';
-  import { TransitionDuration } from '@/client/src/fw/definitions/TransitionDuration.ts';
   import { getPlayRuntimeContext } from '@/client/src/fw/ui/by-hierarchy/per-route/play/Play.svelte';
   import PlayMainBoardOutlineTooltip from '@/client/src/fw/ui/by-hierarchy/per-route/play/PlayMain/PlayMainBoard/PlayMainBoardOutline/PlayMainBoardOutlineTooltip.svelte';
   import type { PlayBlock, PlaySlotId } from '@/client/src/domain/play.ts';
@@ -98,9 +96,7 @@
     style:height={`calc(var(--step) * ${group.rowSpan} - var(--gap-grid) - 1px)`}
   >
     {#if isAnchorAt(idx)}
-      <div transition:fade|global={{ duration: TransitionDuration.Normal }}>
-        <PlayMainBoardOutlineTooltip isFlipped={isOnRightmostColumnAt(idx)} />
-      </div>
+      <PlayMainBoardOutlineTooltip isFlipped={isOnRightmostColumnAt(idx)} />
     {/if}
   </div>
 {/each}
