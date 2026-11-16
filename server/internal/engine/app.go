@@ -8,27 +8,19 @@ type App struct {
 }
 
 func (a *App) ChangeMatchDifficulty(difficulty string) error {
-	return a.command(a.engine.callWithString(difficulty, func(pointer unsafe.Pointer) unsafe.Pointer {
+	return a.command(a.engine.callWith(difficulty, func(pointer unsafe.Pointer) unsafe.Pointer {
 		return a.engine.appChangeMatchDifficulty(a.handle, pointer)
 	}))
 }
 
 func (a *App) ChangeMatchType(matchType string) error {
-	return a.command(a.engine.callWithString(matchType, func(pointer unsafe.Pointer) unsafe.Pointer {
+	return a.command(a.engine.callWith(matchType, func(pointer unsafe.Pointer) unsafe.Pointer {
 		return a.engine.appChangeMatchType(a.handle, pointer)
 	}))
 }
 
-func (a *App) ClearUserTiles() error {
-	return a.command(a.engine.read(a.engine.appClearUserTiles(a.handle)))
-}
-
 func (a *App) Close() error {
 	return a.command(a.engine.read(a.engine.appClose(a.handle)))
-}
-
-func (a *App) EventLog() ([]byte, error) {
-	return a.engine.read(a.engine.appEventLog(a.handle))
 }
 
 func (a *App) MatchState() ([]byte, error) {
@@ -45,7 +37,7 @@ func (a *App) PassTurn() error {
 }
 
 func (a *App) PlaceTile(cell int, tile string) error {
-	return a.command(a.engine.callWithString(tile, func(pointer unsafe.Pointer) unsafe.Pointer {
+	return a.command(a.engine.callWith(tile, func(pointer unsafe.Pointer) unsafe.Pointer {
 		return a.engine.appPlaceTile(a.handle, uint32(cell), pointer)
 	}))
 }
@@ -70,12 +62,8 @@ func (a *App) SaveTurn() error {
 	return a.command(a.engine.read(a.engine.appSaveTurn(a.handle)))
 }
 
-func (a *App) ShuffleUserTiles() error {
-	return a.command(a.engine.read(a.engine.appShuffleUserTiles(a.handle)))
-}
-
 func (a *App) UndoPlaceTile(tile string) error {
-	return a.command(a.engine.callWithString(tile, func(pointer unsafe.Pointer) unsafe.Pointer {
+	return a.command(a.engine.callWith(tile, func(pointer unsafe.Pointer) unsafe.Pointer {
 		return a.engine.appUndoPlaceTile(a.handle, pointer)
 	}))
 }

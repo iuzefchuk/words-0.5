@@ -7,7 +7,8 @@ dev:
 	set -a; [ -f ../.env ] && . ../.env; set +a; go run ./cmd/server
 
 format:
-	gofmt -l -w .
+	gofmt -l -s -w .
 
 lint:
 	go vet ./...
+	go fix -diff ./...

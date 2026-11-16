@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	idleTimeout = 24 * time.Hour
-	maxSessions = 1000
+	maxSessions        = 1000
+	sessionIdleTimeout = 24 * time.Hour
 )
 
 type session struct {
@@ -20,17 +20,17 @@ type session struct {
 	lastSeen time.Time
 }
 
-type sessions struct {
+type sessionStore struct {
 	byClientID map[string]*session
 	engine     *engine.Engine
 	mu         sync.Mutex
 }
 
-func newSessions(eng *engine.Engine) *sessions {
-	return &sessions{byClientID: make(map[string]*session), engine: eng}
+func newSessionStore(eng *engine.Engine) *sessionStore {
+	return &sessionStore{byClientID: make(map[string]*session), engine: eng}
 }
 
-func (s *sessions) open(clientID string) (*engine.App, error) {
+func (s *sessionStore) open(clientID string) (*engine.App, error) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 	now := time.Now()
@@ -48,9 +48,9 @@ func (s *sessions) open(clientID string) (*engine.App, error) {
 	return current.app, nil
 }
 
-func (s *sessions) evict(now time.Time) {
+func (s *sessionStore) evict(now time.Time) {
 	for id, current := range s.byClientID {
-		if now.Sub(current.lastSeen) >= idleTimeout {
+		if now.Sub(current.lastSeen) >= sessionIdleTimeout {
 			s.close(id)
 		}
 	}
@@ -65,7 +65,7 @@ func (s *sessions) evict(now time.Time) {
 	}
 }
 
-func (s *sessions) close(id string) {
+func (s *sessionStore) close(id string) {
 	if err := s.byClientID[id].app.Close(); err != nil {
 		slog.Warn("closing evicted session failed", "error", err)
 	}

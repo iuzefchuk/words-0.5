@@ -15,9 +15,7 @@ type Engine struct {
 	alloc                    func(uint32) unsafe.Pointer
 	appChangeMatchDifficulty func(uint32, unsafe.Pointer) unsafe.Pointer
 	appChangeMatchType       func(uint32, unsafe.Pointer) unsafe.Pointer
-	appClearUserTiles        func(uint32) unsafe.Pointer
 	appClose                 func(uint32) unsafe.Pointer
-	appEventLog              func(uint32) unsafe.Pointer
 	appMatchState            func(uint32) unsafe.Pointer
 	appOpen                  func(unsafe.Pointer, unsafe.Pointer, uint32) unsafe.Pointer
 	appOpponentTurnIsDue     func(uint32) unsafe.Pointer
@@ -28,12 +26,10 @@ type Engine struct {
 	appResignMatch           func(uint32) unsafe.Pointer
 	appRestartGame           func(uint32) unsafe.Pointer
 	appSaveTurn              func(uint32) unsafe.Pointer
-	appShuffleUserTiles      func(uint32) unsafe.Pointer
 	appUndoPlaceTile         func(uint32, unsafe.Pointer) unsafe.Pointer
 	appValidateTurn          func(uint32) unsafe.Pointer
 	dealloc                  func(unsafe.Pointer)
 	engineOpen               func(unsafe.Pointer) unsafe.Pointer
-	eventsSchemaVersion      func() uint32
 }
 
 func Open(dir string) (*Engine, error) {
@@ -47,9 +43,7 @@ func Open(dir string) (*Engine, error) {
 		"alloc":                       &e.alloc,
 		"app_change_match_difficulty": &e.appChangeMatchDifficulty,
 		"app_change_match_type":       &e.appChangeMatchType,
-		"app_clear_user_tiles":        &e.appClearUserTiles,
 		"app_close":                   &e.appClose,
-		"app_event_log":               &e.appEventLog,
 		"app_match_state":             &e.appMatchState,
 		"app_open":                    &e.appOpen,
 		"app_opponent_turn_is_due":    &e.appOpponentTurnIsDue,
@@ -60,12 +54,10 @@ func Open(dir string) (*Engine, error) {
 		"app_resign_match":            &e.appResignMatch,
 		"app_restart_game":            &e.appRestartGame,
 		"app_save_turn":               &e.appSaveTurn,
-		"app_shuffle_user_tiles":      &e.appShuffleUserTiles,
 		"app_undo_place_tile":         &e.appUndoPlaceTile,
 		"app_validate_turn":           &e.appValidateTurn,
 		"dealloc":                     &e.dealloc,
 		"engine_open":                 &e.engineOpen,
-		"events_schema_version":       &e.eventsSchemaVersion,
 	}
 	for name, function := range symbols {
 		address, err := purego.Dlsym(library, name)
@@ -79,14 +71,10 @@ func Open(dir string) (*Engine, error) {
 	if err != nil {
 		return nil, fmt.Errorf("read dictionary: %w", err)
 	}
-	if _, err := e.callWithBytes(dictionary, e.engineOpen); err != nil {
+	if _, err := e.callWith(dictionary, e.engineOpen); err != nil {
 		return nil, fmt.Errorf("open engine: %w", err)
 	}
 	return e, nil
-}
-
-func (e *Engine) EventsSchemaVersion() uint32 {
-	return e.eventsSchemaVersion()
 }
 
 func (e *Engine) NewApp(seed uint32) (*App, error) {
@@ -105,8 +93,6 @@ func libraryExtension() string {
 	switch runtime.GOOS {
 	case "darwin":
 		return ".dylib"
-	case "windows":
-		return ".dll"
 	default:
 		return ".so"
 	}

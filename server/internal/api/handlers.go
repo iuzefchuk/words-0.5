@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 
 	"server/internal/engine"
@@ -14,7 +15,13 @@ func handleBoot() http.Handler {
 	})
 }
 
-func handleGeometry(sessions *sessions) http.Handler {
+func handleNotFound() http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		writeError(w, statusError{http.StatusNotFound, fmt.Sprintf("%s %s not found", r.Method, r.URL.Path)})
+	})
+}
+
+func handleGeometry(sessions *sessionStore) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app, err := sessions.open(clientID(r.Context()))
 		if err != nil {
@@ -30,7 +37,7 @@ func handleGeometry(sessions *sessions) http.Handler {
 	})
 }
 
-func state(sessions *sessions, run step) http.Handler {
+func handleStep(sessions *sessionStore, run step) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		app, err := sessions.open(clientID(r.Context()))
 		if err != nil {

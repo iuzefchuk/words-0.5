@@ -1,30 +1,16 @@
 package api
 
 import (
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
-	"io"
-	"log/slog"
 	"math"
 	"net/http"
 	"regexp"
 	"slices"
 	"strings"
 )
-
-type statusError struct {
-	status  int
-	message string
-}
-
-func (e statusError) Error() string {
-	return e.message
-}
-
-func badRequest(message string) error {
-	return statusError{http.StatusBadRequest, message}
-}
 
 const (
 	cellCount    = 225
@@ -75,8 +61,9 @@ func decodeTilePlacement(r *http.Request) (tilePlacement, error) {
 	if err != nil {
 		return tilePlacement{}, err
 	}
+	rawCell := record["cell"]
 	var cell float64
-	if err := json.Unmarshal(record["cell"], &cell); err != nil || cell != math.Trunc(cell) || cell < 0 || cell >= cellCount {
+	if err := json.Unmarshal(rawCell, &cell); err != nil || rawCell.Kind() != jsontext.KindNumber || cell != math.Trunc(cell) || cell < 0 || cell >= cellCount {
 		return tilePlacement{}, badRequest("cell must be a cell index")
 	}
 	var tile string
@@ -97,15 +84,13 @@ func parseTile(value string) (string, error) {
 	return value, nil
 }
 
-func decodeRecord(r *http.Request) (map[string]json.RawMessage, error) {
-	body, err := io.ReadAll(http.MaxBytesReader(nil, r.Body, maxBodyBytes))
-	if err != nil {
-		return nil, badRequest("body must be valid json")
-	}
-	var record map[string]json.RawMessage
-	if err := json.Unmarshal(body, &record); err != nil {
-		var typeError *json.UnmarshalTypeError
-		if errors.As(err, &typeError) {
+func decodeRecord(r *http.Request) (map[string]jsontext.Value, error) {
+	var record map[string]jsontext.Value
+	if err := json.UnmarshalRead(r.Body, &record); err != nil {
+		if tooLarge, ok := errors.AsType[*http.MaxBytesError](err); ok {
+			return nil, statusError{http.StatusRequestEntityTooLarge, fmt.Sprintf("body must be at most %d bytes", tooLarge.Limit)}
+		}
+		if _, ok := errors.AsType[*json.SemanticError](err); ok {
 			return nil, badRequest("body must be an object")
 		}
 		return nil, badRequest("body must be valid json")
@@ -116,36 +101,10 @@ func decodeRecord(r *http.Request) (map[string]json.RawMessage, error) {
 	return record, nil
 }
 
-func parseMember(raw json.RawMessage, allowed []string, name string) (string, error) {
+func parseMember(raw jsontext.Value, allowed []string, name string) (string, error) {
 	var value string
 	if err := json.Unmarshal(raw, &value); err != nil || !slices.Contains(allowed, value) {
 		return "", badRequest(fmt.Sprintf("%s must be one of %s", name, strings.Join(allowed, ", ")))
 	}
 	return value, nil
-}
-
-func writeError(w http.ResponseWriter, err error) {
-	status := http.StatusInternalServerError
-	var known statusError
-	if errors.As(err, &known) {
-		status = known.status
-	} else {
-		slog.Error("request failed", "error", err)
-	}
-	writeValue(w, status, map[string]string{"error": err.Error()})
-}
-
-func writeValue(w http.ResponseWriter, status int, value any) {
-	body, err := json.Marshal(value)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	writeJSON(w, status, body)
-}
-
-func writeJSON(w http.ResponseWriter, status int, body []byte) {
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(status)
-	w.Write(body)
 }
