@@ -1,8 +1,12 @@
 # In progress
 
-Finish design system
+Finish design system:
+Builtin browser notifications instead of toasts
+Alert instead of dialog
+
 Apply modal to endscreen
 Multiple matches + Auth / save progress on server
+
 
 # Backlog
 
@@ -12,3 +16,4 @@ Engine review
 Tests (+ lighthouse perf)
 Multiplayer
 Sentry
+iOS
